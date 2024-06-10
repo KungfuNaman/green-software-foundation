@@ -1,0 +1,7 @@
+python_dotenv
+langchain_openai
+langchain
+pypdf
+docarray
+pydantic==1.10.8
+jupytext
