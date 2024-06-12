@@ -3,3 +3,6 @@ pymupdf
 
 # for Image Extraction
 pymupdf4llm
+
+boto3
+chromadb
