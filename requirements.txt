@@ -1,0 +1,5 @@
+# forTextExtractor
+pymupdf
+
+# for Image Extraction
+pymupdf4llm
