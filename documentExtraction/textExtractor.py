@@ -1,6 +1,7 @@
 from langchain_community.document_loaders import PyMuPDFLoader
 import pymupdf4llm
 import os
+import pathlib
 
 
 def extractText(pdfPath):
@@ -18,10 +19,12 @@ def extractWithImages(pdfPath):
 
     output_dir = "./documentExtraction/outputs/extractWithImages.txt"
 
-    with open(output_dir, "w", encoding="utf-8") as file:
-        # Write the markdown text to the file
-        file.write(md_text)
-        file.write("\n\n")
+    pathlib.Path("./documentExtraction/outputs/extractWithImages.md").write_bytes(md_text.encode())
+
+    # with open(output_dir, "w", encoding="utf-8") as file:
+    #     # Write the markdown text to the file
+    #     file.write(md_text)
+    #     file.write("\n\n")
 
 
 # extractTextUsingLangChain("./documents/2.pdf")
