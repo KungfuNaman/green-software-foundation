@@ -1,60 +1,49 @@
-from haystack import Document
-from haystack import Pipeline
-from haystack.document_stores.in_memory import InMemoryDocumentStore
-from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
-from haystack.components.readers import ExtractiveReader
-from haystack.components.embedders import SentenceTransformersDocumentEmbedder
-from haystack.components.writers import DocumentWriter
-import pymupdf4llm
+import requests
+from typing import Optional, Dict, Any, Callable
 
+class Ollama:
+    def __init__(self, 
+                 model: str = "orca-mini",
+                 url: str = "http://localhost:11434/api/generate",
+                 generation_kwargs: Optional[Dict[str, Any]] = None,
+                 system_prompt: Optional[str] = None,
+                 template: Optional[str] = None,
+                 raw: bool = False,
+                 timeout: int = 120,
+                 streaming_callback: Optional[Callable[[dict], None]] = None):
+        self.model = model
+        self.url = url
+        self.generation_kwargs = generation_kwargs or {}
+        self.system_prompt = system_prompt
+        self.template = template
+        self.raw = raw
+        self.timeout = timeout
+        self.streaming_callback = streaming_callback
 
-def extractWithImages(pdfPath):
-    md_text = pymupdf4llm.to_markdown(pdfPath, write_images=True)
-    return md_text
+    def generate(self, prompt: str) -> Any:
+        payload = {
+            "model": self.model,
+            "prompt": prompt,
+            "generation_kwargs": self.generation_kwargs,
+            "system_prompt": self.system_prompt,
+            "template": self.template,
+            "raw": self.raw
+        }
 
-pdf_path="./documents/3.pdf"
-dataset = extractWithImages(pdf_path)
+        response = requests.post(self.url, json=payload, timeout=self.timeout)
 
-documents = [Document(content=dataset, meta={"source": pdf_path})]
+        if response.status_code == 200:
+            data = response.json()
+            if self.streaming_callback:
+                for chunk in data.get("chunks", []):
+                    self.streaming_callback(chunk)
+            return data
+        else:
+            response.raise_for_status()
 
-model = "bert-base-uncased"
-
-document_store = InMemoryDocumentStore()
-
-indexing_pipeline = Pipeline()
-
-indexing_pipeline.add_component(instance=SentenceTransformersDocumentEmbedder(model=model), name="embedder")
-indexing_pipeline.add_component(instance=DocumentWriter(document_store=document_store), name="writer")
-indexing_pipeline.connect("embedder.documents", "writer.documents")
-
-indexing_pipeline.run({"documents": documents})
-
-# %%
-from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
-from haystack.components.readers import ExtractiveReader
-from haystack.components.embedders import SentenceTransformersTextEmbedder
-
-
-retriever = InMemoryEmbeddingRetriever(document_store=document_store)
-reader = ExtractiveReader()
-reader.warm_up()
-
-extractive_qa_pipeline = Pipeline()
-
-extractive_qa_pipeline.add_component(instance=SentenceTransformersTextEmbedder(model=model), name="embedder")
-extractive_qa_pipeline.add_component(instance=retriever, name="retriever")
-extractive_qa_pipeline.add_component(instance=reader, name="reader")
-
-extractive_qa_pipeline.connect("embedder.embedding", "retriever.query_embedding")
-extractive_qa_pipeline.connect("retriever.documents", "reader.documents")
-
-# %% [markdown]
-# Try extracting some answers.
-
-# %%
-query = "what is the name of the project  ?"
-extractive_qa_pipeline.run(
-    data={"embedder": {"text": query}, "retriever": {"top_k": 3}, "reader": {"query": query, "top_k": 2}}
-)
-
-
+# Example usage
+if __name__ == "__main__":
+    ollama = Ollama()
+    prompt = "Tell me a story about a brave knight."
+    result = ollama.generate(prompt)
+    print(result)
