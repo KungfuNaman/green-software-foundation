@@ -1,4 +1,3 @@
-import argparse
 import os
 import shutil
 from langchain.document_loaders.pdf import PyPDFDirectoryLoader
@@ -7,29 +6,30 @@ from langchain.schema.document import Document
 from get_embedding_function import get_embedding_function
 from langchain.vectorstores.chroma import Chroma
 
+from dotenv import load_dotenv
+load_dotenv()
 
-CHROMA_PATH = "chroma"
-DATA_PATH = "./Rag/documents"
+CHROMA_PATH = os.getenv("CHROMA_PATH")
 
 
-def main():
-
+def setup_database(document_path,reset:False):
     # Check if the database should be cleared (using the --clear flag).
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--reset", action="store_true", help="Reset the database.")
-    args = parser.parse_args()
-    if args.reset:
+   
+    if reset:
         print("✨ Clearing Database")
         clear_database()
 
     # Create (or update) the data store.
-    documents = load_documents()
+    documents = load_documents(document_path)
     chunks = split_documents(documents)
-    add_to_chroma(chunks)
+
+    return add_to_chroma(chunks)
+        
 
 
-def load_documents():
-    document_loader = PyPDFDirectoryLoader(DATA_PATH)
+
+def load_documents(document_path):
+    document_loader = PyPDFDirectoryLoader(document_path)
     return document_loader.load()
 
 
@@ -68,8 +68,10 @@ def add_to_chroma(chunks: list[Document]):
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
         db.add_documents(new_chunks, ids=new_chunk_ids)
         db.persist()
+        return True
     else:
         print("✅ No new documents to add")
+        return False
 
 
 def calculate_chunk_ids(chunks):
@@ -107,4 +109,4 @@ def clear_database():
 
 
 if __name__ == "__main__":
-    main()
+    setup_database("./Rag/documents",False)
