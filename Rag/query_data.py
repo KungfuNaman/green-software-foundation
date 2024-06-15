@@ -1,11 +1,12 @@
-import argparse
+import os
 from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
 import time
 from get_embedding_function import get_embedding_function
+from logger.get_track_llm_response import append_to_csv
 
-CHROMA_PATH = "chroma"
+CHROMA_PATH = os.getenv("CHROMA_PATH")
 
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
@@ -19,53 +20,52 @@ Answer the question based on the above context: {question}
 
 
 def main():
-    # Create CLI.
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("query_text", type=str, help="The query text.")
-    # args = parser.parse_args()
-    # query_text = args.query_text
-    query_rag("can you tell me the databases details getting used ?")
+    query_rag("can you tell me the databases details getting used ?","")
 
 
-def query_rag(query_text: str):
+def query_rag(query_text: str,setup_database_time: str):
     # Prepare the DB.
     embedding_function = get_embedding_function()
-    
-    start = time.time()
 
     db = Chroma(persist_directory=CHROMA_PATH, embedding_function=embedding_function)
 
-    print("data added to db")
-    
+    print("data added to db : ", setup_database_time, "s")
+
     # Search the DB.
 
-    start = time.time()
+    search_start_time = time.time()
 
-    results = db.similarity_search_with_score(query_text, k=5)
-    print("context is taken out")
+    similarity_results = db.similarity_search_with_score(query_text, k=5)
 
-    end = time.time()
-    print("The time of execution of above program is :",
-      (end-start) * 10**3, "ms")
+    search_end_time = time.time()
+    search_time = search_end_time - search_start_time
 
-    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
+    print("context is taken out : ", search_time, "s")
+
+    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in similarity_results])
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
+
     print("prompt is created")
 
-    start = time.time()
+    response_start_time = time.time()
 
     model = Ollama(model="llama2")
     response_text = model.invoke(prompt)
-    print("response is generated")
 
-    end = time.time()
-    print("The time of execution of above program is :",
-      (end-start) * 10**3, "ms")
+    response_end_time = time.time()
+    response_time = response_end_time - response_start_time
 
-    sources = [doc.metadata.get("id", None) for doc, _score in results]
+    print("response is generated : ", response_time, "s")
+
+    sources = [doc.metadata.get("id", None) for doc, _score in similarity_results]
+    print(similarity_results)
     formatted_response = f"Response: {response_text}\nSources: {sources}"
     print(formatted_response)
+
+    append_to_csv(
+        query_text, context_text, search_time, response_text, response_time, setup_database_time,similarity_results
+    )
     return response_text
 
 
