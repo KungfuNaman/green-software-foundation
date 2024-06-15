@@ -59,7 +59,6 @@ def query_rag(query_text: str,setup_database_time: str):
     print("response is generated : ", response_time, "s")
 
     sources = [doc.metadata.get("id", None) for doc, _score in similarity_results]
-    print(similarity_results)
     formatted_response = f"Response: {response_text}\nSources: {sources}"
     print(formatted_response)
 
