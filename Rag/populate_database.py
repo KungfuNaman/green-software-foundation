@@ -1,10 +1,10 @@
 import os
 import shutil
-from langchain.document_loaders.pdf import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from get_embedding_function import get_embedding_function
-from langchain.vectorstores.chroma import Chroma
+from langchain_community.vectorstores import Chroma
+import pymupdf4llm
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -29,8 +29,12 @@ def setup_database(document_path,reset:False):
 
 
 def load_documents(document_path):
-    document_loader = PyPDFDirectoryLoader(document_path)
-    return document_loader.load()
+    # Load all PDFs in the DATA_PATH and convert them to markdown with images.
+    documents = []
+    md_text = pymupdf4llm.to_markdown(document_path, write_images=True)
+    document = Document(page_content=md_text, metadata={"source": document_path})
+    documents.append(document)
+    return documents
 
 
 def split_documents(documents: list[Document]):
@@ -41,7 +45,6 @@ def split_documents(documents: list[Document]):
         is_separator_regex=False,
     )
     return text_splitter.split_documents(documents)
-
 
 def add_to_chroma(chunks: list[Document]):
     # Load the existing database.
@@ -109,4 +112,4 @@ def clear_database():
 
 
 if __name__ == "__main__":
-    setup_database("./Rag/documents",False)
+    setup_database("./documents/3.pdf",False)
