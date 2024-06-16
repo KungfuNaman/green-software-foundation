@@ -1,12 +1,12 @@
 from populate_database import setup_database
 from query_data import query_rag
 
-document_path = "./Rag/documents"
+document_path = "./documents/3.pdf"
 import time
 
 
 def main():
-    query_text = "can you tell me the databases details getting used ?"
+    query_text = "can you give me all the green practices getting followed  ?"
     setup_database_start_time = time.time()
 
     is_document_embedded=setup_database(document_path, False)
