@@ -1,5 +1,7 @@
 # forTextExtractor
 pymupdf
+pypdf
+PyPDF2
 
 # for Image Extraction
 pymupdf4llm
@@ -8,3 +10,7 @@ boto3
 chromadb
 
 sentence-transformers>=2.2.0
+transformers
+langchain_community
+huggingface-hub
+tenacity

@@ -1,31 +1,30 @@
 import os
 import shutil
-from langchain.document_loaders.pdf import PyPDFDirectoryLoader
+from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from get_embedding_function import get_embedding_function
-from langchain.vectorstores.chroma import Chroma
+from hf_inference_model import Embedder
+from langchain_community.vectorstores import Chroma
+import chromadb
 
 from dotenv import load_dotenv
-load_dotenv()
 
+load_dotenv()
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 
 
-def setup_database(document_path,reset:False):
+def setup_database(document_path, reset=False):
     # Check if the database should be cleared (using the --clear flag).
-   
+
     if reset:
         print("✨ Clearing Database")
         clear_database()
 
     # Create (or update) the data store.
-    documents = load_documents(document_path)
-    chunks = split_documents(documents)
+    documents = load_documents(document_path)  # list of 17 langchain Document, each element = 1 page
+    chunks = split_documents(documents)  # split to 46 chunks of langchain Document
 
     return add_to_chroma(chunks)
-        
-
 
 
 def load_documents(document_path):
@@ -44,9 +43,15 @@ def split_documents(documents: list[Document]):
 
 
 def add_to_chroma(chunks: list[Document]):
-    # Load the existing database.
+    embedder = Embedder()
+    persistent_client = chromadb.PersistentClient()
+    collection = persistent_client.get_or_create_collection("dim384")
+
     db = Chroma(
-        persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
+        persist_directory=CHROMA_PATH,
+        client=persistent_client,
+        collection_name="dim384",
+        embedding_function=embedder,
     )
 
     # Calculate Page IDs.
@@ -75,7 +80,6 @@ def add_to_chroma(chunks: list[Document]):
 
 
 def calculate_chunk_ids(chunks):
-
     # This will create IDs like "data/monopoly.pdf:6:2"
     # Page Source : Page Number : Chunk Index
 
@@ -84,6 +88,7 @@ def calculate_chunk_ids(chunks):
 
     for chunk in chunks:
         source = chunk.metadata.get("source")
+        source = dir_name_washing(source)
         page = chunk.metadata.get("page")
         current_page_id = f"{source}:{page}"
 
@@ -103,10 +108,19 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
+# TODO: the 3rd one is not working
+def dir_name_washing(dir_str):
+    dir_str = dir_str.replace(r"\\", "-")
+    dir_str = dir_str.replace(r"//", "-")
+    dir_str = dir_str.replace("\ ", "-")
+    dir_str = dir_str.replace(r"/", "-")
+    return dir_str
+
+
 def clear_database():
     if os.path.exists(CHROMA_PATH):
         shutil.rmtree(CHROMA_PATH)
 
 
 if __name__ == "__main__":
-    setup_database("./Rag/documents",False)
+    setup_database("./Rag/documents", False)
