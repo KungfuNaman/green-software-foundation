@@ -2,3 +2,4 @@
 venv
 chroma
 Rag/logger/embeddings/
+Rag/logger/__pycache__/

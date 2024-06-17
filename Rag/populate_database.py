@@ -31,10 +31,9 @@ def setup_database(document_path, reset: False):
     chunks = split_documents(documents)
 
     success = add_to_chroma(chunks)
-    if success:
-        log_embeddings_to_tensorboard()
+    log_embeddings_to_tensorboard()
 
-    return True
+    return success
 
 
 def load_documents(document_path):
