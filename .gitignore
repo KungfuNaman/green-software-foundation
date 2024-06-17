@@ -1,0 +1,4 @@
+.venv/
+venv
+chroma
+Rag/logger/embeddings/projector_config.pbtxt
