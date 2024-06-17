@@ -1763,3 +1763,136 @@ Therefore, there are three servers involved in the implementation of the Yummy I
 1. IBM HTTP Server (1 server)
 2. IBM WebSphere Servers (2 servers)
 3. IBM DB2 Database (1 server)",44.437970876693726,155.36939406394958,"[(Document(page_content='[RSA]: IBM Rational Software Architect\n\n[http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html](http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html)\n\n[RUP]: The IBM Rational Unified Process : [http://www-306.ibm.com/software/awdtools/rup/index.html](http://www-306.ibm.com/software/awdtools/rup/index.html)\n\n[RUPRSA]: Developing a J2EE Architecture with Rational Software Architect using the Rational\n\nUnified Process®, IBM DeveloperWorks, Jean-Louis Maréchaux, Mars 2005,\n\n[http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/](http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/)\n\n**1.5** **Overview**', metadata={'id': './documents/3.pdf:None:13', 'source': './documents/3.pdf'}), 12288.875364959042), (Document(page_content='**3.7** **Internationalization (i18n)**\n\nThe online catering service of Yummy Inc must be able to deal with several languages (at least French and English)\nSo the presentation layer must be able to support i18n.\nOther layers must be generic enough to work with any internationalization context\n\n**4.** **Use-Case View**\n\nThis section lists use cases or scenarios from the use-case model if they represent some significant, central\nfunctionality of the final system. The only use-case with a significant impact on the online catering architecture is\nthe one related to online orders. It includes a search feature as well as a call to external services (delivery and\npayment)\n\n**4.1** **Ordering Menus**', metadata={'id': './documents/3.pdf:None:21', 'source': './documents/3.pdf'}), 13010.505093946966), (Document(page_content='Confidential Ó Yummy Inc, 2024 Page 6 of 17\n\n\n-----\n\n|Sample Software Architecture Document (version 0.7)|Col2|\n|---|---|\n\n\n**3.** **Architectural Goals and Constraints**\n\nThis section describes the software requirements and objectives that have some significant impact on the\narchitecture\n\n**3.1** **Technical Platform**\n\nThe Yummy Inc online application will be deployed onto a J2EE application server (Websphere Application Server\nversion 6, as it is already the application server use for internal applications).\n\n**3.2** **Transaction**\n\nThe Yummy Inc online application is transactional, leveraging the technical platform capabilities. Transaction\nmanagement model of the J2EE platform will be reused intensively.\n\n**3.3** **Security**', metadata={'id': './documents/3.pdf:None:18', 'source': './documents/3.pdf'}), 13332.963305476464), (Document(page_content=""**Logical view**\n\n**Audience** : Designers.\n**Area** : Functional Requirements: describes the design's object model. Also describes the most important\nuse-case realizations.\n**Related Artifacts** : Design model\n\n**Process view**\n\n**Audience** : Integrators.\n**Area** : Non-functional requirements: describes the design's concurrency and synchronization aspects.\n**Related Artifacts** : (no specific artifact).\n\n**Implementation view**\n\n**Audience** : Programmers.\n**Area** : Software components: describes the layers and subsystems of the application.\n**Related Artifacts** : Implementation model, components\n\n**Deployment view**"", metadata={'id': './documents/3.pdf:None:16', 'source': './documents/3.pdf'}), 13637.338216633412), (Document(page_content='**6.** **Process View**\n\nThere’s only one process to take into account. The J2EE model automatically handles threads which are instances of\nthis process.\n\nConfidential Ó Yummy Inc, 2024 Page 13 of 17\n\n\n-----\n\n|Sample Software Architecture Document (version 0.7)|Col2|\n|---|---|\n\n\n**7.** **Deployment View**\n\n**Global Overview**\n\n![3.pdf-13-0.png](3.pdf-13-0.png)\n\n**Detailed deployment model with clustering**\n\n-  One IBM HTTP Server will dispatch requests to two different IBM WebSphere servers (load balancing +\nclustering)\n\n-  An IBM DB2 Database stores all the information related to online orders\n\nConfidential Ó Yummy Inc, 2024 Page 14 of 17\n\n\n-----\n\n|Sample Software Architecture Document (version 0.7)|Col2|\n|---|---|\n\n\n![3.pdf-14-0.png](3.pdf-14-0.png)\n\n**8.** **Implementation View**', metadata={'id': './documents/3.pdf:None:27', 'source': './documents/3.pdf'}), 13799.731317030944)]"
+can you tell me which and how many servers are used   ?,"[RSA]: IBM Rational Software Architect
+
+[http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html](http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html)
+
+[RUP]: The IBM Rational Unified Process : [http://www-306.ibm.com/software/awdtools/rup/index.html](http://www-306.ibm.com/software/awdtools/rup/index.html)
+
+[RUPRSA]: Developing a J2EE Architecture with Rational Software Architect using the Rational
+
+Unified Process®, IBM DeveloperWorks, Jean-Louis Maréchaux, Mars 2005,
+
+[http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/](http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/)
+
+**1.5** **Overview**
+
+---
+
+**3.7** **Internationalization (i18n)**
+
+The online catering service of Yummy Inc must be able to deal with several languages (at least French and English)
+So the presentation layer must be able to support i18n.
+Other layers must be generic enough to work with any internationalization context
+
+**4.** **Use-Case View**
+
+This section lists use cases or scenarios from the use-case model if they represent some significant, central
+functionality of the final system. The only use-case with a significant impact on the online catering architecture is
+the one related to online orders. It includes a search feature as well as a call to external services (delivery and
+payment)
+
+**4.1** **Ordering Menus**
+
+---
+
+Confidential Ó Yummy Inc, 2024 Page 6 of 17
+
+
+-----
+
+|Sample Software Architecture Document (version 0.7)|Col2|
+|---|---|
+
+
+**3.** **Architectural Goals and Constraints**
+
+This section describes the software requirements and objectives that have some significant impact on the
+architecture
+
+**3.1** **Technical Platform**
+
+The Yummy Inc online application will be deployed onto a J2EE application server (Websphere Application Server
+version 6, as it is already the application server use for internal applications).
+
+**3.2** **Transaction**
+
+The Yummy Inc online application is transactional, leveraging the technical platform capabilities. Transaction
+management model of the J2EE platform will be reused intensively.
+
+**3.3** **Security**
+
+---
+
+**Logical view**
+
+**Audience** : Designers.
+**Area** : Functional Requirements: describes the design's object model. Also describes the most important
+use-case realizations.
+**Related Artifacts** : Design model
+
+**Process view**
+
+**Audience** : Integrators.
+**Area** : Non-functional requirements: describes the design's concurrency and synchronization aspects.
+**Related Artifacts** : (no specific artifact).
+
+**Implementation view**
+
+**Audience** : Programmers.
+**Area** : Software components: describes the layers and subsystems of the application.
+**Related Artifacts** : Implementation model, components
+
+**Deployment view**
+
+---
+
+**6.** **Process View**
+
+There’s only one process to take into account. The J2EE model automatically handles threads which are instances of
+this process.
+
+Confidential Ó Yummy Inc, 2024 Page 13 of 17
+
+
+-----
+
+|Sample Software Architecture Document (version 0.7)|Col2|
+|---|---|
+
+
+**7.** **Deployment View**
+
+**Global Overview**
+
+![3.pdf-13-0.png](3.pdf-13-0.png)
+
+**Detailed deployment model with clustering**
+
+-  One IBM HTTP Server will dispatch requests to two different IBM WebSphere servers (load balancing +
+clustering)
+
+-  An IBM DB2 Database stores all the information related to online orders
+
+Confidential Ó Yummy Inc, 2024 Page 14 of 17
+
+
+-----
+
+|Sample Software Architecture Document (version 0.7)|Col2|
+|---|---|
+
+
+![3.pdf-14-0.png](3.pdf-14-0.png)
+
+**8.** **Implementation View**",3.3646910190582275,"Based on the provided context, there are three types of servers mentioned:
+
+1. IBM HTTP Server: This server is used for dispatching requests to two different IBM WebSphere servers (load balancing + clustering).
+2. IBM WebSphere Servers: There are two of these servers in total, each handling a different instance of the process.
+3. IBM DB2 Database: This database stores all the information related to online orders.
+
+Therefore, there are three servers used in the implementation of the Yummy Inc online application:
+
+1. IBM HTTP Server (1 server)
+2. IBM WebSphere Servers (2 servers)
+3. IBM DB2 Database (1 server)",48.43989896774292,132.75784993171692,"[(Document(page_content='[RSA]: IBM Rational Software Architect\n\n[http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html](http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html)\n\n[RUP]: The IBM Rational Unified Process : [http://www-306.ibm.com/software/awdtools/rup/index.html](http://www-306.ibm.com/software/awdtools/rup/index.html)\n\n[RUPRSA]: Developing a J2EE Architecture with Rational Software Architect using the Rational\n\nUnified Process®, IBM DeveloperWorks, Jean-Louis Maréchaux, Mars 2005,\n\n[http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/](http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/)\n\n**1.5** **Overview**', metadata={'id': './documents/3.pdf:None:13', 'source': './documents/3.pdf'}), 12288.875364959042), (Document(page_content='**3.7** **Internationalization (i18n)**\n\nThe online catering service of Yummy Inc must be able to deal with several languages (at least French and English)\nSo the presentation layer must be able to support i18n.\nOther layers must be generic enough to work with any internationalization context\n\n**4.** **Use-Case View**\n\nThis section lists use cases or scenarios from the use-case model if they represent some significant, central\nfunctionality of the final system. The only use-case with a significant impact on the online catering architecture is\nthe one related to online orders. It includes a search feature as well as a call to external services (delivery and\npayment)\n\n**4.1** **Ordering Menus**', metadata={'id': './documents/3.pdf:None:21', 'source': './documents/3.pdf'}), 13010.505093946966), (Document(page_content='Confidential Ó Yummy Inc, 2024 Page 6 of 17\n\n\n-----\n\n|Sample Software Architecture Document (version 0.7)|Col2|\n|---|---|\n\n\n**3.** **Architectural Goals and Constraints**\n\nThis section describes the software requirements and objectives that have some significant impact on the\narchitecture\n\n**3.1** **Technical Platform**\n\nThe Yummy Inc online application will be deployed onto a J2EE application server (Websphere Application Server\nversion 6, as it is already the application server use for internal applications).\n\n**3.2** **Transaction**\n\nThe Yummy Inc online application is transactional, leveraging the technical platform capabilities. Transaction\nmanagement model of the J2EE platform will be reused intensively.\n\n**3.3** **Security**', metadata={'id': './documents/3.pdf:None:18', 'source': './documents/3.pdf'}), 13332.963305476464), (Document(page_content=""**Logical view**\n\n**Audience** : Designers.\n**Area** : Functional Requirements: describes the design's object model. Also describes the most important\nuse-case realizations.\n**Related Artifacts** : Design model\n\n**Process view**\n\n**Audience** : Integrators.\n**Area** : Non-functional requirements: describes the design's concurrency and synchronization aspects.\n**Related Artifacts** : (no specific artifact).\n\n**Implementation view**\n\n**Audience** : Programmers.\n**Area** : Software components: describes the layers and subsystems of the application.\n**Related Artifacts** : Implementation model, components\n\n**Deployment view**"", metadata={'id': './documents/3.pdf:None:16', 'source': './documents/3.pdf'}), 13637.338216633412), (Document(page_content='**6.** **Process View**\n\nThere’s only one process to take into account. The J2EE model automatically handles threads which are instances of\nthis process.\n\nConfidential Ó Yummy Inc, 2024 Page 13 of 17\n\n\n-----\n\n|Sample Software Architecture Document (version 0.7)|Col2|\n|---|---|\n\n\n**7.** **Deployment View**\n\n**Global Overview**\n\n![3.pdf-13-0.png](3.pdf-13-0.png)\n\n**Detailed deployment model with clustering**\n\n-  One IBM HTTP Server will dispatch requests to two different IBM WebSphere servers (load balancing +\nclustering)\n\n-  An IBM DB2 Database stores all the information related to online orders\n\nConfidential Ó Yummy Inc, 2024 Page 14 of 17\n\n\n-----\n\n|Sample Software Architecture Document (version 0.7)|Col2|\n|---|---|\n\n\n![3.pdf-14-0.png](3.pdf-14-0.png)\n\n**8.** **Implementation View**', metadata={'id': './documents/3.pdf:None:27', 'source': './documents/3.pdf'}), 13799.731317030944)]"
