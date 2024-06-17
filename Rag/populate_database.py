@@ -12,6 +12,12 @@ import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
 
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.schema.document import Document
+from langchain_community.vectorstores import Chroma
+import pymupdf4llm
+
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -49,7 +55,6 @@ def split_documents(documents: list[Document]):
         is_separator_regex=False,
     )
     return text_splitter.split_documents(documents)
-
 
 def add_to_chroma(chunks: list[Document]):
     embedder = Embedder()
@@ -133,4 +138,4 @@ def clear_database():
 
 
 if __name__ == "__main__":
-    setup_database("./Rag/documents", False)
+    setup_database("./documents/3.pdf",False)

@@ -4,7 +4,11 @@ Install ollama https://www.ollama.com/
  Ollama commands (ollama list: to see the downloaded models, these models are saved in the home directory under .ollama)
 Install jupyter plugin for vs code 
 python3 -m venv .venv (to create a virtual environment, name of the environment is .venv)
-Source .venv/bin/activate (to activate this virtual environment) 
+  (for windows)python -m venv .venv 
+
+Source .venv/bin/activate (to activate this virtual environment)
+  (for windows).venv/Scripts/activate 
+
 pip install python_dotenv
 pip install langchain_openai
 pip install langchain

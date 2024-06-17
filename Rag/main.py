@@ -1,7 +1,7 @@
 from populate_database import setup_database
 from query_data import query_rag
 
-document_path = "./Rag/documents"
+document_path = "./documents/3.pdf"
 import time
 
 
