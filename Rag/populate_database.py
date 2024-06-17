@@ -1,41 +1,38 @@
 import os
 import shutil
-from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from hf_inference_model import Embedder
 from langchain_community.vectorstores import Chroma
 import pymupdf4llm
+from hf_inference_model import Embedder
 import chromadb
 import torch
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 
-
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain.schema.document import Document
-from langchain_community.vectorstores import Chroma
-import pymupdf4llm
-
-
 from dotenv import load_dotenv
 
 load_dotenv()
+
 CHROMA_PATH = os.getenv("CHROMA_PATH")
+EMBEDDINGS_LOG_DIR = os.getenv(
+    "EMBEDDINGS_LOG_DIR"
+)  # Directory to save TensorBoard logs
 
 
-def setup_database(document_path, reset=False):
+def setup_database(document_path, reset: False):
     # Check if the database should be cleared (using the --clear flag).
-
     if reset:
         print("✨ Clearing Database")
         clear_database()
 
     # Create (or update) the data store.
-    documents = load_documents(document_path)  # list of 17 langchain Document, each element = 1 page
-    chunks = split_documents(documents)         # split to 46 chunks of langchain Document
+    documents = load_documents(document_path)  # list of
+    chunks = split_documents(documents)         # split to 32 chunks of
+    success = add_to_chroma(chunks)
+    log_embeddings_to_tensorboard()
 
-    return add_to_chroma(chunks)
+    return success
 
 
 def load_documents(document_path):
@@ -55,6 +52,7 @@ def split_documents(documents: list[Document]):
         is_separator_regex=False,
     )
     return text_splitter.split_documents(documents)
+
 
 def add_to_chroma(chunks: list[Document]):
     embedder = Embedder()
@@ -137,5 +135,64 @@ def clear_database():
         shutil.rmtree(CHROMA_PATH)
 
 
+def log_embeddings_to_tensorboard():
+    # Load Chroma database and get embeddings and metadata
+    db = Chroma(
+        persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
+    )
+    embeddings = db.get(include=["embeddings", "metadatas"])
+    vectors = embeddings["embeddings"]
+    metadata = embeddings["metadatas"]
+
+    # Convert metadata to a pandas DataFrame for easier handling
+    metadata_df = pd.DataFrame(metadata)
+
+    # Select specific metadata columns for TensorBoard
+    columns = ["id", "source"]
+    selected_meta = metadata_df[columns]
+    selected_meta_list = selected_meta.to_numpy().tolist()
+
+    # Prepare TensorBoard writer
+    writer = SummaryWriter(EMBEDDINGS_LOG_DIR)
+
+    # Convert vectors to tensor
+    vectors_tensor = torch.tensor(vectors)
+
+    # Set global step and tag
+    global_step = 1
+    tag = "model1"
+
+    # Define projector config path
+    pbconfig = os.path.join(EMBEDDINGS_LOG_DIR, "projector_config.pbtxt")
+
+    # Read existing projector config entries
+    def read_pbconfig(path):
+        if os.path.exists(path):
+            with open(path, "r") as f:
+                entries = f.read()
+                return entries
+        return ""
+
+    old_entries = read_pbconfig(pbconfig)
+
+    # Add embeddings to TensorBoard
+    writer.add_embedding(
+        vectors_tensor,
+        metadata=selected_meta_list,
+        global_step=global_step,
+        metadata_header=columns,
+        tag=tag,
+    )
+
+    writer.close()
+
+    # Write new projector config entries
+    new_entry = read_pbconfig(pbconfig)
+    with open(pbconfig, "w") as f:
+        f.write(old_entries + "\n" + new_entry)
+
+    print(f"Embeddings have been logged to TensorBoard at {EMBEDDINGS_LOG_DIR}")
+
+
 if __name__ == "__main__":
-    setup_database("./documents/3.pdf",False)
+    setup_database("./documents/3.pdf", False)

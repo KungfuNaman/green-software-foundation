@@ -9,12 +9,11 @@ python3 -m venv .venv (to create a virtual environment, name of the environment 
 Source .venv/bin/activate (to activate this virtual environment)
   (for windows).venv/Scripts/activate 
 
-pip install python_dotenv
-pip install langchain_openai
-pip install langchain
-pip install pypdf
-pip install docarray
-pip install pydantic==1.10.8
+#To Install all the dependencies
+pip install -r requirements.txt
+
+#To visualise embeddings
+tensorboard --logdir logger/embeddings
 
 Helpers:
 pip install jupytext
