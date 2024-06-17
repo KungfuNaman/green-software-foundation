@@ -62,14 +62,19 @@ def query_rag(query_text: str, setup_database_time: str):
     response = extractor.generate_answer(prompt)
     response_text = response[0]['generated_text']
 
+    print('ANSWER---')
+    print(response_text)
+    print('ANSWER---')
+
     response_end_time = time.time()
     response_time = response_end_time - response_start_time
 
-    print("response is generated : ", response_time, "s")
+    print("response is generated: ", response_time, "s")
 
     sources = [doc.metadata.get("id", None) for doc, _score in similarity_results]
     formatted_response = f"Response: {response_text}\nSources: {sources}"
-    print(formatted_response)
+
+    # print(formatted_response)
 
     append_to_csv(
         query_text, context_text, search_time, response_text, response_time, setup_database_time,similarity_results

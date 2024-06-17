@@ -62,16 +62,16 @@ class Extractor:
 
 
 if __name__ == "__main__":
-    # t = [
-    #     "How do I get a replacement Medicare card?",
-    #     "How do I get a replacement card?",
-    #     ]
-    # embedder = Embedder()
-    # output = embedder.embed(t)
-    # print(output)
-    # print('item: ', len(output))
-    # print('dimension: ', len(output[0]))
-    # print('='*50)
+    t = [
+        "How do I get a replacement Medicare card?",
+        "How do I get a replacement card?",
+        ]
+    embedder = Embedder()
+    output = embedder.embed(t)
+    print(output)
+    print('item: ', len(output))
+    print('dimension: ', len(output[0]))
+    print('='*50)
 
     p = "What is the meaning of life?"
     extractor = Extractor()

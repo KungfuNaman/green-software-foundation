@@ -47,6 +47,7 @@ def add_to_chroma(chunks: list[Document]):
     persistent_client = chromadb.PersistentClient()
     collection = persistent_client.get_or_create_collection("dim384")
 
+    # langchain db
     db = Chroma(
         persist_directory=CHROMA_PATH,
         client=persistent_client,
