@@ -8,7 +8,6 @@ from logger.get_track_llm_response import append_to_csv
 import chromadb
 
 
-
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
 MODEL_ID = ''

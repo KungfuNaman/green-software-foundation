@@ -1,5 +1,7 @@
 from query_data import query_rag
 from langchain_community.llms.ollama import Ollama
+from hf_inference_model import Extractor
+
 
 EVAL_PROMPT = """
 Expected Response: {expected_response}
@@ -24,16 +26,20 @@ def test_ticket_to_ride_rules():
 
 
 def query_and_validate(question: str, expected_response: str):
-    response_text = query_rag(question)
+    response_text = query_rag(question, '0')
     prompt = EVAL_PROMPT.format(
         expected_response=expected_response, actual_response=response_text
     )
 
-    model = Ollama(model="mistral")
-    evaluation_results_str = model.invoke(prompt)
-    evaluation_results_str_cleaned = evaluation_results_str.strip().lower()
+    extractor = Extractor()
+    response = extractor.generate_answer(prompt)
+    evaluation_results_str_cleaned = response[0]['generated_text'].strip().lower()
 
-    print(prompt)
+    # model = Ollama(model="mistral")
+    # evaluation_results_str = model.invoke(prompt)
+    # evaluation_results_str_cleaned = evaluation_results_str.strip().lower()
+
+    print('prompt: ', prompt)
 
     if "true" in evaluation_results_str_cleaned:
         # Print response in Green if it is correct.
@@ -47,3 +53,7 @@ def query_and_validate(question: str, expected_response: str):
         raise ValueError(
             f"Invalid evaluation result. Cannot determine if 'true' or 'false'."
         )
+
+
+if __name__ == "__main__":
+    test_monopoly_rules()
