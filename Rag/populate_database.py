@@ -1,34 +1,35 @@
 import os
 import shutil
-import pymupdf4llm
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
+from get_embedding_function import get_embedding_function
 from langchain_community.vectorstores import Chroma
-import chromadb
-
-import pandas as pd
+import pymupdf4llm
 import torch
+import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
-
-from hf_inference_model import Embedder
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
-EMBEDDINGS_LOG_DIR = os.getenv("EMBEDDINGS_LOG_DIR")  # Directory to save TensorBoard logs
+EMBEDDINGS_LOG_DIR = os.getenv(
+    "EMBEDDINGS_LOG_DIR"
+)  # Directory to save TensorBoard logs
 
 
 def setup_database(document_path, reset: False):
     # Check if the database should be cleared (using the --clear flag).
+
     if reset:
         print("✨ Clearing Database")
         clear_database()
 
     # Create (or update) the data store.
-    documents = load_documents(document_path)  # list of
-    chunks = split_documents(documents)         # split to 32 chunks of
+    documents = load_documents(document_path)
+    chunks = split_documents(documents)
+
     success = add_to_chroma(chunks)
     log_embeddings_to_tensorboard()
 
@@ -55,16 +56,9 @@ def split_documents(documents: list[Document]):
 
 
 def add_to_chroma(chunks: list[Document]):
-    embedder = Embedder()
-    persistent_client = chromadb.PersistentClient()
-    collection = persistent_client.get_or_create_collection("dim384")
-
-    # langchain db
+    # Load the existing database.
     db = Chroma(
-        persist_directory=CHROMA_PATH,
-        client=persistent_client,
-        collection_name="dim384",
-        embedding_function=embedder,
+        persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
     )
 
     # Calculate Page IDs.
@@ -93,6 +87,7 @@ def add_to_chroma(chunks: list[Document]):
 
 
 def calculate_chunk_ids(chunks):
+
     # This will create IDs like "data/monopoly.pdf:6:2"
     # Page Source : Page Number : Chunk Index
 
@@ -101,7 +96,6 @@ def calculate_chunk_ids(chunks):
 
     for chunk in chunks:
         source = chunk.metadata.get("source")
-        source = dir_name_washing(source)
         page = chunk.metadata.get("page")
         current_page_id = f"{source}:{page}"
 
@@ -119,15 +113,6 @@ def calculate_chunk_ids(chunks):
         chunk.metadata["id"] = chunk_id
 
     return chunks
-
-
-# TODO: the 3rd one is not working
-def dir_name_washing(dir_str):
-    dir_str = dir_str.replace(r"\\", "-")
-    dir_str = dir_str.replace(r"//", "-")
-    dir_str = dir_str.replace("\ ", "-")
-    dir_str = dir_str.replace(r"/", "-")
-    return dir_str
 
 
 def clear_database():
