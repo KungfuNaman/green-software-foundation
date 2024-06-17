@@ -5,7 +5,12 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from hf_inference_model import Embedder
 from langchain_community.vectorstores import Chroma
+import pymupdf4llm
 import chromadb
+import torch
+import pandas as pd
+from torch.utils.tensorboard import SummaryWriter
+
 
 from dotenv import load_dotenv
 
@@ -22,14 +27,18 @@ def setup_database(document_path, reset=False):
 
     # Create (or update) the data store.
     documents = load_documents(document_path)  # list of 17 langchain Document, each element = 1 page
-    chunks = split_documents(documents)  # split to 46 chunks of langchain Document
+    chunks = split_documents(documents)         # split to 46 chunks of langchain Document
 
     return add_to_chroma(chunks)
 
 
 def load_documents(document_path):
-    document_loader = PyPDFDirectoryLoader(document_path)
-    return document_loader.load()
+    # Load all PDFs in the DATA_PATH and convert them to markdown with images.
+    documents = []
+    md_text = pymupdf4llm.to_markdown(document_path, write_images=True)
+    document = Document(page_content=md_text, metadata={"source": document_path})
+    documents.append(document)
+    return documents
 
 
 def split_documents(documents: list[Document]):

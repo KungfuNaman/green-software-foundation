@@ -1,7 +1,12 @@
+python_dotenv
+langchain_openai
+langchain
+pypdf
+docarray
+pydantic==1.10.8
+jupytext
 # forTextExtractor
 pymupdf
-pypdf
-PyPDF2
 
 # for Image Extraction
 pymupdf4llm
@@ -14,3 +19,6 @@ transformers
 langchain_community
 huggingface-hub
 tenacity
+tensorboard
+tensorflow
+pandas

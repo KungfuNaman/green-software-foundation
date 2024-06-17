@@ -6,9 +6,7 @@ import time
 
 
 def main():
-    # query_text = "can you tell me the server details getting used ?"
-    query_text = "What kind of server is using in this project ?"
-
+    query_text = "can you tell me which and how many servers are used   ?"
     setup_database_start_time = time.time()
 
     is_document_embedded = setup_database(document_path, False)
