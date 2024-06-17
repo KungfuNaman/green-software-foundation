@@ -5,6 +5,7 @@ pypdf
 docarray
 pydantic==1.10.8
 jupytext
+
 # forTextExtractor
 pymupdf
 

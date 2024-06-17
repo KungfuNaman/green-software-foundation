@@ -1,23 +1,23 @@
 import os
 import shutil
+import pymupdf4llm
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from langchain_community.vectorstores import Chroma
-import pymupdf4llm
-from hf_inference_model import Embedder
 import chromadb
-import torch
+
 import pandas as pd
+import torch
 from torch.utils.tensorboard import SummaryWriter
+
+from hf_inference_model import Embedder
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
-EMBEDDINGS_LOG_DIR = os.getenv(
-    "EMBEDDINGS_LOG_DIR"
-)  # Directory to save TensorBoard logs
+EMBEDDINGS_LOG_DIR = os.getenv("EMBEDDINGS_LOG_DIR")  # Directory to save TensorBoard logs
 
 
 def setup_database(document_path, reset: False):
