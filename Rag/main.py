@@ -6,7 +6,7 @@ import time
 
 
 def main():
-    query_text = "can you give me all the green practices getting followed  ?"
+    query_text = "can you tell me which and how many servers are used   ?"
     setup_database_start_time = time.time()
 
     is_document_embedded=setup_database(document_path, False)

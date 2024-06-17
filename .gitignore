@@ -1,0 +1,8 @@
+.venv/
+venv
+chroma
+Rag/logger/embeddings/
+Rag/logger/__pycache__/
+logger/embeddings
+ Rag/Rag/logger/embeddings/
+ Rag/__pycache__/
