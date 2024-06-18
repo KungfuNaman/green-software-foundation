@@ -10,8 +10,6 @@ from get_embedding_function import get_embedding_function
 from rag_utils import load_chroma_db
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
-HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
-MODEL_ID = ''
 
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
@@ -85,4 +83,4 @@ def query_rag(query_text: str, setup_database_time: str, emb_local: bool, ext_lo
 
 
 if __name__ == "__main__":
-    main(False, False)
+    main(True, True)

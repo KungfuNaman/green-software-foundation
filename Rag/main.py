@@ -7,8 +7,8 @@ document_path = "./documents/3.pdf"
 
 def main():
     query_text = "Can you tell me which and how many servers are used?"
-    emb_local = True
-    extract_local = True
+    emb_local = False
+    extract_local = False
 
     # set up database
     setup_database_start_time = time.time()
