@@ -3,34 +3,31 @@ import shutil
 import pymupdf4llm
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from langchain_community.vectorstores import Chroma
-import chromadb
-
 import pandas as pd
 import torch
 from torch.utils.tensorboard import SummaryWriter
-
-from hf_inference_model import Embedder
-
 from dotenv import load_dotenv
 
-load_dotenv()
+from get_embedding_function import get_embedding_function
+from rag_utils import load_chroma_db
 
+
+load_dotenv()
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 EMBEDDINGS_LOG_DIR = os.getenv("EMBEDDINGS_LOG_DIR")  # Directory to save TensorBoard logs
 
 
-def setup_database(document_path, reset: False):
+def setup_database(document_path, reset: bool, emb_local: bool):
     # Check if the database should be cleared (using the --clear flag).
     if reset:
-        print("✨ Clearing Database")
         clear_database()
+        print("✨  Database Cleared")
 
     # Create (or update) the data store.
-    documents = load_documents(document_path)  # list of
-    chunks = split_documents(documents)         # split to 32 chunks of
-    success = add_to_chroma(chunks)
-    log_embeddings_to_tensorboard()
+    documents = load_documents(document_path)   # list of langchain_Doc(page_content, meta_data)
+    chunks = split_documents(documents)         # split to n chunks of langchain_Doc
+    success = add_to_chroma(chunks, emb_local)
+    # log_embeddings_to_tensorboard()
 
     return success
 
@@ -54,18 +51,17 @@ def split_documents(documents: list[Document]):
     return text_splitter.split_documents(documents)
 
 
-def add_to_chroma(chunks: list[Document]):
-    embedder = Embedder()
-    persistent_client = chromadb.PersistentClient()
-    collection = persistent_client.get_or_create_collection("dim384")
-
-    # langchain db
-    db = Chroma(
-        persist_directory=CHROMA_PATH,
-        client=persistent_client,
-        collection_name="dim384",
-        embedding_function=embedder,
-    )
+def add_to_chroma(chunks: list[Document], emb_local: bool):
+    # Initialize langchain db
+    db = load_chroma_db(emb_local, db_path=CHROMA_PATH)
+    # embedder, collection_name = get_embedding_function(run_local=emb_local)
+    # persistent_client = chromadb.PersistentClient()
+    # db = Chroma(
+    #     persist_directory=CHROMA_PATH,
+    #     client=persistent_client,
+    #     collection_name=collection_name,
+    #     embedding_function=embedder,
+    # )
 
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
@@ -85,7 +81,6 @@ def add_to_chroma(chunks: list[Document]):
         print(f"👉 Adding new documents: {len(new_chunks)}")
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
         db.add_documents(new_chunks, ids=new_chunk_ids)
-        db.persist()
         return True
     else:
         print("✅ No new documents to add")
@@ -121,12 +116,9 @@ def calculate_chunk_ids(chunks):
     return chunks
 
 
-# TODO: the 3rd one is not working
 def dir_name_washing(dir_str):
-    dir_str = dir_str.replace(r"\\", "-")
-    dir_str = dir_str.replace(r"//", "-")
-    dir_str = dir_str.replace("\ ", "-")
-    dir_str = dir_str.replace(r"/", "-")
+    dir_str = dir_str.replace("\\\\", "/")
+    dir_str = dir_str.replace("\\", "/")
     return dir_str
 
 
@@ -135,11 +127,17 @@ def clear_database():
         shutil.rmtree(CHROMA_PATH)
 
 
-def log_embeddings_to_tensorboard():
+def log_embeddings_to_tensorboard(emb_local: bool):
     # Load Chroma database and get embeddings and metadata
-    db = Chroma(
-        persist_directory=CHROMA_PATH, embedding_function=get_embedding_function()
-    )
+    db = load_chroma_db(emb_local, db_path=CHROMA_PATH)
+    # embedder, collection_name = get_embedding_function()
+    # persistent_client = chromadb.PersistentClient()
+    # db = Chroma(
+    #     persist_directory=CHROMA_PATH,
+    #     client=persistent_client,
+    #     collection_name=collection_name,
+    #     embedding_function=embedder,
+    # )
     embeddings = db.get(include=["embeddings", "metadatas"])
     vectors = embeddings["embeddings"]
     metadata = embeddings["metadatas"]
@@ -195,4 +193,5 @@ def log_embeddings_to_tensorboard():
 
 
 if __name__ == "__main__":
-    setup_database("./documents/3.pdf", False)
+    setup_database("./documents/3.pdf", True, False)
+

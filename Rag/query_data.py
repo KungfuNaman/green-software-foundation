@@ -1,12 +1,13 @@
 import os
-from langchain_community.vectorstores import Chroma
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
 import time
-from hf_inference_model import Embedder, Extractor
+from hf_model import Extractor
 from logger.get_track_llm_response import append_to_csv
 import chromadb
 
+from get_embedding_function import get_embedding_function
+from rag_utils import load_chroma_db
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
@@ -23,57 +24,58 @@ Answer the question based on the above context: {question}
 """
 
 
-def main():
-    query_rag("can you tell me the databases details getting used ?", "")
-
-
-def query_rag(query_text: str, setup_database_time: str):
-    # Prepare the DB.
-    embedder = Embedder()
-    persistent_client = chromadb.PersistentClient()
-    collection = persistent_client.get_or_create_collection("dim384")
-    db = Chroma(
-        persist_directory=CHROMA_PATH,
-        client=persistent_client,
-        collection_name="dim384",
-        embedding_function=embedder,
+def main(emd_local, ext_local):
+    query_rag(
+        "can you tell me the databases details getting used?",
+        "",
+        emd_local,
+        ext_local
     )
+
+
+def query_rag(query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool):
+    # Prepare the DB.
+    db = load_chroma_db(emb_local)
+    # embedder, collection_name = get_embedding_function(run_local=emb_local)
+    # persistent_client = chromadb.PersistentClient()
+    # db = Chroma(
+    #     persist_directory=CHROMA_PATH,
+    #     client=persistent_client,
+    #     collection_name=collection_name,
+    #     embedding_function=embedder,
+    # )
     print("data added to db : ", setup_database_time, "s")
 
-    # Search the DB.
+    # Search context in DB.
     search_start_time = time.time()
-
     similarity_results = db.similarity_search_with_score(query_text, k=5)  # [(Document(), sort_of_sim_rate)]
-
     search_end_time = time.time()
     search_time = search_end_time - search_start_time
-
+    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in similarity_results])
     print("context is taken out : ", search_time, "s")
 
-    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in similarity_results])
+    # Prompt
     prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     prompt = prompt_template.format(context=context_text, question=query_text)
-
+    # print('*'*25, '  prompt  ', '*'*25)
+    # print(prompt)
+    # print('*'*25, '  prompt  ', '*'*25)
     print("prompt is created")
 
+    # Get response from Extractor LLM
     response_start_time = time.time()
-
-    extractor = Extractor()
-    response = extractor.generate_answer(prompt)
-    response_text = response[0]['generated_text']
-
-    print('ANSWER---')
-    print(response_text)
-    print('ANSWER---')
-
+    extractor = Extractor(ext_local)
+    response_text = extractor.generate_answer(prompt)
     response_end_time = time.time()
     response_time = response_end_time - response_start_time
-
+    print('*'*25, '  response  ', '*'*25)
+    print(response_text)
+    print('*'*25, '  response  ', '*'*25)
     print("response is generated: ", response_time, "s")
 
+    # Format the response
     sources = [doc.metadata.get("id", None) for doc, _score in similarity_results]
     formatted_response = f"Response: {response_text}\nSources: {sources}"
-
     # print(formatted_response)
 
     append_to_csv(
@@ -83,4 +85,4 @@ def query_rag(query_text: str, setup_database_time: str):
 
 
 if __name__ == "__main__":
-    main()
+    main(False, False)
