@@ -1,4 +1,3 @@
-from langchain_community.embeddings.ollama import OllamaEmbeddings
 from hf_model import Embedder
 from langchain_community.vectorstores import Chroma
 import chromadb
@@ -6,28 +5,12 @@ import os
 import torch
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
+from get_embedding_function import get_embedding_function
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 EMBEDDINGS_LOG_DIR = os.getenv(
     "EMBEDDINGS_LOG_DIR"
 )  # Directory to save TensorBoard logs
-
-
-
-def get_embedding_function(run_local=False):
-    embedder, collection_name = None, None
-    if run_local:
-        # embeddings = BedrockEmbeddings(
-        #     credentials_profile_name="default", region_name="us-east-1"
-        # )
-        model_id = "llama2"
-        embedder = OllamaEmbeddings(model=model_id)
-        collection_name = "local"
-    else:
-        embedder = Embedder()
-        model_id = embedder.model
-        collection_name = "remote"
-    return embedder, collection_name
 
 
 def load_chroma_db(emb_locally: bool, db_path=CHROMA_PATH):

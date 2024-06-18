@@ -2,13 +2,10 @@ import os
 import shutil
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from get_embedding_function import get_embedding_function
-from langchain_community.vectorstores import Chroma
 import pymupdf4llm
 
 from dotenv import load_dotenv
 
-from get_embedding_function import get_embedding_function
 from rag_utils import load_chroma_db
 from rag_utils import log_embeddings_to_tensorboard
 
@@ -54,14 +51,6 @@ def split_documents(documents: list[Document]):
 def add_to_chroma(chunks: list[Document], emb_local: bool):
     # Initialize langchain db
     db = load_chroma_db(emb_local, db_path=CHROMA_PATH)
-    # embedder, collection_name = get_embedding_function(run_local=emb_local)
-    # persistent_client = chromadb.PersistentClient()
-    # db = Chroma(
-    #     persist_directory=CHROMA_PATH,
-    #     client=persistent_client,
-    #     collection_name=collection_name,
-    #     embedding_function=embedder,
-    # )
 
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)

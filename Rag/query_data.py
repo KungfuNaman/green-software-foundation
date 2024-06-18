@@ -4,9 +4,7 @@ from langchain_community.llms.ollama import Ollama
 import time
 from hf_model import Extractor
 from logger.get_track_llm_response import append_to_csv
-import chromadb
 
-from get_embedding_function import get_embedding_function
 from rag_utils import load_chroma_db
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
@@ -34,14 +32,7 @@ def main(emd_local, ext_local):
 def query_rag(query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool):
     # Prepare the DB.
     db = load_chroma_db(emb_local)
-    # embedder, collection_name = get_embedding_function(run_local=emb_local)
-    # persistent_client = chromadb.PersistentClient()
-    # db = Chroma(
-    #     persist_directory=CHROMA_PATH,
-    #     client=persistent_client,
-    #     collection_name=collection_name,
-    #     embedding_function=embedder,
-    # )
+   
     print("data added to db : ", setup_database_time, "s")
 
     # Search context in DB.
