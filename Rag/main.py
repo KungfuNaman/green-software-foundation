@@ -26,7 +26,10 @@ def main():
 
     # Step 2: Extract the 'query' field
     queries = data.get("queries", [])
+    count = 0
     for query_obj in queries:
+        if count==24:
+            break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
         query_rag(query_text, setup_database_time)

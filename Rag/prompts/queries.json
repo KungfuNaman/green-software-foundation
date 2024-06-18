@@ -1,6 +1,102 @@
 {
     "queries": [
         {
+            "type": "Number of Tiers",
+            "query": "What is the number of tiers in the system architecture? Are there mentions of presentation, application, and database tiers?"
+          },
+          {
+            "type": "Microservices vs. Monolithic",
+            "query": "Does the architecture use a microservices or monolithic approach? Are there mentions of microservices leading to higher inter-service communication overhead?"
+          },
+          {
+            "type": "Communication Patterns",
+            "query": "What are the communication patterns between components? Are there mentions of synchronous or asynchronous communication?"
+          },
+          {
+            "type": "Data Flow Diagrams",
+            "query": "Are there any data flow diagrams included? What do they indicate about the volume and frequency of data exchanges between components?"
+          },
+          {
+            "type": "Programming Languages",
+            "query": "Which programming languages are used in the technology stack? Are there mentions of resource-intensive languages like Python or more efficient ones like C++?"
+          },
+          {
+            "type": "Frameworks and Libraries",
+            "query": "What frameworks and libraries are used in the application? Are there mentions of their efficiency?"
+          },
+          {
+            "type": "Type of Servers",
+            "query": "What type of servers are used in the deployment architecture? Are they physical or virtual servers, and what is their expected utilization?"
+          },
+          {
+            "type": "Clustering and Load Balancing",
+            "query": "How many and what types of servers/clusters are used for clustering and load balancing? What does this indicate about potential energy consumption?"
+          },
+          {
+            "type": "Database Type",
+            "query": "What type of database is used, relational or NoSQL? Are there mentions of their performance and energy profiles?"
+          },
+          {
+            "type": "Sharding and Replication",
+            "query": "Is sharding and replication used in the database design? How does this impact data distribution and energy use?"
+          },
+          {
+            "type": "Caching Strategies",
+            "query": "What caching strategies are in place? Are there mentions of the extent and type of caching mechanisms used?"
+          },
+          {
+            "type": "Data Storage Solutions",
+            "query": "What type of data storage solutions are used, such as SSDs vs. HDDs? What is their configuration?"
+          },
+          {
+            "type": "Network Topology",
+            "query": "What is the design of the network topology? Are there mentions of centralized vs. distributed data centers?"
+          },
+          {
+            "type": "Data Transfer Methods",
+            "query": "What methods and protocols are used for data transfer, such as HTTP/2 or WebSockets?"
+          },
+          {
+            "type": "Concurrency Model",
+            "query": "What concurrency model is used in the system, thread-based or event-driven?"
+          },
+          {
+            "type": "Parallel Processing",
+            "query": "Are there any parallel processing techniques used in the system?"
+          },
+          {
+            "type": "Scalability Strategy",
+            "query": "What is the scalability strategy, horizontal or vertical scaling? What are the expected load patterns?"
+          },
+          {
+            "type": "Auto-scaling Policies",
+            "query": "What are the auto-scaling policies in place for load balancing?"
+          },
+          {
+            "type": "Redundancy Mechanisms",
+            "query": "What strategies for redundancy are implemented, such as active-passive or active-active?"
+          },
+          {
+            "type": "Fault Tolerance Design",
+            "query": "How is fault tolerance designed in the system? Are there mechanisms like retries and fallbacks?"
+          },
+          {
+            "type": "Performance Requirements",
+            "query": "What are the expected performance benchmarks and SLAs?"
+          },
+          {
+            "type": "Reliability and Availability",
+            "query": "What are the target uptime and reliability metrics?"
+          },
+          {
+            "type": "Sustainability Goals",
+            "query": "Are there any stated sustainability goals or requirements for carbon footprint reduction?"
+          },
+          {
+            "type": "Energy Efficiency Metrics",
+            "query": "Are there any metrics or considerations for energy efficiency in the design?"
+          },
+        {
             "type": "Cache static data",
             "query": "Is there any mention of caching static data to reduce the need to recompute or fetch it?"
         },
