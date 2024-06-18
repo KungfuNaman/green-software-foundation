@@ -1,0 +1,248 @@
+{
+    "queries": [
+        {
+            "type": "Cache static data",
+            "query": "Is there any mention of caching static data to reduce the need to recompute or fetch it?"
+        },
+        {
+            "type": "Choose the region that is closest to users",
+            "query": "Is there any mention of choosing server regions that are closest to users to reduce latency and energy consumption?"
+        },
+        {
+            "type": "Compress stored data",
+            "query": "Is there any mention of compressing stored data to reduce storage requirements?"
+        },
+        {
+            "type": "Compress transmitted data",
+            "query": "Is there any mention of compressing data transmitted over networks to minimize transmission amounts?"
+        },
+        {
+            "type": "Containerize your workloads",
+            "query": "Is there any mention of containerizing workloads to ensure efficient use of resources?"
+        },
+        {
+            "type": "Delete unused storage resources",
+            "query": "Is there any mention of deleting unused storage resources to remove storage that is no longer needed?"
+        },
+        {
+            "type": "Encrypt what is necessary",
+            "query": "Is there any mention of encrypting only necessary data to save energy?"
+        },
+        {
+            "type": "Evaluate other CPU architectures",
+            "query": "Is there any mention of evaluating other CPU architectures to consider more efficient options?"
+        },
+        {
+            "type": "Use a service mesh only if needed",
+            "query": "Is there any mention of using a service mesh only if needed to avoid unnecessary overhead?"
+        },
+        {
+            "type": "Terminate TLS at border gateway",
+            "query": "Is there any mention of terminating TLS at the border gateway to reduce internal encryption overhead?"
+        },
+        {
+            "type": "Implement stateless design",
+            "query": "Is there any mention of implementing a stateless design to improve scalability?"
+        },
+        {
+            "type": "Match your service level objectives to business needs",
+            "query": "Is there any mention of matching service level objectives to business needs to align performance goals?"
+        },
+        {
+            "type": "Match utilization requirements of virtual machines (VMs)",
+            "query": "Is there any mention of ensuring VMs are right-sized for their workloads to match utilization requirements?"
+        },
+        {
+            "type": "Match utilization requirements with pre-configured servers",
+            "query": "Is there any mention of using pre-configured servers that match workload requirements to optimize utilization?"
+        },
+        {
+            "type": "Set storage retention policies",
+            "query": "Is there any mention of setting storage retention policies to automatically clean up old data?"
+        },
+        {
+            "type": "Shed lower priority traffic",
+            "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?"
+        },
+        {
+            "type": "Time-shift Kubernetes cron jobs",
+            "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?"
+        },
+        {
+            "type": "Use asynchronous network calls instead of synchronous",
+            "query": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?"
+        },
+        {
+            "type": "Use circuit breaker patterns",
+            "query": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?"
+        },
+        {
+            "type": "Use cloud native network security tools and controls",
+            "query": "Is there any mention of adopting cloud-native network security tools and controls for efficient security?"
+        },
+        {
+            "type": "Use DDoS protection",
+            "query": "Is there any mention of using DDoS protection to maintain service availability?"
+        },
+        {
+            "type": "Use cloud native processor VMs",
+            "query": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?"
+        },
+        {
+            "type": "Use serverless cloud services",
+            "query": "Is there any mention of adopting serverless cloud services to optimize resource usage?"
+        },
+        {
+            "type": "Minimize total number of deployed environments",
+            "query": "Is there any mention of minimizing the total number of deployed environments to save resources?"
+        },
+        {
+            "type": "Optimize storage utilization",
+            "query": "Is there any mention of optimizing storage utilization to reduce energy consumption?"
+        },
+        {
+            "type": "Optimize average CPU utilization",
+            "query": "Is there any mention of optimizing average CPU utilization to ensure efficient use of resources?"
+        },
+        {
+            "type": "Optimize impact on customer devices and equipment",
+            "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?"
+        },
+        {
+            "type": "Optimize peak CPU utilization",
+            "query": "Is there any mention of managing peak CPU utilization to avoid over-provisioning?"
+        },
+        {
+            "type": "Queue non-urgent processing requests",
+            "query": "Is there any mention of queuing non-urgent processing requests to reduce peak loads?"
+        },
+        {
+            "type": "Reduce transmitted data",
+            "query": "Is there any mention of reducing transmitted data to save energy?"
+        },
+        {
+            "type": "Remove unused assets",
+            "query": "Is there any mention of removing unused assets to optimize performance?"
+        },
+        {
+            "type": "Scale down Kubernetes applications when not in use",
+            "query": "Is there any mention of scaling down Kubernetes applications when not in use to reduce resource usage?"
+        },
+        {
+            "type": "Scale down applications when not in use",
+            "query": "Is there any mention of scaling down applications during idle periods to minimize resource usage?"
+        },
+        {
+            "type": "Scale infrastructure with user load",
+            "query": "Is there any mention of scaling infrastructure based on real-time user demand?"
+        },
+        {
+            "type": "Scale Kubernetes workloads based on relevant demand metrics",
+            "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?"
+        },
+        {
+            "type": "Scale logical components independently",
+            "query": "Is there any mention of allowing independent scaling of logical components?"
+        },
+        {
+            "type": "Scan for vulnerabilities",
+            "query": "Is there any mention of regularly scanning for and fixing vulnerabilities to maintain efficiency?"
+        },
+        {
+            "type": "Set storage retention policies",
+            "query": "Is there any mention of setting storage retention policies to automatically clean up old data?"
+        },
+        {
+            "type": "Shed lower priority traffic",
+            "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?"
+        },
+        {
+            "type": "Time-shift Kubernetes cron jobs",
+            "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?"
+        },
+        {
+            "type": "Use asynchronous network calls instead of synchronous",
+            "query": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?"
+        },
+        {
+            "type": "Use circuit breaker patterns",
+            "query": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?"
+        },
+        {
+            "type": "Use cloud native network security tools and controls",
+            "query": "Is there any mention of adopting cloud-native network security tools and controls for efficient security?"
+        },
+        {
+            "type": "Use DDoS protection",
+            "query": "Is there any mention of using DDoS protection to maintain service availability?"
+        },
+        {
+            "type": "Use serverless cloud services",
+            "query": "Is there any mention of adopting serverless cloud services to optimize resource usage?"
+        },
+        {
+            "type": "Optimize the size of AI/ML models",
+            "query": "Is there any mention of optimizing the size of AI/ML models to save storage space and reduce memory usage during inference?"
+        },
+        {
+            "type": "Use efficient file formats for AI/ML development",
+            "query": "Is there any mention of using efficient file formats like Parquet for better data storage and retrieval in AI/ML development?"
+        },
+        {
+            "type": "Run AI models at the edge",
+            "query": "Is there any mention of deploying AI models on edge devices to reduce energy consumption and minimize data transfer?"
+        },
+        {
+            "type": "Select a more energy efficient AI/ML framework",
+            "query": "Is there any mention of selecting a more energy-efficient AI/ML framework, such as those built on programming languages like C/C++?"
+        },
+        {
+            "type": "Use energy efficient AI/ML models",
+            "query": "Is there any mention of using AI/ML models that consume less energy while maintaining performance?"
+        },
+        {
+            "type": "Use sustainable regions for AI/ML training",
+            "query": "Is there any mention of training AI models in cloud regions with lower carbon intensity?"
+        },
+        {
+            "type": "Leverage pre-trained models and transfer learning for AI/ML development",
+            "query": "Is there any mention of leveraging pre-trained models and transfer learning to reduce training times and energy consumption in AI/ML development?"
+        },
+        {
+            "type": "Select the right hardware/VM instance types for AI/ML training",
+            "query": "Is there any mention of selecting the right hardware or VM instance types for energy-efficient AI/ML training?"
+        },
+        {
+            "type": "Adopt serverless architecture for AI/ML workload processes",
+            "query": "Is there any mention of adopting a serverless architecture for AI/ML workload processes to optimize resource usage?"
+        },
+        {
+            "type": "Energy Efficiency of Servers",
+            "query": "Are there any details on the energy efficiency of the servers used in the architecture?"
+        },
+        {
+            "type": "Data Center Practices",
+            "query": "Are there any mentions of data center certifications like LEED or ENERGY STAR for the infrastructure hosting the application"
+        },
+        {
+            "type": "Virtualization and Resource Optimization",
+            "query": "Is there any information on the use of virtualization or resource optimization strategies in the architecture?"
+        },
+        {
+            "type": "Cooling and Environmental Controls",
+            "query": "What cooling methods or environmental controls are mentioned for the data centers or server rooms?"
+        },
+        {
+            "type": "Operational Practices",
+            "query": "Are there any policies for server shutdowns during non-peak times or regular maintenance practices to ensure efficiency?"
+        },
+        {
+            "type": "Renewable Energy Use",
+            "query": "Is there any mention of the use of renewable energy sources for powering the infrastructure or strategies for carbon offset?"
+        },
+        {
+            "type": "Software Efficiency",
+            "query": "Is there any information on software optimization for performance and efficiency to reduce computational load and energy consumption?"
+        }
+    ]
+}
