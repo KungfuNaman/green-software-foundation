@@ -9,7 +9,6 @@ DOCUMENT_PATH = "./documents/3.pdf"
 
 def main():
     """Function to execute the whole Rag Pipeline"""
-    query_text = "Can you tell me which and how many servers are used?"
     emb_local = True
     extract_local = True
 
