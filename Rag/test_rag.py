@@ -1,6 +1,6 @@
 from query_data import query_rag
 from langchain_community.llms.ollama import Ollama
-from hf_inference_model import Extractor
+from hf_model import Extractor
 
 
 EVAL_PROMPT = """
@@ -26,12 +26,12 @@ def test_ticket_to_ride_rules():
 
 
 def query_and_validate(question: str, expected_response: str):
-    response_text = query_rag(question, '0')
+    response_text = query_rag(question, '0', False, False)
     prompt = EVAL_PROMPT.format(
         expected_response=expected_response, actual_response=response_text
     )
 
-    extractor = Extractor()
+    extractor = Extractor(False)
     response = extractor.generate_answer(prompt)
     evaluation_results_str_cleaned = response[0]['generated_text'].strip().lower()
 
