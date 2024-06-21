@@ -4,12 +4,11 @@ import json
 from populate_database import setup_database
 from query_data import query_rag
 
-DOCUMENT_PATH = "./documents/3.pdf"
+DOCUMENT_PATH = "./documents/1.pdf"
 
 
 def main():
     """Function to execute the whole Rag Pipeline"""
-    query_text = "Can you tell me which and how many servers are used?"
     emb_local = True
     extract_local = True
 
@@ -28,11 +27,12 @@ def main():
     queries = data.get("queries", [])
     count = 0
     for query_obj in queries:
-        if count==1:
-            break
+        # if count==1:
+        #     break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
         query_rag(query_text, setup_database_time, emb_local, extract_local)
+        print("count: ",count)
 
         count=count+1
 

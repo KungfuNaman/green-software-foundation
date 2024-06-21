@@ -16,7 +16,7 @@ Answer the question based only on the following context:
 
 ---
 
-Answer the question based on the above context: {question}
+Answer the question based on the above context: {question} and then conclude with either "Yes", "No", or "Not Applicable"
 """
 
 
