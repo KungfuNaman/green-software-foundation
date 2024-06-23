@@ -1,3 +1,6 @@
+### `npm install`
+
+Install all the required packages for frontend
 
 ### `npm start`
 
