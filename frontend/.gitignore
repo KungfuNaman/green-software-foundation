@@ -1,17 +1,3 @@
-.venv/
-venv
-
-.idea
-
-chroma
-
-**/__pycache__/
-Rag/logger/embeddings/
-Rag/logger/__pycache__/
-logger/embeddings
- Rag/Rag/logger/embeddings/
- Rag/__pycache__/
-
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
