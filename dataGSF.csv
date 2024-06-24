@@ -1,0 +1,56 @@
+Category,Green Practice,Description
+Cloud,Cache static data,Reduce the need to recompute or fetch static data.
+Cloud,Choose the region that is closest to users,Reduce latency and energy by using nearby servers.
+Cloud,Compress stored data,Use compression to reduce storage requirements.
+Cloud,Compress transmitted data,Minimize the amount of data transmitted over networks.
+Cloud,Containerize your workloads,Use containers to ensure efficient use of resources.
+Cloud,Delete unused storage resources,Remove storage that is no longer needed.
+Cloud,Encrypt what is necessary,Only encrypt data that needs protection to save energy.
+Cloud,Evaluate other CPU architectures,Consider using more efficient CPU architectures.
+Cloud,Use a service mesh only if needed,Avoid unnecessary service mesh overhead.
+Cloud,Terminate TLS at border gateway,Reduce internal encryption overhead.
+Cloud,Implement stateless design,Design stateless applications to improve scalability.
+Cloud,Match your service level objectives to business needs,Align performance goals with actual business requirements.
+Cloud,Match utilization requirements of virtual machines (VMs),Ensure VMs are right-sized for their workloads.
+Cloud,Match utilization requirements with pre-configured servers,Use pre-configured servers that match workload requirements.
+Cloud,Set storage retention policies,Define policies to automatically clean up old data.
+Cloud,Shed lower priority traffic,Prioritize critical traffic to improve performance.
+Cloud,Time-shift Kubernetes cron jobs,Schedule Kubernetes jobs during off-peak hours.
+Cloud,Use asynchronous network calls instead of synchronous,Reduce waiting times by using async calls.
+Cloud,Use circuit breaker patterns,Implement circuit breakers to handle service failures gracefully.
+Cloud,Use cloud native network security tools and controls,Adopt cloud-native tools for efficient security.
+Cloud,Use DDoS protection,Protect against DDoS attacks to maintain service availability.
+Cloud,Use cloud native processor VMs,Leverage VMs designed for cloud environments.
+Cloud,Use serverless cloud services,Adopt serverless services to optimize resource usage.
+Cloud,Minimize total number of deployed environments,Reduce the number of active environments to save resources.
+Web,Minimize the total number of deployed environments,Reduce the number of environments to minimize resource usage.
+Web,Optimize storage utilization,Efficiently use storage to reduce energy consumption.
+Web,Optimize average CPU utilization,Ensure CPU resources are used efficiently.
+Web,Optimize impact on customer devices and equipment,Design software to minimize impact on end-user devices.
+Web,Optimize peak CPU utilization,Manage peak CPU usage to avoid over-provisioning.
+Web,Queue non-urgent processing requests,Delay non-critical tasks to reduce peak loads.
+Web,Reduce transmitted data,Minimize data transmission to save energy.
+Web,Remove unused assets,Clean up unused resources to optimize performance.
+Web,Scale down Kubernetes applications when not in use,Reduce Kubernetes resource usage when idle.
+Web,Scale down applications when not in use,Minimize application resources during idle periods.
+Web,Scale infrastructure with user load,Adjust infrastructure based on real-time user demand.
+Web,Scale Kubernetes workloads based on relevant demand metrics,Use metrics to dynamically adjust Kubernetes resources.
+Web,Scale logical components independently,Allow independent scaling of software components.
+Web,Scan for vulnerabilities,Regularly check and fix security issues to maintain efficiency.
+Web,Set storage retention policies,Define policies to automatically clean up old data.
+Web,Shed lower priority traffic,Prioritize critical traffic to improve performance.
+Web,Time-shift Kubernetes cron jobs,Schedule Kubernetes jobs during off-peak hours.
+Web,Use asynchronous network calls instead of synchronous,Reduce waiting times by using async calls.
+Web,Use circuit breaker patterns,Implement circuit breakers to handle service failures gracefully.
+Web,Use cloud native network security tools and controls,Adopt cloud-native tools for efficient security.
+Web,Use DDoS protection,Protect against DDoS attacks to maintain service availability.
+Web,Use serverless cloud services,Adopt serverless services to optimize resource usage.
+AI,Optimize the size of AI/ML models,Reduce the size of AI models to save storage space and reduce memory usage during inference.
+AI,Use efficient file formats for AI/ML development,Utilize efficient file formats like Parquet for better data storage and retrieval.
+AI,Run AI models at the edge,Deploy AI models on edge devices to reduce energy consumption and minimize data transfer.
+AI,Select a more energy efficient AI/ML framework,Choose frameworks built on energy-efficient programming languages like C/C++.
+AI,Use energy efficient AI/ML models,Opt for AI models that consume less energy while maintaining performance.
+AI,Use sustainable regions for AI/ML training,Train AI models in cloud regions with lower carbon intensity.
+AI,Leverage pre-trained models and transfer learning for AI/ML development,Use pre-trained models to reduce training times and energy consumption.
+AI,Select the right hardware/VM instance types for AI/ML training,Use energy-efficient hardware or virtual machines for training AI models.
+AI,Adopt serverless architecture for AI/ML workload processes,Utilize serverless architectures to optimize resource usage.
