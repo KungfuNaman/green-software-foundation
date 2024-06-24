@@ -3,7 +3,6 @@ import shutil
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 import pymupdf4llm
-
 from dotenv import load_dotenv
 
 from rag_utils import load_chroma_db
@@ -13,7 +12,7 @@ from rag_utils import log_embeddings_to_tensorboard
 load_dotenv()
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 
-def setup_database(document_path, reset: bool, emb_local: bool):
+def setup_database(document_path, reset: bool, emb_local: bool,create_doc: bool):
     # Check if the database should be cleared (using the --clear flag).
 
     if reset:
@@ -21,7 +20,7 @@ def setup_database(document_path, reset: bool, emb_local: bool):
         print("✨  Database Cleared")
 
     # Create (or update) the data store.
-    documents = load_documents(document_path)   # list of langchain_Doc(page_content, meta_data)
+    documents = load_documents(document_path,create_doc)   # list of langchain_Doc(page_content, meta_data)
     chunks = split_documents(documents)         # split to n chunks of langchain_Doc
     success = add_to_chroma(chunks, emb_local)
     log_embeddings_to_tensorboard(emb_local)
@@ -29,14 +28,26 @@ def setup_database(document_path, reset: bool, emb_local: bool):
     return success
 
 
-def load_documents(document_path):
+def load_documents(document_path,create_doc):
     # Load all PDFs in the DATA_PATH and convert them to markdown with images.
     documents = []
-    md_text = pymupdf4llm.to_markdown(document_path, write_images=True)
-    document = Document(page_content=md_text, metadata={"source": document_path})
-    documents.append(document)
+    if(create_doc):
+        md_text = pymupdf4llm.to_markdown(document_path, write_images=True)
+        document = Document(page_content=md_text, metadata={"source": document_path})
+        documents.append(document)
+
+    else:
+         document=create_own_doc(document_path)
+         documents.append(document)
+
     return documents
 
+def create_own_doc(document_path):
+    with open(document_path, 'r', encoding='utf-8') as file:
+        text_content = file.read()
+    
+        document = Document(page_content=text_content, metadata={"source": document_path})
+        return document
 
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
@@ -116,5 +127,5 @@ def clear_database():
         shutil.rmtree(CHROMA_PATH)
 
 if __name__ == "__main__":
-    setup_database("./documents/3.pdf", True, False)
+    setup_database("documentsFromText/hadoop/content.txt", True, False,True)
 

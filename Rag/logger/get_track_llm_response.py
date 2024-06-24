@@ -10,7 +10,7 @@ load_dotenv()
 CSV_FILE_PATH = os.getenv("LLM_RESPONSE_LOGGER")
 # Add the parent directory to the Python path
 
-
+print("hello")
 def append_to_csv(
     query, context, search_time, response, response_time, db_time, similarity_results
 ):
