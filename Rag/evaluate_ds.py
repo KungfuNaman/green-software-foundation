@@ -54,6 +54,7 @@ def append_to_csv(context, question, answer):
 
 QA_generation_prompt = """
 Your task is to write a factoid question and an answer given a context.
+Your factoid question should be related to the sence of sustainability and green software development.
 Your factoid question should be answerable with a specific, concise piece of factual information from the context.
 Your factoid question should be formulated in the same style as questions users could ask in a search engine.
 This means that your factoid question MUST NOT mention something like "according to the passage" or "context".
@@ -119,6 +120,7 @@ for sampled_context in contexts:
 
 
 # Setup critique agents
+# TODO: Add more/modify critique prompts as needed
 
 question_groundedness_critique_prompt = """
 You will be given a context and a question.
@@ -141,7 +143,7 @@ Answer::: """
 
 question_relevance_critique_prompt = """
 You will be given a question.
-Your task is to provide a 'total rating' representing how useful this question can be to machine learning developers building NLP applications with the Hugging Face ecosystem.
+Your task is to provide a 'total rating' representing how useful this question can be to software developers for improving the sustainability of their project.
 Give your answer on a scale of 1 to 5, where 1 means that the question is not useful at all, and 5 means that the question is extremely useful.
 
 Provide your answer as follows:
