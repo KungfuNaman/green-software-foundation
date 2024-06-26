@@ -1,6 +1,6 @@
 function OutputViewer () {
     return (
-        <p>Output</p>
+        <div className="outputViewer"></div>
     );
 };
 export default OutputViewer;
