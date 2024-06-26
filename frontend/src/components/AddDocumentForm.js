@@ -28,7 +28,7 @@ function AddDocumentForm(){
         setIsRunning(true);
 
         const formData = new FormData();
-        formData.append('uploadedFile', file);
+        formData.append('file', file);
         const response = await fetch('', {
           method: 'POST',
           body: formData
