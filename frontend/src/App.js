@@ -3,6 +3,7 @@ import AddDocumentForm from './components/AddDocumentForm';
 import OutputViewer from './components/OutputViewer';
 import "@fontsource/nunito-sans";
 import GSFLogo from './assets/GSFLogo.jpg';
+import MetricTable from './components/MetricTable';
 
 function App() {
 
@@ -17,9 +18,14 @@ function App() {
         <AddDocumentForm/>
       </div>
       <div className="output-container">
-        Analysis Output
+        <h4>Analysis Output</h4>
         <OutputViewer/>
       </div>
+      <div className="metrics-container">
+        <h4>Output Metrics</h4>
+        <MetricTable/>
+      </div>
+      <footer className="App-footer">Footer info goes here</footer>
     </div>
   );
 }

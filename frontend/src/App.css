@@ -19,6 +19,18 @@
   font-weight: 700;
 }
 
+.App-footer{
+  background-color: #002d2a;
+  min-height: 7.7vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #FFFFFF80;
+  font-weight: 0;
+}
+
 .GSFLogo{
   height: 7vmin;
   margin-right: 0.5em;
@@ -26,7 +38,7 @@
 
 .form-container {
   margin: 2em auto;
-  padding: 2em;
+  padding: 1em;
   background-color: #003734;
   border-radius: 2em;
   color: white;
@@ -69,7 +81,7 @@
 
 .output-container {
   margin: 2em auto;
-  padding: 2em;
+  padding: 1em;
   background-color: #003734;
   border-radius: 2em;
   color: white;
@@ -82,7 +94,17 @@
   padding: 1em;
   background-color:white;
   border-radius: 1em;
-  height: 20em;
+  height: 18em;
+}
+
+.metrics-container{
+  margin: 2em auto;
+  padding: 1em;
+  background-color: #003734;
+  border-radius: 2em;
+  color: white;
+  width: 60em;
+  height: 25em;
 }
 
 .UploadTitle{
