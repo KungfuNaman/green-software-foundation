@@ -74,7 +74,7 @@
   border-radius: 2em;
   color: white;
   width: 60em;
-  height: 20em;
+  height: 25em;
 }
 
 .outputViewer{
@@ -82,7 +82,7 @@
   padding: 1em;
   background-color:white;
   border-radius: 1em;
-  height: 15em;
+  height: 20em;
 }
 
 .UploadTitle{
@@ -92,4 +92,16 @@
 .hr1{
   margin-top: 1em;
   border: 2px solid #aecc53;
+}
+
+.previewButton{
+  background: #aecc53;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  margin-bottom: 1em;
 }
