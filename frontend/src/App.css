@@ -42,7 +42,7 @@
   background-color: #003734;
   border-radius: 2em;
   color: white;
-  width: 60em;
+  width: 75%;
 }
 
 .submitForm{
@@ -85,8 +85,8 @@
   background-color: #003734;
   border-radius: 2em;
   color: white;
-  width: 60em;
-  height: 25em;
+  width: 75%;
+  height: 25%;
 }
 
 .outputViewer{
@@ -94,7 +94,7 @@
   padding: 1em;
   background-color:white;
   border-radius: 1em;
-  height: 18em;
+  color:#003734;
 }
 
 .metrics-container{
@@ -103,7 +103,7 @@
   background-color: #003734;
   border-radius: 2em;
   color: white;
-  width: 60em;
+  width: 75%;
   height: 25em;
 }
 

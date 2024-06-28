@@ -13,7 +13,7 @@ function App() {
        <img class="GSFLogo" src={GSFLogo} alt="GSF Logo"/>
        Eco Doc Sense
       </header>
-      <h2 className='UploadTitle'>File Upload and Analysis Tool</h2>
+      <h3 className='UploadTitle'>File Upload and Analysis Tool</h3> 
       <div className="form-container">
         <AddDocumentForm/>
       </div>
@@ -25,7 +25,7 @@ function App() {
         <h4>Output Metrics</h4>
         <MetricTable/>
       </div>
-      <footer className="App-footer">Footer info goes here</footer>
+      <footer className="App-footer">By the Eco Doc Sense team</footer>
     </div>
   );
 }

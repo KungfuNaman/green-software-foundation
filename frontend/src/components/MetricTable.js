@@ -14,6 +14,8 @@ function MetricTable(){
 
     const StyledTableCell = styled(TableCell)(({ theme }) => ({
         [`&.${tableCellClasses.head}`]: {
+          backgroundColor: '#006d69',
+          color: 'white',
           fontSize: 14,
         },
         [`&.${tableCellClasses.body}`]: {
