@@ -1,8 +1,8 @@
 {
     "queries": [
         {
-            "type": "Number of Tiers",
-            "query": "What is the number of tiers in the system architecture? Are there mentions of presentation, application, and database tiers?"
+            "type": "Type of architecture",
+            "query": "Could you please identify whether this application is web-based, cloud-based, or iOS-based"
           },
           {
             "type": "Microservices vs. Monolithic",

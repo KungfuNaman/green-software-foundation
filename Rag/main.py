@@ -5,13 +5,13 @@ from populate_database import setup_database
 from query_data import query_rag
 
 # to use existing pdf
-# DOCUMENT_PATH = "./documents/1.pdf"
-# CREATE_DOC= False
+DOCUMENT_PATH = "./documents/3.pdf"
+CREATE_DOC= False
 
 
 # to use text
-DOCUMENT_PATH="documentsFromText/hadoop/content.txt"
-CREATE_DOC= True
+# DOCUMENT_PATH="documentsFromText/hadoop/content.txt"
+# CREATE_DOC= True
 
 def main():
     """Function to execute the whole Rag Pipeline"""
@@ -33,6 +33,8 @@ def main():
     queries = data.get("queries", [])
     count = 0
     for query_obj in queries:
+        if count==1:
+            break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
         query_rag(query_text, setup_database_time, emb_local, extract_local)

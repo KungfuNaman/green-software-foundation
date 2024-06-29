@@ -32,13 +32,13 @@ def load_documents(document_path,create_doc):
     # Load all PDFs in the DATA_PATH and convert them to markdown with images.
     documents = []
     if(create_doc):
+       document=create_own_doc(document_path)
+       documents.append(document)
+
+    else:
         md_text = pymupdf4llm.to_markdown(document_path, write_images=True)
         document = Document(page_content=md_text, metadata={"source": document_path})
         documents.append(document)
-
-    else:
-         document=create_own_doc(document_path)
-         documents.append(document)
 
     return documents
 
