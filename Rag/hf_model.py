@@ -8,6 +8,7 @@ from tenacity import retry, wait_fixed, stop_after_attempt
 
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
+LLM_MODEL = os.getenv("LLM_MODEL")
 
 # dim = 384
 EMD_MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
@@ -50,7 +51,7 @@ class Extractor:
         self.run_local = run_local
         self.wait = False
         if self.run_local:
-            self.model = Ollama(model="llama2")
+            self.model = Ollama(model=LLM_MODEL)
         else:
             self.model = EXT_MODEL_ID
             self.api_url = f"https://api-inference.huggingface.co/models/{self.model}"
