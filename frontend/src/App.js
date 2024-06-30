@@ -1,32 +1,27 @@
-import './App.css';
-import AddDocumentForm from './components/AddDocumentForm';
-import OutputViewer from './components/OutputViewer';
+import "./App.css";
 import "@fontsource/nunito-sans";
-import GSFLogo from './assets/GSFLogo.jpg';
-import MetricTable from './components/MetricTable';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import "./App.css";
+import Header from "./components/common/Header/Header";
+import Footer from "./components/common/Footer/Footer";
+import Home from "./pages/Home/Home";
+import Analysis from "./pages/Analysis/Analysis";
 
 function App() {
-
   return (
-    <div className="App">
-      <header className="App-header">
-       <img class="GSFLogo" src={GSFLogo} alt="GSF Logo"/>
-       Eco Doc Sense
-      </header>
-      <h3 className='UploadTitle'>File Upload and Analysis Tool</h3> 
-      <div className="form-container">
-        <AddDocumentForm/>
+    <Router>
+      <div className="App">
+        <Header />
+        <div className="App-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/analysis" element={<Analysis />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <div className="output-container">
-        <h4>Analysis Output</h4>
-        <OutputViewer/>
-      </div>
-      <div className="metrics-container">
-        <h4>Output Metrics</h4>
-        <MetricTable/>
-      </div>
-      <footer className="App-footer">By the Eco Doc Sense team</footer>
-    </div>
+    </Router>
   );
 }
 

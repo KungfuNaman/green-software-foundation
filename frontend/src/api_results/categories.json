@@ -1,0 +1,34 @@
+{
+    "Resource Optimization": [
+        "Minimize the total number of deployed environments",
+        "Optimize storage utilization",
+        "Optimize average CPU utilization",
+        "Optimize peak CPU utilization",
+        "Remove unused assets",
+        "Scale down Kubernetes applications when not in use",
+        "Scale down applications when not in use",
+        "Scale infrastructure with user load",
+        "Scale Kubernetes workloads based on relevant demand metrics",
+        "Scale logical components independently",
+        "Use serverless cloud services"
+    ],
+    "Data Efficiency": [
+        "Reduce transmitted data",
+        "Set storage retention policies"
+    ],
+    "Performance Management": [
+        "Queue non-urgent processing requests",
+        "Shed lower priority traffic",
+        "Time-shift Kubernetes cron jobs",
+        "Use asynchronous network calls instead of synchronous",
+        "Use circuit breaker patterns"
+    ],
+    "Security": [
+        "Scan for vulnerabilities",
+        "Use cloud native network security tools and controls",
+        "Use DDoS protection"
+    ],
+    "User Impact": [
+        "Optimize impact on customer devices and equipment"
+    ]
+}
