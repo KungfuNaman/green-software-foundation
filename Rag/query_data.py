@@ -16,31 +16,40 @@ Answer the question based only on the following context:
 
 ---
 
-Answer the question based on the above context: {question} and then conclude with either "Yes", "No", or "Not Applicable"
+Answer the question based on the above context.
+
+Question: {question}
+
+Response:
+- Answer: [Provide the detailed answer here]
+- Conclusion: [Yes/No/Not Applicable]
 """
 
 
 def main(emd_local, ext_local):
     query_rag(
-        "can you tell me the databases details getting used?",
-        "",
-        emd_local,
-        ext_local
+        "can you tell me the databases details getting used?", "", emd_local, ext_local
     )
 
 
-def query_rag(query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool):
+def query_rag(
+    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool
+):
     # Prepare the DB.
     db = load_chroma_db(emb_local)
-   
+
     print("data added to db : ", setup_database_time, "s")
 
     # Search context in DB.
     search_start_time = time.time()
-    similarity_results = db.similarity_search_with_score(query_text, k=5)  # [(Document(), sort_of_sim_rate)]
+    similarity_results = db.similarity_search_with_score(
+        query_text, k=5
+    )  # [(Document(), sort_of_sim_rate)]
     search_end_time = time.time()
     search_time = search_end_time - search_start_time
-    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in similarity_results])
+    context_text = "\n\n---\n\n".join(
+        [doc.page_content for doc, _score in similarity_results]
+    )
     print("context is taken out : ", search_time, "s")
 
     # Prompt
@@ -57,9 +66,9 @@ def query_rag(query_text: str, setup_database_time: str, emb_local: bool, ext_lo
     response_text = extractor.generate_answer(prompt)
     response_end_time = time.time()
     response_time = response_end_time - response_start_time
-    print('*'*25, '  response  ', '*'*25)
+    print("*" * 25, "  response  ", "*" * 25)
     print(response_text)
-    print('*'*25, '  response  ', '*'*25)
+    print("*" * 25, "  response  ", "*" * 25)
     print("response is generated: ", response_time, "s")
 
     # Format the response
@@ -68,7 +77,13 @@ def query_rag(query_text: str, setup_database_time: str, emb_local: bool, ext_lo
     # print(formatted_response)
 
     append_to_csv(
-        query_text, context_text, search_time, response_text, response_time, setup_database_time,similarity_results
+        query_text,
+        context_text,
+        search_time,
+        response_text,
+        response_time,
+        setup_database_time,
+        similarity_results,
     )
     return response_text
 
