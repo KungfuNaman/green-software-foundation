@@ -113,7 +113,8 @@ def export_combined_results_to_json(combined_results_path):
                 obj["practice"]=question["practice"]
                 obj["type"]=question["type"]
 
-        result_arr.append(obj)
+        if "type" in obj and obj["type"] is not None:
+             result_arr.append(obj)
 
     with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/graphResponse.json", "w") as f:
             json.dump(result_arr, f)
