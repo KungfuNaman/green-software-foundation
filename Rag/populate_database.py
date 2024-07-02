@@ -6,7 +6,7 @@ import pymupdf4llm
 from dotenv import load_dotenv
 
 from rag_utils import load_chroma_db
-from rag_utils import log_embeddings_to_tensorboard
+#from rag_utils import log_embeddings_to_tensorboard
 
 
 load_dotenv()
@@ -23,7 +23,7 @@ def setup_database(document_path, reset: bool, emb_local: bool,create_doc: bool)
     documents = load_documents(document_path,create_doc)   # list of langchain_Doc(page_content, meta_data)
     chunks = split_documents(documents)         # split to n chunks of langchain_Doc
     success = add_to_chroma(chunks, emb_local)
-    log_embeddings_to_tensorboard(emb_local)
+    #log_embeddings_to_tensorboard(emb_local)
 
     return success
 
