@@ -1,6 +1,8 @@
 import pandas as pd
-
+import json
 CSV_FILE_PATH="/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/parsedResults.csv"
+COMBINED_RESULTS_PATH="/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/COMBINED_RESULTS.csv"
+
 def read_ecoDoc_results(csv_file_path):
     # Read the CSV file into a DataFrame
     df = pd.read_csv(csv_file_path)
@@ -30,18 +32,26 @@ def add_parsed_results(csv_file_path):
     df['result'] = result_arr
 
     # Save the updated DataFrame to a CSV file
-    df.to_csv('/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/COMBINED_RESULTS.csv', index=False)
+    df.to_csv(COMBINED_RESULTS_PATH, index=False)
 
 def parse_generated_response(generated_response):
      # Extract the explanation
+    if "about scaling down applications during idle periods." in generated_response:
+        print("hello")
     response_start = None
     if "Response:" in generated_response:
         response_start = generated_response.find("Response:") + len("Response:")
+    elif "**Response**:" in generated_response:
+        response_start = generated_response.find("**Response**:") + len("**Response**:")
     elif "Answer:" in generated_response:
         response_start = generated_response.find("Answer:") + len("Answer:")
+    elif "**Answer**:" in generated_response:
+        response_start = generated_response.find("**Answer**:") + len("**Answer**:")
     
     if response_start is not None:
         response_end = generated_response.find("Conclusion:")
+        if response_end == -1:  # if "**Conclusion**:" is not found
+            response_end = generated_response.find("**Conclusion**")
         if response_end == -1:  # if "Conclusion:" is not found
             response = generated_response[response_start:].strip()
         else:
@@ -50,8 +60,16 @@ def parse_generated_response(generated_response):
         response = ""
     
     # Extract the conclusion
-    conclusion_start = generated_response.find("Conclusion:") + len("Conclusion:")
-    conclusion = generated_response[conclusion_start:].strip()
+    conclusion_start = None
+    if "Conclusion:" in generated_response:
+        conclusion_start = generated_response.find("Conclusion:") + len("Conclusion:")
+    elif "**Conclusion**:" in generated_response:
+        conclusion_start = generated_response.find("**Conclusion**:") + len("**Conclusion**:")
+    
+    if conclusion_start is not None:
+        conclusion = generated_response[conclusion_start:].strip()
+    else:
+        conclusion = ""    
 
     # Extract the result
     result = categorize_text(conclusion)
@@ -64,14 +82,36 @@ def categorize_text(text):
     
     # Define keyword arrays for each category
     yes_keywords = ['yes', 'yes,']
-    no_keywords = ['no', 'no,']
+    no_keywords = ['not applicable']
     
     # Check for keywords corresponding to each category
     if any(keyword in text_lower for keyword in yes_keywords):
         return 'Yes'
     elif any(keyword in text_lower for keyword in no_keywords):
-        return 'No'
-    else:
         return 'Not Applicable'
+    else:
+        return 'No'
 
-add_parsed_results(CSV_FILE_PATH)
+
+
+def export_combined_results_to_json(combined_results_path):
+    df = pd.read_csv(combined_results_path)
+
+    records=df.to_dict(orient="records")
+    result_arr=[]
+    for item in records:
+        if "How is fault tolerance designed in the system? Are there mechanisms like retries and fallbacks?" in item["query"]:
+            print("hello")
+        obj={}
+        obj["query"] = "" if pd.isna(item["query"]) else item["query"]
+        obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
+        obj["result"] = "" if pd.isna(item["result"]) else item["result"]
+        result_arr.append(obj)
+
+    with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/graphResponse.json", "w") as f:
+            json.dump(result_arr, f)
+
+
+
+# add_parsed_results(CSV_FILE_PATH)
+export_combined_results_to_json(COMBINED_RESULTS_PATH)
