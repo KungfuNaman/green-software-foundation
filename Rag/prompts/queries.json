@@ -195,6 +195,7 @@
         {
             "type": "Optimize storage utilization",
             "query": "Is there any mention of optimizing storage utilization to reduce energy consumption?"
+            
         },
         {
             "type": "Optimize average CPU utilization",

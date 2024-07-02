@@ -92,20 +92,27 @@ def categorize_text(text):
     else:
         return 'No'
 
-
+with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/categories.json", "r", encoding="utf-8") as file:
+        categories_json = json.load(file)["Questions"]
 
 def export_combined_results_to_json(combined_results_path):
     df = pd.read_csv(combined_results_path)
-
+    
     records=df.to_dict(orient="records")
     result_arr=[]
     for item in records:
-        if "How is fault tolerance designed in the system? Are there mechanisms like retries and fallbacks?" in item["query"]:
-            print("hello")
+        
         obj={}
         obj["query"] = "" if pd.isna(item["query"]) else item["query"]
         obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
         obj["result"] = "" if pd.isna(item["result"]) else item["result"]
+
+        for question in categories_json:
+            if item["query"] in question["query"]:
+                obj["category"]=question["category"]
+                obj["practice"]=question["practice"]
+                obj["type"]=question["type"]
+
         result_arr.append(obj)
 
     with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/graphResponse.json", "w") as f:
