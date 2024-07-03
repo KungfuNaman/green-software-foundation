@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import ResultTabs from "../ResultTabs/ResultTabs";
+// import ResultTabs from "./ResultTabs";
 
 const style = {
   position: "absolute",
@@ -12,19 +13,21 @@ const style = {
   bgcolor: "background.paper",
   // border: "2px solid #000",
   boxShadow: 24,
-  // p: 4,
+  maxHeight: '80vh', // Set a maximum height for the Box
+  overflow:"auto",
+  borderRadius:"20px",
 };
 
-export default function ResultPieChart({ categoryWiseResult,apiResponse }) {
+export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
   const [data, setData] = useState([]);
   const [selectedSlice, setSelectedSlice] = useState();
+  const [tabularData, setTabularData] = useState({});
   const [open, setOpen] = React.useState(false);
   const handleOpen = (slice) => {
     setSelectedSlice(slice);
     setOpen(true);
   };
   const handleClose = () => setOpen(false);
-
   useEffect(() => {
     setData((prev) => {
       return Object.keys(categoryWiseResult).map((category, index) => {
@@ -36,7 +39,18 @@ export default function ResultPieChart({ categoryWiseResult,apiResponse }) {
       });
     });
   }, [categoryWiseResult]);
-  console.log("selecedSlice", selectedSlice);
+
+  useEffect(() => {
+    setTabularData(() => {
+      return apiResponse.reduce((acc, item) => {
+        if (!acc[item.category]) {
+          acc[item.category] = [];
+        }
+        acc[item.category].push(item);
+        return acc;
+      }, {});
+    });
+  }, [apiResponse]);
   return (
     <div className="pieChartContainer">
       <PieChart
@@ -62,7 +76,7 @@ export default function ResultPieChart({ categoryWiseResult,apiResponse }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-         <ResultTabs apiResponse={apiResponse}/>
+          <ResultTabs tabularData={tabularData} />
         </Box>
       </Modal>
     </div>
