@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
 
 const settings = {
-  width: 200,
+  width: 500,
   height: 200,
   value: 60,
   cornerRadius:"50%"
@@ -11,22 +11,26 @@ const settings = {
 
 export default function ProgressTimer({value}) {
   return (
-    <Gauge
-      {...settings}
-      value={value} // Use the dynamic value from props here
-      valueFormatter={(value) => `${value}%`}
+    <>
+    
 
-      sx={(theme) => ({
-        [`& .${gaugeClasses.valueText}`]: {
-          fontSize: 40,
-        },
-        [`& .${gaugeClasses.valueArc}`]: {
-          fill: '#52b202',
-        },
-        [`& .${gaugeClasses.referenceArc}`]: {
-          fill: theme.palette.text.disabled,
-        },
-      })}
-    />
+<Gauge
+{...settings}
+  value={value}
+  startAngle={-110}
+  endAngle={110}
+  sx={{
+    [`& .${gaugeClasses.valueText}`]: {
+      fontSize: 40,
+      transform: 'translate(0px, 0px)',
+    }, [`& .${gaugeClasses.valueArc}`]: {
+      fill: '#52b202',
+    },
+  }}
+  text={
+     ({ value, valueMax }) => `${value} %`
+  }
+/>
+</>
   );
 }

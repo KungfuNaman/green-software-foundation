@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import "./Analysis.css";
-import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
-import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
+import React, { useState, useEffect } from "react";
+import { Button } from "@mui/material";
+import StarIcon from "@mui/icons-material/Star";
 import ProgressTimer from "../../components/ProgressTimer/ProgressTimer";
+import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
+import ResultTabs from "../../components/ResultTabs/ResultTabs";
 import graphResponse from "./../../api_results/graphResponse.json";
 import ProjectType from "./../../api_results/projectType.json";
-import { Button } from "@mui/material";
-import StarIcon from '@mui/icons-material/Star';
+import "./Analysis.css";
+
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(
@@ -21,11 +22,9 @@ const Analysis = () => {
 
   const [categoryWiseResult, setCategoryWiseResult] = useState({});
 
-  //to mock initialising and formatting backend data
   useEffect(() => {
-    // filter the api response if needed
     const updatedResponse = graphResponse["response"].filter((item) => {
-      return item.type && item.type != "AI";
+      return item.type && item.type !== "AI";
     });
 
     setFilteredResponse(updatedResponse);
@@ -39,35 +38,25 @@ const Analysis = () => {
     });
   }, []);
 
-  //to mock streaming affect
   useEffect(() => {
     const interval = setInterval(() => {
       if (filteredResponse.length > 0) {
-        // Get a random index
         const randomIndex = Math.floor(Math.random() * filteredResponse.length);
-        // Get the random item
         const randomItem = filteredResponse[randomIndex];
 
-        // Add the random item to apiResponse
         setApiResponse((prevApiResponse) => [...prevApiResponse, randomItem]);
 
-        // Remove the random item from filteredResponse
         setFilteredResponse((prevFilteredResponse) =>
           prevFilteredResponse.filter((_, index) => index !== randomIndex)
         );
       }
-      return () => clearInterval(interval); // Cleanup interval on component unmount
-    }, 1000); // Runs every second
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [filteredResponse]);
 
-  // changes whenever data is streamed from backend
   useEffect(() => {
-    //change progress bar
     changeProgressBar(apiResponse);
-
-    //change bar chart
     changeBarChart(apiResponse);
   }, [apiResponse]);
 
@@ -94,9 +83,10 @@ const Analysis = () => {
       return resultCount;
     });
   };
+
   return (
-    <>
-      <div className="analysis-container">
+    <div className="analysis-container">
+      <div className="analysisContent">
         <div className="progress-timer">
           <ProgressTimer value={progressValue} />
         </div>
@@ -117,12 +107,12 @@ const Analysis = () => {
             categoryWiseResult={categoryWiseResult}
           />
         </div>
-        <div className="Ranking">
-          Ranking:3/5
-          <StarIcon sx={{color:"#f7c81e"}}/>
-        </div>
       </div>
-    </>
+      <div className="ranking">
+        Ranking: 3/5
+        <StarIcon sx={{ color: "#f7c81e" }} />
+      </div>
+    </div>
   );
 };
 
