@@ -1,0 +1,9 @@
+.metrics-container{
+    margin: 2em auto;
+    padding: 1em;
+    background-color: #003734;
+    border-radius: 2em;
+    color: white;
+    width: 75%;
+    height: 25em;
+  }

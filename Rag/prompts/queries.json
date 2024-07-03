@@ -20,7 +20,7 @@
         "practice": "Choose the region that is closest to users",
         "query": "Does the application/framework select cloud regions based on the geographical location of the majority of its users to reduce latency?"
     },
-    {  
+    {
         "type": "Cloud",
         "practice": "Choose the region that is closest to users",
         "query": "Does the application/framework utilize geo-IP routing to direct users to the nearest server location?"
@@ -910,6 +910,5 @@
     "practice": "Adopt serverless architecture for AI/ML workload processes",
     "query": "Does the application/framework implement event-driven serverless services to process AI/ML data as it is generated?"
   }
-
     ]
 }

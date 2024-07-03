@@ -1,0 +1,20 @@
+.output-container {
+    margin: 2em auto;
+    padding: 1em;
+    background-color: #003734;
+    border-radius: 2em;
+    color: white;
+    width: 75%;
+    height: auto;
+  }
+
+  .outputViewer{
+    margin: 1em auto;
+    padding: 1em;
+    background-color:white;
+    border-radius: 1em;
+    color:#003734;
+  }
+  
+  
+  
