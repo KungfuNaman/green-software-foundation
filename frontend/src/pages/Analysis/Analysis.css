@@ -1,0 +1,31 @@
+.analysis-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .progress-timer {
+    margin-right: 20px; /* Add some space between the timer and the charts/tabs */
+  }
+  
+  .chart-tabs {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #cdd7e1;
+    border-radius: 12px;
+    box-shadow: 10px 5px 5px #cdd7e1;
+    padding: 10px;
+  }
+  
+  .projectType{
+    padding: 4px 20px!important;
+    /* background: #fbfcfe!important; */
+    font-weight: bold!important;
+    font-size:  30px!important;
+    border-radius: 10px!important;
+  }
+  .projectTypeList{
+    display: flex;
+    gap: 10px;
+
+  }

@@ -42,7 +42,7 @@ export default function ResultBarChart({ xlabels, categoryWiseResult }) {
       ]}
       sx={{
         [`.${axisClasses.left} .${axisClasses.label}`]: {
-          transform: "translate(-20px, 0)",
+          transform: "translate(-10px, 0)",
         },
       }}
       series={series}

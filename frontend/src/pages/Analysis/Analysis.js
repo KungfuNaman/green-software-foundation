@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import "./Analysis.css";
 import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
-import ResultTabs from "../../components/ResultTabs/ResultTabs";
 import ProgressTimer from "../../components/ProgressTimer/ProgressTimer";
 import graphResponse from "./../../api_results/graphResponse.json";
 import ProjectType from "./../../api_results/projectType.json";
-
+import { Button } from "@mui/material";
+import StarIcon from '@mui/icons-material/Star';
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(
@@ -16,14 +16,10 @@ const Analysis = () => {
 
   const [categories, setCategories] = useState([]);
 
-  const [yesDataArr, setYesDataArr] = useState([]);
-  const [noDataArr, setNoDataArr] = useState([]);
-  const [notApplicableDataArr, setNotApplicableDataArr] = useState([]);
-
   const [filteredResponse, setFilteredResponse] = useState([]);
   const [apiResponse, setApiResponse] = useState([]);
 
-  const [categoryWiseResult,setCategoryWiseResult]=useState({})
+  const [categoryWiseResult, setCategoryWiseResult] = useState({});
 
   //to mock initialising and formatting backend data
   useEffect(() => {
@@ -82,41 +78,50 @@ const Analysis = () => {
   };
 
   const changeBarChart = (responseArr) => {
-   setCategoryWiseResult(prev=>{
-    const resultCount = {};
+    setCategoryWiseResult((prev) => {
+      const resultCount = {};
 
-    categories.forEach((category) => {
-      resultCount[category] = { Yes: 0, No: 0, "Not Applicable": 0 };
+      categories.forEach((category) => {
+        resultCount[category] = { Yes: 0, No: 0, "Not Applicable": 0 };
+      });
+
+      responseArr?.forEach((item) => {
+        const { category, result } = item;
+        if (resultCount[category]) {
+          resultCount[category][result] += 1;
+        }
+      });
+      return resultCount;
     });
-
-    responseArr?.forEach((item) => {
-      const { category, result } = item;
-      if (resultCount[category]) {
-        resultCount[category][result] += 1;
-      }
-    });
-    return resultCount
-
-   })
-    // const yesData = categories.map((category) => resultCount[category].Yes);
-    // const noData = categories.map((category) => resultCount[category].No);
-    // const notApplicableData = categories.map(
-    //   (category) => resultCount[category]["Not Applicable"]
-    // );
-
-    // setYesDataArr(yesData);
-    // setNoDataArr(noData);
-    // setNotApplicableDataArr(notApplicableData);
   };
   return (
     <>
-      <ResultBarChart
-        xlabels={categories}
-        categoryWiseResult={categoryWiseResult}
-      />
-      <ResultPieChart />
-      <ResultTabs />
-      <ProgressTimer value={progressValue} />
+      <div className="analysis-container">
+        <div className="progress-timer">
+          <ProgressTimer value={progressValue} />
+        </div>
+        <div className="chart-tabs">
+          <div className="projectTypeList">
+            <Button className="projectType" variant="contained">
+              Web
+            </Button>
+            <Button className="projectType" variant="outlined" disabled>
+              Cloud
+            </Button>
+            <Button className="projectType" variant="outlined" disabled>
+              AI
+            </Button>
+          </div>
+          <ResultBarChart
+            xlabels={categories}
+            categoryWiseResult={categoryWiseResult}
+          />
+        </div>
+        <div className="Ranking">
+          Ranking:3/5
+          <StarIcon sx={{color:"#f7c81e"}}/>
+        </div>
+      </div>
     </>
   );
 };
