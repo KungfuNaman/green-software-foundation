@@ -109,8 +109,18 @@ const Analysis = () => {
         </div>
       </div>
       <div className="ranking">
-        Ranking: 3/5
-        <StarIcon sx={{ color: "#f7c81e" }} />
+        Ranking :
+        {progressValue === 100 && (
+          <>
+            <div>3/5</div>
+            <div sx={{ display: "flex" }}>
+              <StarIcon sx={{ color: "#f7c81e" }} />
+              <StarIcon sx={{ color: "#f7c81e" }} />
+              <StarIcon sx={{ color: "#f7c81e" }} />
+            </div>
+          </>
+        )}
+        {progressValue !== 100 && <div style={{ padding: "10px" }}>?</div>}
       </div>
     </div>
   );
