@@ -120,8 +120,8 @@ const Analysis = () => {
               <div>1/5</div>
               <div sx={{ display: "flex" }}>
                 <StarIcon sx={{ color: "#f7c81e" }} />
-                <StarIcon sx={{ color: "#f7c81e" }} />
-                <StarIcon sx={{ color: "#f7c81e" }} />
+                {/* <StarIcon sx={{ color: "#f7c81e" }} />
+                <StarIcon sx={{ color: "#f7c81e" }} /> */}
               </div>
             </>
           )}
