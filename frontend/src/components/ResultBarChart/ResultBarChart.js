@@ -25,7 +25,6 @@ export default function ResultBarChart({ xlabels, categoryWiseResult }) {
       ];
     });
   }, [categoryWiseResult]);
-  console.log(series);
   return (
     <BarChart
       xAxis={[
@@ -44,6 +43,8 @@ export default function ResultBarChart({ xlabels, categoryWiseResult }) {
         [`.${axisClasses.left} .${axisClasses.label}`]: {
           transform: "translate(-10px, 0)",
         },
+        flex:1
+
       }}
       series={series}
       width={1000}

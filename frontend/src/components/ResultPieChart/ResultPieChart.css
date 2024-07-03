@@ -1,0 +1,12 @@
+.pieChartContainer {
+    width: fit-content;
+    margin: 0 auto; /* Center the PieChart */
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* padding: 20px; Optional: Add padding for better spacing */
+    border: 1px solid #cdd7e1; /* Optional: Add border */
+    border-radius: 12px; /* Optional: Add border radius */
+    box-shadow: 10px 5px 5px #cdd7e1; /* Optional: Add shadow */
+  }
+  

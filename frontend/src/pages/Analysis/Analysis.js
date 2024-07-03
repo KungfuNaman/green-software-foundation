@@ -7,6 +7,7 @@ import ResultTabs from "../../components/ResultTabs/ResultTabs";
 import graphResponse from "./../../api_results/graphResponse.json";
 import ProjectType from "./../../api_results/projectType.json";
 import "./Analysis.css";
+import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
@@ -102,25 +103,30 @@ const Analysis = () => {
               AI
             </Button>
           </div>
-          <ResultBarChart
-            xlabels={categories}
-            categoryWiseResult={categoryWiseResult}
-          />
+          <div className="charts">
+            <ResultBarChart
+              xlabels={categories}
+              categoryWiseResult={categoryWiseResult}
+            />
+          </div>
         </div>
       </div>
-      <div className="ranking">
-        Ranking :
-        {progressValue === 100 && (
-          <>
-            <div>3/5</div>
-            <div sx={{ display: "flex" }}>
-              <StarIcon sx={{ color: "#f7c81e" }} />
-              <StarIcon sx={{ color: "#f7c81e" }} />
-              <StarIcon sx={{ color: "#f7c81e" }} />
-            </div>
-          </>
-        )}
-        {progressValue !== 100 && <div style={{ padding: "10px" }}>?</div>}
+      <div className="results">
+        <ResultPieChart categoryWiseResult={categoryWiseResult} apiResponse={apiResponse}/>
+        <div className="ranking">
+          Ranking :
+          {progressValue === 100 && (
+            <>
+              <div>3/5</div>
+              <div sx={{ display: "flex" }}>
+                <StarIcon sx={{ color: "#f7c81e" }} />
+                <StarIcon sx={{ color: "#f7c81e" }} />
+                <StarIcon sx={{ color: "#f7c81e" }} />
+              </div>
+            </>
+          )}
+          {progressValue !== 100 && <div style={{ padding: "10px" }}>?</div>}
+        </div>
       </div>
     </div>
   );

@@ -56,3 +56,16 @@
   gap: 5px;
   justify-content: space-around;
 }
+
+.charts{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.results{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    /* height: 100%; */
+    /* align-items: center; */
+}
