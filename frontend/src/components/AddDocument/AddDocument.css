@@ -1,0 +1,64 @@
+.UploadTitle{
+    color: #003734;
+  }
+
+  .form-container {
+    margin: 2em auto;
+    padding: 1em;
+    background-color: #003734;
+    border-radius: 2em;
+    color: white;
+    width: 75%;
+  }
+
+  .submitForm{
+    background-color: #006d69;
+    color: white;
+    border: none;
+    padding: 1em;
+    border-radius: 1em;
+  }
+  
+  .fileUploadButton{
+    margin: 2em;
+  }
+  
+  .submitFileButton{
+    background: #aecc53;
+    border-radius: 4px;
+    color: #0b161f;
+    font-weight: 700;
+    padding: 8px 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  
+  .submitFileButton:disabled{
+    background: #aecc53;
+    border-radius: 4px;
+    color: #0b161f;
+    font-weight: 700;
+    padding: 8px 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: not-allowed;
+  }
+
+
+  .hr1{
+    margin-top: 1em;
+    border: 2px solid #aecc53;
+  }
+  
+  .previewButton{
+    background: #aecc53;
+    border-radius: 4px;
+    color: #0b161f;
+    font-weight: 700;
+    padding: 8px 16px;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    margin-bottom: 1em;
+  }

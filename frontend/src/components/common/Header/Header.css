@@ -1,0 +1,15 @@
+.App-header {
+    background-color: #002d2a;
+    min-height: 9.7vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(5px + 2vmin);
+    color: white;
+    font-weight: 700;
+  }
+  .GSFLogo{
+    height: 7vmin;
+    margin-right: 0.5em;
+  }
