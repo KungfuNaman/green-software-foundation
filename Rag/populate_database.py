@@ -49,6 +49,7 @@ def create_own_doc(document_path):
         document = Document(page_content=text_content, metadata={"source": document_path})
         return document
 
+
 def split_documents(documents: list[Document]):
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=800,
