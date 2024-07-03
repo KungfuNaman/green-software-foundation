@@ -1,0 +1,86 @@
+question,answer
+"What is the number of tiers in the system architecture? Are there mentions of presentation, application, and database tiers?",Yes
+Does the architecture use a microservices or monolithic approach? Are there mentions of microservices leading to higher inter-service communication overhead?,No
+What are the communication patterns between components? Are there mentions of synchronous or asynchronous communication?,Yes
+Are there any data flow diagrams included? What do they indicate about the volume and frequency of data exchanges between components?,No
+Which programming languages are used in the technology stack? Are there mentions of resource-intensive languages like Python or more efficient ones like C++?,No
+What frameworks and libraries are used in the application? Are there mentions of their efficiency?,No
+"What type of servers are used in the deployment architecture? Are they physical or virtual servers, and what is their expected utilization?",No
+How many and what types of servers/clusters are used for clustering and load balancing? What does this indicate about potential energy consumption?,Yes
+"What type of database is used, relational or NoSQL? Are there mentions of their performance and energy profiles?",No
+Is sharding and replication used in the database design? How does this impact data distribution and energy use?,No
+What caching strategies are in place? Are there mentions of the extent and type of caching mechanisms used?,No
+"What type of data storage solutions are used, such as SSDs vs. HDDs? What is their configuration?",No
+What is the design of the network topology? Are there mentions of centralized vs. distributed data centers?,No 
+"What methods and protocols are used for data transfer, such as HTTP/2 or WebSockets?",Yes
+"What concurrency model is used in the system, thread-based or event-driven?",No
+Are there any parallel processing techniques used in the system?,No
+"What is the scalability strategy, horizontal or vertical scaling? What are the expected load patterns?",No
+What are the auto-scaling policies in place for load balancing?,No
+"What strategies for redundancy are implemented, such as active-passive or active-active?",No
+How is fault tolerance designed in the system? Are there mechanisms like retries and fallbacks?,Yes
+What are the expected performance benchmarks and SLAs?,Yes
+What are the target uptime and reliability metrics?,No
+Are there any stated sustainability goals or requirements for carbon footprint reduction?,No
+Are there any metrics or considerations for energy efficiency in the design?,No
+Is there any mention of caching static data to reduce the need to recompute or fetch it?,No
+Is there any mention of choosing server regions that are closest to users to reduce latency and energy consumption?,No
+Is there any mention of compressing stored data to reduce storage requirements?,No
+Is there any mention of compressing data transmitted over networks to minimize transmission amounts?,No
+Is there any mention of containerizing workloads to ensure efficient use of resources?,No
+Is there any mention of deleting unused storage resources to remove storage that is no longer needed?,No
+Is there any mention of encrypting only necessary data to save energy?,No
+Is there any mention of evaluating other CPU architectures to consider more efficient options?,No
+Is there any mention of using a service mesh only if needed to avoid unnecessary overhead?,No
+Is there any mention of terminating TLS at the border gateway to reduce internal encryption overhead?,No
+Is there any mention of implementing a stateless design to improve scalability?,No
+Is there any mention of matching service level objectives to business needs to align performance goals?,No
+Is there any mention of ensuring VMs are right-sized for their workloads to match utilization requirements?,No
+Is there any mention of using pre-configured servers that match workload requirements to optimize utilization?,No
+Is there any mention of setting storage retention policies to automatically clean up old data?,No
+Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?,No
+Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?,No
+Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?,No
+Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?,No
+Is there any mention of adopting cloud-native network security tools and controls for efficient security?,No
+Is there any mention of using DDoS protection to maintain service availability?,No
+Is there any mention of leveraging cloud native processor VMs designed for cloud environments?,No
+Is there any mention of adopting serverless cloud services to optimize resource usage?,No
+Is there any mention of minimizing the total number of deployed environments to save resources?,No
+Is there any mention of optimizing storage utilization to reduce energy consumption?,No
+Is there any mention of optimizing average CPU utilization to ensure efficient use of resources?,No
+Is there any mention of designing software to minimize impact on end-user devices and equipment?,No
+Is there any mention of managing peak CPU utilization to avoid over-provisioning?,No
+Is there any mention of queuing non-urgent processing requests to reduce peak loads?,No
+Is there any mention of reducing transmitted data to save energy?,No
+Is there any mention of removing unused assets to optimize performance?,No
+Is there any mention of scaling down Kubernetes applications when not in use to reduce resource usage?,No
+Is there any mention of scaling down applications during idle periods to minimize resource usage?,No
+Is there any mention of scaling infrastructure based on real-time user demand?,No
+Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?,No
+Is there any mention of allowing independent scaling of logical components?,No
+Is there any mention of regularly scanning for and fixing vulnerabilities to maintain efficiency?,No
+Is there any mention of setting storage retention policies to automatically clean up old data?,No
+Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?,No
+Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?,No
+Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?,No
+Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?,No
+Is there any mention of adopting cloud-native network security tools and controls for efficient security?,No
+Is there any mention of using DDoS protection to maintain service availability?,No
+Is there any mention of adopting serverless cloud services to optimize resource usage?,No
+Is there any mention of optimizing the size of AI/ML models to save storage space and reduce memory usage during inference?,No
+Is there any mention of using efficient file formats like Parquet for better data storage and retrieval in AI/ML development?,No
+Is there any mention of deploying AI models on edge devices to reduce energy consumption and minimize data transfer?,No
+"Is there any mention of selecting a more energy-efficient AI/ML framework, such as those built on programming languages like C/C++?",No
+Is there any mention of using AI/ML models that consume less energy while maintaining performance?,No
+Is there any mention of training AI models in cloud regions with lower carbon intensity?,No
+Is there any mention of leveraging pre-trained models and transfer learning to reduce training times and energy consumption in AI/ML development?,No
+Is there any mention of selecting the right hardware or VM instance types for energy-efficient AI/ML training?,No
+Is there any mention of adopting a serverless architecture for AI/ML workload processes to optimize resource usage?,No
+Are there any details on the energy efficiency of the servers used in the architecture?,No
+Are there any mentions of data center certifications like LEED or ENERGY STAR for the infrastructure hosting the application,No
+Is there any information on the use of virtualization or resource optimization strategies in the architecture?,No
+What cooling methods or environmental controls are mentioned for the data centers or server rooms?,No
+Are there any policies for server shutdowns during non-peak times or regular maintenance practices to ensure efficiency?,No
+Is there any mention of the use of renewable energy sources for powering the infrastructure or strategies for carbon offset?,No
+Is there any information on software optimization for performance and efficiency to reduce computational load and energy consumption?,Yes
