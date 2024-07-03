@@ -1,7 +1,8 @@
 .pieChartContainer {
     width: fit-content;
-    margin: 0 auto; /* Center the PieChart */
+    /* margin: 0 auto; Center the PieChart */
     display: flex;
+    /* transform: translateY(-20px); */
     /* justify-content: center; */
     /* align-items: center; */
     /* padding: 20px; Optional: Add padding for better spacing */

@@ -53,6 +53,7 @@ export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
   }, [apiResponse]);
   return (
     <div className="pieChartContainer">
+      <h2>Category wise responses</h2>
       <PieChart
         series={[
           {
