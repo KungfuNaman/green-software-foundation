@@ -1,0 +1,307 @@
+Overview
+SkyWalking is an open source observability platform used to collect, analyze, aggregate and visualize data from services and cloud native infrastructures. SkyWalking provides an easy way to maintain a clear view of your distributed systems, even across Clouds. It is a modern APM, specially designed for cloud native, container based distributed systems.
+
+SkyWalking covers all the observability needs in Cloud Native world, including:
+
+Tracing. SkyWalking native data formats, and Zipkin traces of v1 and v2 formats are supported.
+Metrics. SkyWalking supports mature metrics formats, including native meter format, OTEL metrics format, and Telegraf format. SkyWalking integrates with Service Mesh platforms, typically Istio and Envoy, to build observability into the data plane or control plane. Also, SkyWalking native agents can run in the metrics mode, which greatly improves performances.
+Logging. Includes logs collected from disk or through network. Native agents could bind the tracing context with logs automatically, or use SkyWalking to bind the trace and log through the text content.
+Profiling. Profiling is a powerful tool to help developers understand the performance of their applications from lines of codes perspective. SkyWalking provides profiling feature bundled in native language agents and independent ebpf agents.
+Event. Event is a special kind of data, which is used to record the important moments in the system, such as version upgrade, configuration change, etc. Linking the events with metrics could help on explain the peaks or valleys in the metrics, and linking the events with traces and logs could help on troubleshooting root cause.
+Why use SkyWalking?
+SkyWalking provides solutions for observing and monitoring distributed systems, in many different scenarios. First of all, like traditional approaches, SkyWalking provides auto instrument agents for services, such as Java, C#, Node.js, Go, PHP and Python, and manually SDKs for C++, Rust, and Nginx LUA. In multi-language, continuously deployed environments, cloud native infrastructures grow more powerful but also more complex. SkyWalking’s service mesh receiver allows SkyWalking to receive telemetry data from service mesh frameworks such as Istio/Envoy, allowing users to understand the entire distributed system. Powered by eBPF stack, SkyWalking provides k8s monitoring. Also, by adopting OpenTelemetry, Telegraf, Zabbix, Zipkin, Prometheus, SkyWalking can integrate with other distributed tracing, metrics and logging systems and build a unified APM system to host all data.
+
+Besides the support of various kinds of telemetry formats, the hierarchy structure of objects in SkyWalking is defined as service(s), service instance(s), endpoint(s), process(s). The terms Service, Instance and Endpoint are used everywhere today, so it is worth defining their specific meanings in the context of SkyWalking:
+
+Layer. A layer represents an abstract framework in computer science, such as Operating System(OS_LINUX layer), and Kubernetes(k8s layer). A layer is an abstract collection of services. A service typically only belongs to one layer, but in some scenarios, a service could belong to multiple layers. For example, a service could be deployed in an Istio service mesh, it could belong to mesh and mesh-dp(mesh data plane) layer.
+Service. Represents a set/group of workloads which provide the same behaviours for incoming requests. You can define the service name when you are using instrument agents or SDKs. SkyWalking can also use the name you define in platforms such as Istio.
+Service Instance. Each individual workload in the Service group is known as an instance. Like pods in Kubernetes, it doesn’t need to be a single OS process, however, if you are using instrument agents, an instance is actually a real OS process.
+Endpoint. A path in a service for incoming requests, such as an HTTP URI path or a gRPC service class + method signature.
+Process. An operating system process. In some scenarios, a Service Instance is not a process, such as a pod Kubernetes could contain multiple processes.
+SkyWalking allows users to understand the topology relationship between Services and Endpoints, also detect API dependencies in the distributed environment if you use our native agents.,
+
+Besides topology map, SkyWalking provides Service Hierarchy Relationship , which defines the relationships of existing logically same services in various layers. For example, a service could be deployed in a Kubernetes cluster with Istio mesh, services are detected by k8s monitoring and Istio mesh, this hierarchy relationship could connect the services in k8s layer and mesh layer.
+
+Architecture
+SkyWalking is logically split into four parts: Probes, Platform backend, Storage and UI.
+
+
+Probes collect telemetry data, including metrics, traces, logs and events in various formats(SkyWalking, Zipkin, OpenTelemetry, Prometheus, Zabbix, etc.)
+Platform backend supports data aggregation, analysis and streaming process covers traces, metrics, logs and events. Work as Aggregator Role, Receiver Role or both.
+Storage houses SkyWalking data through an open/plugable interface. You can choose an existing implementation, such as ElasticSearch, H2, MySQL, TiDB, BanyanDB, or implement your own.
+UI is a highly customizable web based interface allowing SkyWalking end users to visualize and manage SkyWalking data.
+Design Goals
+This document outlines the core design goals for the SkyWalking project.
+
+Maintaining Observability. Regardless of the deployment method of the target system, SkyWalking provides an integration solution for it to maintain observability. Based on this, SkyWalking provides multiple runtime forms and probes.
+
+Topology, Metrics and Trace Together. The first step to understanding a distributed system is the topology map. It visualizes the entire complex system in an easy-to-read layout. Under the topology, the OSS personnel have higher requirements in terms of the metrics for service, instance, endpoint and calls. Traces are in the form of detailed logs to make sense of those metrics. For example, when the endpoint latency becomes long, you want to see the slowest the trace to find out why. So you can see, they are from big picture to details, they are all needed. SkyWalking integrates and provides a lot of features to make this possible and easy understand.
+
+Light Weight. There two parts of light weight are needed. (1) In probe, we just depend on network communication framework, prefer gRPC. By that, the probe should be as small as possible, to avoid the library conflicts and the payload of VM, such as permsize requirement in JVM. (2) As an observability platform, it is secondary and third level system in your project environment. So we are using our own light weight framework to build the backend core. Then you don’t need to deploy big data tech platform and maintain them. SkyWalking should be simple in tech stack.
+
+Pluggable. SkyWalking core team provides many default implementations, but definitely it is not enough, and also don’t fit every scenario. So, we provide a lot of features for being pluggable.
+
+Portability. SkyWalking can run in multiple environments, including: (1) Use traditional register center like eureka. (2) Use RPC framework including service discovery, like Spring Cloud, Apache Dubbo. (3) Use Service Mesh in modern infrastructure. (4) Use cloud services. (5) Across cloud deployment. SkyWalking should run well in all of these cases.
+
+Interoperability. The observability landscape is so vast that it is virtually impossible for SkyWalking to support all systems, even with the support of its community. Currently, it supports interoperability with other OSS systems, especially probes, such as Zipkin, Jaeger, and OpenTelemetry. It is very important to end users that SkyWalking has the ability to accept and read these data formats, since the users are not required to switch their libraries.
+Probe Introduction
+In SkyWalking, probe means an agent or SDK library integrated into a target system that takes charge of collecting telemetry data, including tracing and metrics. Depending on the target system tech stack, there are very different ways how the probe performs such tasks. But ultimately, they all work towards the same goal — to collect and reformat data, and then to send them to the backend.
+
+On a high level, there are four typical categories in all SkyWalking probes.
+
+Language based native agent. These agents run in target service user spaces, such as a part of user codes. For example, the SkyWalking Java agent uses the -javaagent command line argument to manipulate codes in runtime, where manipulate means to change and inject user’s codes. Another example is SkyWalking agent, which leverage Golang compiling mechanism to weaves codes in the compiling time. For some static compilation languages, such as C++, manual library is the only choice. As you can see, these agents are based on languages and libraries, no matter we provide auto instrument or manual agents.
+
+Service Mesh probes. Service Mesh probes collect data from sidecar, control plane in service mesh or proxy. In the old days, proxy is only used as an ingress of the whole cluster, but with the Service Mesh and sidecar, we can now perform observability functions.
+
+3rd-party instrument library. SkyWalking accepts many widely used instrument libraries data formats. SkyWalking community is connected closely with Zipkin community, it could work as an alternative server for both v1 and v2 Zipkin traces. Also, OTEL trace format in gRPC is supported, and converted to Zipkin format inside SkyWalking. As an alternative Zipkin server, Zipkin lens UI could be used to visualize accepted traces when they are in Zipkin format. See Receiver for Zipkin traces and Receiver for OTEL traces for more information.
+
+eBPF agent. The eBPF agent collects metrics and profiling the target service powered by the eBPF technology of Linux kernel.
+
+You don’t have to install all probes to make SkyWalking up and running. There are several recommended ways on how to use these probes:
+
+Use Language based native agent only to build topology and metrics for your business application.
+Use 3rd-party instrument library only, like the Zipkin instrument ecosystem.
+Use Service Mesh probe if you prefer Service Mesh stack and don’t want to use native agents.
+Use Service Mesh probe with Language based native agent or 3rd-party instrument library in pure tracing status. (Advanced usage)
+Use eBPF agent only if you only want to profile on demand and/or activating automatic performance analysis.
+Use eBPF agent with Language based native agent collaboratively. Enhance the traces with the eBPF agent to collect extra information.
+What is the meaning of in tracing status?
+
+By default, Language based native agent and 3rd-party instrument library both send distributed traces to the backend, where analyses and aggregation on those traces are performed. In pure tracing status means that the backend considers these traces as something like logs. In other words, the backend saves them, but doesn’t run the metrics analysis from traces. As a result, there would not have data of service/instance/endpoint metrics and relationships.
+Service Auto Instrument Agent
+The service auto instrument agent is a subset of language-based native agents. This kind of agents is based on some language-specific features, especially those of a VM-based language.
+
+What does Auto Instrument mean?
+Many users learned about these agents when they first heard that “Not a single line of code has to be changed”. SkyWalking used to mention this in its readme page as well. However, this does not reflect the full picture. For end users, it is true that they no longer have to modify their codes in most cases. But it is important to understand that the codes are in fact still modified by the agent, which is usually known as “runtime code manipulation”. The underlying logic is that the auto instrument agent uses the VM interface for code modification to dynamically add in the instrument code, such as modifying the class in Java through javaagent premain.
+
+In fact, although the SkyWalking team has mentioned that most auto instrument agents are VM-based, you may build such tools during compiling time rather than runtime.
+
+What are the limitations?
+Auto instrument is very helpful, as you may perform auto instrument during compiling time, without having to depend on VM features. But there are also certain limitations that come with it:
+
+Higher possibility of in-process propagation in many cases. Many high-level languages, such as Java and .NET, are used for building business systems. Most business logic codes run in the same thread for each request, which causes propagation to be based on thread ID, in order for the stack module to make sure that the context is safe.
+
+Only works in certain frameworks or libraries. Since the agents are responsible for modifying the codes during runtime, the codes are already known to the agent plugin developers. There is usually a list of frameworks or libraries supported by this kind of probes. For example, see the SkyWalking Java agent supported list.
+
+Cross-thread operations are not always supported. Like what is mentioned above regarding in-process propagation, most codes (especially business codes) run in a single thread per request. But in some other cases, they operate across different threads, such as assigning tasks to other threads, task pools or batch processes. Some languages may even provide coroutine or similar components like Goroutine, which allows developers to run async process with low payload. In such cases, auto instrument will face problems.
+
+So, there’s nothing mysterious about auto instrument. In short, agent developers write an activation script to make instrument codes work for you. That’s it!
+Manual instrument SDK
+Our incredible community has contributed to the manual instrument SDK.
+
+Rust. Rust SDK follows the SkyWalking format.
+C++. C++ SDK follows the SkyWalking format.
+Below is the archived list.
+
+Go2Sky. Since Jun 14, 2023.
+What are the SkyWalking format and the propagation protocols?
+Tracing APIs
+Meter APIs
+Logging APIs
+Service Hierarchy
+SkyWalking v10 introduces a new concept Service Hierarchy which defines the relationships of existing logically same services in various layers. OAP will detect the services from different layers, and try to build the connections.
+
+Detect Service Hierarchy Connections
+There 2 ways to detect the connections:
+
+Automatically matching through OAP internal mechanism, no extra work is required.
+Build the connections through specific agents.
+Note: All the relationships and auto-matching rules should be defined in the config/hierarchy-definition.yml file. If you want to customize it according to your own needs, please refer to Service Hierarchy Configuration.
+
+Automatically Matching
+Upper layer	Lower layer	Matching rule
+GENERAL	K8S_SERVICE	GENERAL On K8S_SERVICE
+GENERAL	APISIX	GENERAL On APISIX
+VIRTUAL_DATABASE	MYSQL	VIRTUAL_DATABASE On MYSQL
+VIRTUAL_DATABASE	POSTGRESQL	VIRTUAL_DATABASE On POSTGRESQL
+VIRTUAL_DATABASE	CLICKHOUSE	VIRTUAL_DATABASE On CLICKHOUSE
+VIRTUAL_MQ	RABBITMQ	VIRTUAL_MQ On RABBITMQ
+VIRTUAL_MQ	ROCKETMQ	VIRTUAL_MQ On K8S_SERVICE
+VIRTUAL_MQ	KAFKA	VIRTUAL_MQ On KAFKA
+VIRTUAL_MQ	RABBITMQ	VIRTUAL_MQ On RABBITMQ
+VIRTUAL_MQ	PULSAR	VIRTUAL_MQ On PULSAR
+MESH	MESH_DP	MESH On MESH_DP
+MESH	K8S_SERVICE	MESH On K8S_SERVICE
+MESH_DP	K8S_SERVICE	MESH_DP On K8S_SERVICE
+MYSQL	K8S_SERVICE	MYSQL On K8S_SERVICE
+POSTGRESQL	K8S_SERVICE	POSTGRESQL On K8S_SERVICE
+CLICKHOUSE	K8S_SERVICE	CLICKHOUSE On K8S_SERVICE
+NGINX	K8S_SERVICE	NGINX On K8S_SERVICE
+APISIX	K8S_SERVICE	APISIX On K8S_SERVICE
+ROCKETMQ	K8S_SERVICE	ROCKETMQ On K8S_SERVICE
+RABBITMQ	K8S_SERVICE	RABBITMQ On K8S_SERVICE
+KAFKA	K8S_SERVICE	KAFKA On K8S_SERVICE
+PULSAR	K8S_SERVICE	PULSAR On K8S_SERVICE
+SO11Y_OAP	K8S_SERVICE	SO11Y_OAP On K8S_SERVICE
+The following sections will describe the default matching rules in detail and use the upper-layer On lower-layer format.
+The example service name are based on SkyWalking Showcase default deployment.
+In SkyWalking the service name could be composed of group and short name with :: separator.
+GENERAL On K8S_SERVICE
+Rule name: lower-short-name-remove-ns
+Groovy script: { (u, l) -> u.shortName == l.shortName.substring(0, l.shortName.lastIndexOf('.')) }
+Description: GENERAL.service.shortName == K8S_SERVICE.service.shortName without namespace
+Matched Example:
+GENERAL.service.name: agent::songs
+K8S_SERVICE.service.name: skywalking-showcase::songs.sample-services
+GENERAL On APISIX
+Rule name: lower-short-name-remove-ns
+Groovy script: { (u, l) -> u.shortName == l.shortName.substring(0, l.shortName.lastIndexOf('.')) }
+Description: GENERAL.service.shortName == APISIX.service.shortName without namespace
+Matched Example:
+GENERAL.service.name: agent::frontend
+APISIX.service.name: APISIX::frontend.sample-services
+VIRTUAL_DATABASE On MYSQL
+Rule name: lower-short-name-with-fqdn
+Groovy script: { (u, l) -> u.shortName.substring(0, u.shortName.lastIndexOf(':')) == l.shortName.concat('.svc.cluster.local') }
+Description: VIRTUAL_DATABASE.service.shortName remove port == MYSQL.service.shortName with fqdn suffix
+Matched Example:
+VIRTUAL_DATABASE.service.name: mysql.skywalking-showcase.svc.cluster.local:3306
+MYSQL.service.name: mysql::mysql.skywalking-showcase
+VIRTUAL_DATABASE On POSTGRESQL
+Rule name: lower-short-name-with-fqdn
+Groovy script: { (u, l) -> u.shortName.substring(0, u.shortName.lastIndexOf(':')) == l.shortName.concat('.svc.cluster.local') }
+Description: VIRTUAL_DATABASE.service.shortName remove port == POSTGRESQL.service.shortName with fqdn suffix
+Matched Example:
+VIRTUAL_DATABASE.service.name: psql.skywalking-showcase.svc.cluster.local:5432
+POSTGRESQL.service.name: postgresql::psql.skywalking-showcase
+VIRTUAL_DATABASE On CLICKHOUSE
+Rule name: lower-short-name-with-fqdn
+Groovy script: { (u, l) -> u.shortName.substring(0, u.shortName.lastIndexOf(':')) == l.shortName.concat('.svc.cluster.local') }
+Description: VIRTUAL_DATABASE.service.shortName remove port == CLICKHOUSE.service.shortName with fqdn suffix
+Matched Example:
+VIRTUAL_DATABASE.service.name: clickhouse.skywalking-showcase.svc.cluster.local:8123
+CLICKHOUSE.service.name: clickhouse::clickhouse.skywalking-showcase
+VIRTUAL_MQ On ROCKETMQ
+Rule name: lower-short-name-with-fqdn
+Groovy script: { (u, l) -> u.shortName.substring(0, u.shortName.lastIndexOf(':')) == l.shortName.concat('.svc.cluster.local') }
+Description: VIRTUAL_MQ.service.shortName remove port == ROCKETMQ.service.shortName with fqdn suffix
+Matched Example:
+VIRTUAL_MQ.service.name: rocketmq.skywalking-showcase.svc.cluster.local:9876
+ROCKETMQ.service.name: rocketmq::rocketmq.skywalking-showcase
+VIRTUAL_MQ On RABBITMQ
+Rule name: lower-short-name-with-fqdn
+Groovy script: { (u, l) -> u.shortName.substring(0, u.shortName.lastIndexOf(':')) == l.shortName.concat('.svc.cluster.local') }
+Description: VIRTUAL_MQ.service.shortName remove port == RABBITMQ.service.shortName with fqdn suffix
+Matched Example:
+VIRTUAL_MQ.service.name: rabbitmq.skywalking-showcase.svc.cluster.local:5672
+RABBITMQ.service.name: rabbitmq::rabbitmq.skywalking-showcase
+VIRTUAL_MQ On KAFKA
+Rule name: lower-short-name-with-fqdn
+Groovy script: { (u, l) -> u.shortName.substring(0, u.shortName.lastIndexOf(':')) == l.shortName.concat('.svc.cluster.local') }
+Description: VIRTUAL_MQ.service.shortName remove port == KAFKA.service.shortName with fqdn suffix
+Matched Example:
+VIRTUAL_MQ.service.name: kafka.skywalking-showcase.svc.cluster.local:9092
+KAFKA.service.name: kafka::rocketmq.skywalking-showcase
+VIRTUAL_MQ On PULSAR
+Rule name: lower-short-name-with-fqdn
+Groovy script: { (u, l) -> u.shortName.substring(0, u.shortName.lastIndexOf(':')) == l.shortName.concat('.svc.cluster.local') }
+Description: VIRTUAL_MQ.service.shortName remove port == PULSAR.service.shortName with fqdn suffix
+Matched Example:
+VIRTUAL_MQ.service.name: pulsar.skywalking-showcase.svc.cluster.local:6650
+PULSAR.service.name: pulsar::pulsar.skywalking-showcase
+MESH On MESH_DP
+Rule name: name
+Groovy script: { (u, l) -> u.name == l.name }
+Description: MESH.service.name == MESH_DP.service.name
+Matched Example:
+MESH.service.name: mesh-svr::songs.sample-services
+MESH_DP.service.name: mesh-svr::songs.sample-services
+MESH On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: MESH.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+MESH.service.name: mesh-svr::songs.sample-services
+K8S_SERVICE.service.name: skywalking-showcase::songs.sample-services
+MESH_DP On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: MESH_DP.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+MESH_DP.service.name: mesh-svr::songs.sample-services
+K8S_SERVICE.service.name: skywalking-showcase::songs.sample-services
+MYSQL On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: MYSQL.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+MYSQL.service.name: mysql::mysql.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::mysql.skywalking-showcase
+POSTGRESQL On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: POSTGRESQL.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+POSTGRESQL.service.name: postgresql::psql.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::psql.skywalking-showcase
+CLICKHOUSE On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: CLICKHOUSE.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+CLICKHOUSE.service.name: clickhouse::clickhouse.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::clickhouse.skywalking-showcase
+NGINX On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: NGINX.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+NGINX.service.name: nginx::nginx.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::nginx.skywalking-showcase
+APISIX On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: APISIX.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+APISIX.service.name: APISIX::frontend.sample-services
+K8S_SERVICE.service.name: skywalking-showcase::frontend.sample-services
+ROCKETMQ On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: ROCKETMQ.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+ROCKETMQ.service.name: rocketmq::rocketmq.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::rocketmq.skywalking-showcase
+RABBITMQ On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: RABBITMQ.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+RABBITMQ.service.name: rabbitmq::rabbitmq.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::rabbitmq.skywalking-showcase
+KAFKA On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: KAFKA.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+KAFKA.service.name: kafka::kafka.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::kafka.skywalking-showcase
+PULSAR On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: PULSAR.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+PULSAR.service.name: pulsar::pulsar.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::pulsar.skywalking-showcase
+SO11Y_OAP On K8S_SERVICE
+Rule name: short-name
+Groovy script: { (u, l) -> u.shortName == l.shortName }
+Description: SO11Y_OAP.service.shortName == K8S_SERVICE.service.shortName
+Matched Example:
+SO11Y_OAP.service.name: demo-oap.skywalking-showcase
+K8S_SERVICE.service.name: skywalking-showcase::demo-oap.skywalking-showcase
+Build Through Specific Agents
+Use agent tech involved(such as eBPF) and deployment tools(such as operator and agent injector) to detect the service hierarchy relations.
+
+Upper layer	Lower layer	Agent
+Instance Hierarchy
+Instance Hierarchy relationship follows the same definition as Service Hierarchy.
+
+Automatically Matching
+If the service hierarchy is built, the instance hierarchy relationship could be detected automatically through the following rules:
+
+The upper instance name equals the lower instance name.
+The upper instance attribute pod/hostname equals the lower instance attribute pod/hostname.
+The upper instance attribute pod/hostname equals the lower instance name.
+The upper instance name equals the lower instance attribute pod/hostname.
+Build Through Specific Agents 

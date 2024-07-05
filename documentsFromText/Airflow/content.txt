@@ -1,0 +1,2749 @@
+Architecture Overview
+Airflow is a platform that lets you build and run workflows. A workflow is represented as a DAG (a Directed Acyclic Graph), and contains individual pieces of work called Tasks, arranged with dependencies and data flows taken into account.
+
+An example Airflow DAG, rendered in Graph
+A DAG specifies the dependencies between tasks, which defines the order in which to execute the tasks. Tasks describe what to do, be it fetching data, running analysis, triggering other systems, or more.
+
+Airflow itself is agnostic to what you’re running - it will happily orchestrate and run anything, either with high-level support from one of our providers, or directly as a command using the shell or Python Operators.
+
+Airflow components
+Airflow’s architecture consists of multiple components. The following sections describe each component’s function and whether they’re required for a bare-minimum Airflow installation, or an optional component to achieve better Airflow extensibility, performance, and scalability.
+
+Required components
+A minimal Airflow installation consists of the following components:
+
+A scheduler, which handles both triggering scheduled workflows, and submitting Tasks to the executor to run. The executor, is a configuration property of the scheduler, not a separate component and runs within the scheduler process. There are several executors available out of the box, and you can also write your own.
+
+A webserver, which presents a handy user interface to inspect, trigger and debug the behaviour of DAGs and tasks.
+
+A folder of DAG files is read by the scheduler to figure out what tasks to run and when and to run them.
+
+A metadata database, which airflow components use to store state of workflows and tasks. Setting up a metadata database is described in Set up a Database Backend and is required for Airflow to work.
+
+Optional components
+Some Airflow components are optional and can enable better extensibility, scalability, and performance in your Airflow:
+
+Optional worker, which executes the tasks given to it by the scheduler. In the basic installation worker might be part of the scheduler not a separate component. It can be run as a long running process in the CeleryExecutor, or as a POD in the KubernetesExecutor.
+
+Optional triggerer, which executes deferred tasks in an asyncio event loop. In basic installation where deferred tasks are not used, a triggerer is not necessary. More about deferring tasks can be found in Deferrable Operators & Triggers.
+
+Optional dag processor, which parses DAG files and serializes them into the metadata database. By default, the dag processor process is part of the scheduler, but it can be run as a separate component for scalability and security reasons. If dag processor is present scheduler does not need to read the DAG files directly. More about processing DAG files can be found in DAG File Processing
+
+Optional folder of plugins. Plugins are a way to extend Airflow’s functionality (similar to installed packages). Plugins are read by the scheduler, dag processor, triggerer and webserver. More about plugins can be found in Plugins.
+
+Deploying Airflow components
+All the components are Python applications that can be deployed using various deployment mechanisms.
+
+They can have extra installed packages installed in their Python environment. This is useful for example to install custom operators or sensors or extend Airflow functionality with custom plugins.
+
+While Airflow can be run in a single machine and with simple installation where only scheduler and webserver are deployed, Airflow is designed to be scalable and secure, and is able to run in a distributed environment - where various components can run on different machines, with different security perimeters and can be scaled by running multiple instances of the components above.
+
+The separation of components also allow for increased security, by isolating the components from each other and by allowing to perform different tasks. For example separating dag processor from scheduler allows to make sure that the scheduler does not have access to the DAG files and cannot execute code provided by DAG author.
+
+Also while single person can run and manage Airflow installation, Airflow Deployment in more complex setup can involve various roles of users that can interact with different parts of the system, which is an important aspect of secure Airflow deployment. The roles are described in detail in the Airflow Security Model and generally speaking include:
+
+Deployment Manager - a person that installs and configures Airflow and manages the deployment
+
+DAG author - a person that writes DAGs and submits them to Airflow
+
+Operations User - a person that triggers DAGs and tasks and monitors their execution
+
+Architecture Diagrams
+The diagrams below show different ways to deploy Airflow - gradually from the simple “one machine” and single person deployment, to a more complex deployment with separate components, separate user roles and finally with more isolated security perimeters.
+
+The meaning of the different connection types in the diagrams below is as follows:
+
+brown solid lines represent DAG files submission and synchronization
+
+blue solid lines represent deploying and accessing installed packages and plugins
+
+black dashed lines represent control flow of workers by the scheduler (via executor)
+
+black solid lines represent accessing the UI to manage execution of the workflows
+
+red dashed lines represent accessing the metadata database by all components
+
+Basic Airflow deployment
+This is the simplest deployment of Airflow, usually operated and managed on a single machine. Such a deployment usually uses the LocalExecutor, where the scheduler and the workers are in the same Python process and the DAG files are read directly from the local filesystem by the scheduler. The webserver runs on the same machine as the scheduler. There is no triggerer component, which means that task deferral is not possible.
+
+Such an installation typically does not separate user roles - deployment, configuration, operation, authoring and maintenance are all done by the same person and there are no security perimeters between the components.
+
+../_images/diagram_basic_airflow_architecture.png
+If you want to run Airflow on a single machine in a simple single-machine setup, you can skip the more complex diagrams below and go straight to the Workloads section.
+
+Distributed Airflow architecture
+This is the architecture of Airflow where components of Airflow are distributed among multiple machines and where various roles of users are introduced - Deployment Manager, DAG author, Operations User. You can read more about those various roles in the Airflow Security Model.
+
+In the case of a distributed deployment, it is important to consider the security aspects of the components. The webserver does not have access to the DAG files directly. The code in the Code tab of the UI is read from the metadata database. The webserver cannot execute any code submitted by the DAG author. It can only execute code that is installed as an installed package or plugin by the Deployment Manager. The Operations User only has access to the UI and can only trigger DAGs and tasks, but cannot author DAGs.
+
+The DAG files need to be synchronized between all the components that use them - scheduler, triggerer and workers. The DAG files can be synchronized by various mechanisms - typical ways how DAGs can be synchronized are described in Manage DAGs files ot our Helm Chart documentation. Helm chart is one of the ways how to deploy Airflow in K8S cluster.
+
+../_images/diagram_distributed_airflow_architecture.png
+Separate DAG processing architecture
+In a more complex installation where security and isolation are important, you’ll also see the standalone dag processor component that allows to separate scheduler from accessing DAG files. This is suitable if the deployment focus is on isolation between parsed tasks. While Airflow does not yet support full multi-tenant features, it can be used to make sure that DAG author provided code is never executed in the context of the scheduler.
+
+../_images/diagram_dag_processor_airflow_architecture.png
+Note
+
+When DAG file is changed there can be cases where the scheduler and the worker will see different versions of the DAG until both components catch up. You can avoid the issue by making sure dag is deactivated during deployment and reactivate once finished. If needed, the cadence of sync and scan of DAG folder can be configured. Please make sure you really know what you are doing if you change the configurations.
+
+Workloads
+A DAG runs through a series of Tasks, and there are three common types of task you will see:
+
+Operators, predefined tasks that you can string together quickly to build most parts of your DAGs.
+
+Sensors, a special subclass of Operators which are entirely about waiting for an external event to happen.
+
+A TaskFlow-decorated @task, which is a custom Python function packaged up as a Task.
+
+Internally, these are all actually subclasses of Airflow’s BaseOperator, and the concepts of Task and Operator are somewhat interchangeable, but it’s useful to think of them as separate concepts - essentially, Operators and Sensors are templates, and when you call one in a DAG file, you’re making a Task.
+
+Control Flow
+DAGs are designed to be run many times, and multiple runs of them can happen in parallel. DAGs are parameterized, always including an interval they are “running for” (the data interval), but with other optional parameters as well.
+
+Tasks have dependencies declared on each other. You’ll see this in a DAG either using the >> and << operators:
+
+first_task >> [second_task, third_task]
+fourth_task << third_task
+Or, with the set_upstream and set_downstream methods:
+
+first_task.set_downstream([second_task, third_task])
+fourth_task.set_upstream(third_task)
+These dependencies are what make up the “edges” of the graph, and how Airflow works out which order to run your tasks in. By default, a task will wait for all of its upstream tasks to succeed before it runs, but this can be customized using features like Branching, LatestOnly, and Trigger Rules.
+
+To pass data between tasks you have three options:
+
+XComs (“Cross-communications”), a system where you can have tasks push and pull small bits of metadata.
+
+Uploading and downloading large files from a storage service (either one you run, or part of a public cloud)
+
+TaskFlow API automatically passes data between tasks via implicit XComs
+
+Airflow sends out Tasks to run on Workers as space becomes available, so there’s no guarantee all the tasks in your DAG will run on the same worker or the same machine.
+
+As you build out your DAGs, they are likely to get very complex, so Airflow provides several mechanisms for making this more sustainable - SubDAGs let you make “reusable” DAGs you can embed into other ones, and TaskGroups let you visually group tasks in the UI.
+
+There are also features for letting you easily pre-configure access to a central resource, like a datastore, in the form of Connections & Hooks, and for limiting concurrency, via Pools.
+
+User interface
+Airflow comes with a user interface that lets you see what DAGs and their tasks are doing, trigger runs of DAGs, view logs, and do some limited debugging and resolution of problems with your DAGs.
+
+../_images/dags.png
+It’s generally the best way to see the status of your Airflow installation as a whole, as well as diving into individual DAGs to see their layout, the status of each task, and the logs from each task.
+DAGs
+A DAG (Directed Acyclic Graph) is the core concept of Airflow, collecting Tasks together, organized with dependencies and relationships to say how they should run.
+
+Here’s a basic example DAG:
+
+../_images/basic-dag.png
+It defines four Tasks - A, B, C, and D - and dictates the order in which they have to run, and which tasks depend on what others. It will also say how often to run the DAG - maybe “every 5 minutes starting tomorrow”, or “every day since January 1st, 2020”.
+
+The DAG itself doesn’t care about what is happening inside the tasks; it is merely concerned with how to execute them - the order to run them in, how many times to retry them, if they have timeouts, and so on.
+
+Declaring a DAG
+There are three ways to declare a DAG - either you can use a context manager, which will add the DAG to anything inside it implicitly:
+
+ import datetime
+
+ from airflow import DAG
+ from airflow.operators.empty import EmptyOperator
+
+ with DAG(
+     dag_id="my_dag_name",
+     start_date=datetime.datetime(2021, 1, 1),
+     schedule="@daily",
+ ):
+     EmptyOperator(task_id="task")
+Or, you can use a standard constructor, passing the DAG into any operators you use:
+
+ import datetime
+
+ from airflow import DAG
+ from airflow.operators.empty import EmptyOperator
+
+ my_dag = DAG(
+     dag_id="my_dag_name",
+     start_date=datetime.datetime(2021, 1, 1),
+     schedule="@daily",
+ )
+ EmptyOperator(task_id="task", dag=my_dag)
+Or, you can use the @dag decorator to turn a function into a DAG generator:
+
+import datetime
+
+from airflow.decorators import dag
+from airflow.operators.empty import EmptyOperator
+
+
+@dag(start_date=datetime.datetime(2021, 1, 1), schedule="@daily")
+def generate_dag():
+    EmptyOperator(task_id="task")
+
+
+generate_dag()
+DAGs are nothing without Tasks to run, and those will usually come in the form of either Operators, Sensors or TaskFlow.
+
+Task Dependencies
+A Task/Operator does not usually live alone; it has dependencies on other tasks (those upstream of it), and other tasks depend on it (those downstream of it). Declaring these dependencies between tasks is what makes up the DAG structure (the edges of the directed acyclic graph).
+
+There are two main ways to declare individual task dependencies. The recommended one is to use the >> and << operators:
+
+first_task >> [second_task, third_task]
+third_task << fourth_task
+Or, you can also use the more explicit set_upstream and set_downstream methods:
+
+first_task.set_downstream([second_task, third_task])
+third_task.set_upstream(fourth_task)
+There are also shortcuts to declaring more complex dependencies. If you want to make two lists of tasks depend on all parts of each other, you can’t use either of the approaches above, so you need to use cross_downstream:
+
+from airflow.models.baseoperator import cross_downstream
+
+# Replaces
+# [op1, op2] >> op3
+# [op1, op2] >> op4
+cross_downstream([op1, op2], [op3, op4])
+And if you want to chain together dependencies, you can use chain:
+
+from airflow.models.baseoperator import chain
+
+# Replaces op1 >> op2 >> op3 >> op4
+chain(op1, op2, op3, op4)
+
+# You can also do it dynamically
+chain(*[EmptyOperator(task_id='op' + i) for i in range(1, 6)])
+Chain can also do pairwise dependencies for lists the same size (this is different from the cross dependencies created by cross_downstream!):
+
+from airflow.models.baseoperator import chain
+
+# Replaces
+# op1 >> op2 >> op4 >> op6
+# op1 >> op3 >> op5 >> op6
+chain(op1, [op2, op3], [op4, op5], op6)
+Loading DAGs
+Airflow loads DAGs from Python source files, which it looks for inside its configured DAG_FOLDER. It will take each file, execute it, and then load any DAG objects from that file.
+
+This means you can define multiple DAGs per Python file, or even spread one very complex DAG across multiple Python files using imports.
+
+Note, though, that when Airflow comes to load DAGs from a Python file, it will only pull any objects at the top level that are a DAG instance. For example, take this DAG file:
+
+dag_1 = DAG('this_dag_will_be_discovered')
+
+def my_function():
+    dag_2 = DAG('but_this_dag_will_not')
+
+my_function()
+While both DAG constructors get called when the file is accessed, only dag_1 is at the top level (in the globals()), and so only it is added to Airflow. dag_2 is not loaded.
+
+Note
+
+When searching for DAGs inside the DAG_FOLDER, Airflow only considers Python files that contain the strings airflow and dag (case-insensitively) as an optimization.
+
+To consider all Python files instead, disable the DAG_DISCOVERY_SAFE_MODE configuration flag.
+
+You can also provide an .airflowignore file inside your DAG_FOLDER, or any of its subfolders, which describes patterns of files for the loader to ignore. It covers the directory it’s in plus all subfolders underneath it. See .airflowignore below for details of the file syntax.
+
+In the case where the .airflowignore does not meet your needs and you want a more flexible way to control if a python file needs to be parsed by airflow, you can plug your callable by setting might_contain_dag_callable in the config file. Note, this callable will replace the default Airflow heuristic, i.e. checking if the strings airflow and dag (case-insensitively) are present in the python file.
+
+def might_contain_dag(file_path: str, zip_file: zipfile.ZipFile | None = None) -> bool:
+    # Your logic to check if there are DAGs defined in the file_path
+    # Return True if the file_path needs to be parsed, otherwise False
+Running DAGs
+DAGs will run in one of two ways:
+
+When they are triggered either manually or via the API
+
+On a defined schedule, which is defined as part of the DAG
+
+DAGs do not require a schedule, but it’s very common to define one. You define it via the schedule argument, like this:
+
+with DAG("my_daily_dag", schedule="@daily"):
+    ...
+There are various valid values for the schedule argument:
+
+with DAG("my_daily_dag", schedule="0 0 * * *"):
+    ...
+
+with DAG("my_one_time_dag", schedule="@once"):
+    ...
+
+with DAG("my_continuous_dag", schedule="@continuous"):
+    ...
+Tip
+
+For more information different types of scheduling, see Authoring and Scheduling.
+
+Every time you run a DAG, you are creating a new instance of that DAG which Airflow calls a DAG Run. DAG Runs can run in parallel for the same DAG, and each has a defined data interval, which identifies the period of data the tasks should operate on.
+
+As an example of why this is useful, consider writing a DAG that processes a daily set of experimental data. It’s been rewritten, and you want to run it on the previous 3 months of data—no problem, since Airflow can backfill the DAG and run copies of it for every day in those previous 3 months, all at once.
+
+Those DAG Runs will all have been started on the same actual day, but each DAG run will have one data interval covering a single day in that 3 month period, and that data interval is all the tasks, operators and sensors inside the DAG look at when they run.
+
+In much the same way a DAG instantiates into a DAG Run every time it’s run, Tasks specified inside a DAG are also instantiated into Task Instances along with it.
+
+A DAG run will have a start date when it starts, and end date when it ends. This period describes the time when the DAG actually ‘ran.’ Aside from the DAG run’s start and end date, there is another date called logical date (formally known as execution date), which describes the intended time a DAG run is scheduled or triggered. The reason why this is called logical is because of the abstract nature of it having multiple meanings, depending on the context of the DAG run itself.
+
+For example, if a DAG run is manually triggered by the user, its logical date would be the date and time of which the DAG run was triggered, and the value should be equal to DAG run’s start date. However, when the DAG is being automatically scheduled, with certain schedule interval put in place, the logical date is going to indicate the time at which it marks the start of the data interval, where the DAG run’s start date would then be the logical date + scheduled interval.
+
+Tip
+
+For more information on logical date, see Data Interval and What does execution_date mean?.
+
+DAG Assignment
+Note that every single Operator/Task must be assigned to a DAG in order to run. Airflow has several ways of calculating the DAG without you passing it explicitly:
+
+If you declare your Operator inside a with DAG block
+
+If you declare your Operator inside a @dag decorator
+
+If you put your Operator upstream or downstream of an Operator that has a DAG
+
+Otherwise, you must pass it into each Operator with dag=.
+
+Default Arguments
+Often, many Operators inside a DAG need the same set of default arguments (such as their retries). Rather than having to specify this individually for every Operator, you can instead pass default_args to the DAG when you create it, and it will auto-apply them to any operator tied to it:
+
+import pendulum
+
+with DAG(
+    dag_id="my_dag",
+    start_date=pendulum.datetime(2016, 1, 1),
+    schedule="@daily",
+    default_args={"retries": 2},
+):
+    op = BashOperator(task_id="hello_world", bash_command="Hello World!")
+    print(op.retries)  # 2
+The DAG decorator
+New in version 2.0.
+
+As well as the more traditional ways of declaring a single DAG using a context manager or the DAG() constructor, you can also decorate a function with @dag to turn it into a DAG generator function:
+
+airflow/example_dags/example_dag_decorator.py
+[source]
+
+@dag(
+    schedule=None,
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    catchup=False,
+    tags=["example"],
+)
+def example_dag_decorator(email: str = "example@example.com"):
+    """
+    DAG to send server IP to email.
+
+    :param email: Email to send IP to. Defaults to example@example.com.
+    """
+    get_ip = GetRequestOperator(task_id="get_ip", url="http://httpbin.org/get")
+
+    @task(multiple_outputs=True)
+    def prepare_email(raw_json: dict[str, Any]) -> dict[str, str]:
+        external_ip = raw_json["origin"]
+        return {
+            "subject": f"Server connected from {external_ip}",
+            "body": f"Seems like today your server executing Airflow is connected from IP {external_ip}<br>",
+        }
+
+    email_info = prepare_email(get_ip.output)
+
+    EmailOperator(
+        task_id="send_email", to=email, subject=email_info["subject"], html_content=email_info["body"]
+    )
+
+
+example_dag = example_dag_decorator()
+As well as being a new way of making DAGs cleanly, the decorator also sets up any parameters you have in your function as DAG parameters, letting you set those parameters when triggering the DAG. You can then access the parameters from Python code, or from {{ context.params }} inside a Jinja template.
+
+Note
+
+Airflow will only load DAGs that appear in the top level of a DAG file. This means you cannot just declare a function with @dag - you must also call it at least once in your DAG file and assign it to a top-level object, as you can see in the example above.
+
+Control Flow
+By default, a DAG will only run a Task when all the Tasks it depends on are successful. There are several ways of modifying this, however:
+
+Branching - select which Task to move onto based on a condition
+
+Trigger Rules - set the conditions under which a DAG will run a task
+
+Setup and Teardown - define setup and teardown relationships
+
+Latest Only - a special form of branching that only runs on DAGs running against the present
+
+Depends On Past - tasks can depend on themselves from a previous run
+
+Branching
+You can make use of branching in order to tell the DAG not to run all dependent tasks, but instead to pick and choose one or more paths to go down. This is where the @task.branch decorator come in.
+
+The @task.branch decorator is much like @task, except that it expects the decorated function to return an ID to a task (or a list of IDs). The specified task is followed, while all other paths are skipped. It can also return None to skip all downstream tasks.
+
+The task_id returned by the Python function has to reference a task directly downstream from the @task.branch decorated task.
+
+Note
+
+When a Task is downstream of both the branching operator and downstream of one or more of the selected tasks, it will not be skipped:
+
+../_images/branch_note.png
+The paths of the branching task are branch_a, join and branch_b. Since join is a downstream task of branch_a, it will still be run, even though it was not returned as part of the branch decision.
+
+The @task.branch can also be used with XComs allowing branching context to dynamically decide what branch to follow based on upstream tasks. For example:
+
+@task.branch(task_id="branch_task")
+def branch_func(ti=None):
+    xcom_value = int(ti.xcom_pull(task_ids="start_task"))
+    if xcom_value >= 5:
+        return "continue_task"
+    elif xcom_value >= 3:
+        return "stop_task"
+    else:
+        return None
+
+
+start_op = BashOperator(
+    task_id="start_task",
+    bash_command="echo 5",
+    do_xcom_push=True,
+    dag=dag,
+)
+
+branch_op = branch_func()
+
+continue_op = EmptyOperator(task_id="continue_task", dag=dag)
+stop_op = EmptyOperator(task_id="stop_task", dag=dag)
+
+start_op >> branch_op >> [continue_op, stop_op]
+If you wish to implement your own operators with branching functionality, you can inherit from BaseBranchOperator, which behaves similarly to @task.branch decorator but expects you to provide an implementation of the method choose_branch.
+
+Note
+
+The @task.branch decorator is recommended over directly instantiating BranchPythonOperator in a DAG. The latter should generally only be subclassed to implement a custom operator.
+
+As with the callable for @task.branch, this method can return the ID of a downstream task, or a list of task IDs, which will be run, and all others will be skipped. It can also return None to skip all downstream task:
+
+class MyBranchOperator(BaseBranchOperator):
+    def choose_branch(self, context):
+        """
+        Run an extra branch on the first day of the month
+        """
+        if context['data_interval_start'].day == 1:
+            return ['daily_task_id', 'monthly_task_id']
+        elif context['data_interval_start'].day == 2:
+            return 'daily_task_id'
+        else:
+            return None
+Similar like @task.branch decorator for regular Python code there are also branch decorators which use a virtual environment called @task.branch_virtualenv or external python called @task.branch_external_python.
+
+Latest Only
+Airflow’s DAG Runs are often run for a date that is not the same as the current date - for example, running one copy of a DAG for every day in the last month to backfill some data.
+
+There are situations, though, where you don’t want to let some (or all) parts of a DAG run for a previous date; in this case, you can use the LatestOnlyOperator.
+
+This special Operator skips all tasks downstream of itself if you are not on the “latest” DAG run (if the wall-clock time right now is between its execution_time and the next scheduled execution_time, and it was not an externally-triggered run).
+
+Here’s an example:
+
+airflow/example_dags/example_latest_only_with_trigger.py
+[source]
+
+import datetime
+
+import pendulum
+
+from airflow.models.dag import DAG
+from airflow.operators.empty import EmptyOperator
+from airflow.operators.latest_only import LatestOnlyOperator
+from airflow.utils.trigger_rule import TriggerRule
+
+with DAG(
+    dag_id="latest_only_with_trigger",
+    schedule=datetime.timedelta(hours=4),
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    catchup=False,
+    tags=["example3"],
+) as dag:
+    latest_only = LatestOnlyOperator(task_id="latest_only")
+    task1 = EmptyOperator(task_id="task1")
+    task2 = EmptyOperator(task_id="task2")
+    task3 = EmptyOperator(task_id="task3")
+    task4 = EmptyOperator(task_id="task4", trigger_rule=TriggerRule.ALL_DONE)
+
+    latest_only >> task1 >> [task3, task4]
+    task2 >> [task3, task4]
+In the case of this DAG:
+
+task1 is directly downstream of latest_only and will be skipped for all runs except the latest.
+
+task2 is entirely independent of latest_only and will run in all scheduled periods
+
+task3 is downstream of task1 and task2 and because of the default trigger rule being all_success will receive a cascaded skip from task1.
+
+task4 is downstream of task1 and task2, but it will not be skipped, since its trigger_rule is set to all_done.
+
+../_images/latest_only_with_trigger.png
+Depends On Past
+You can also say a task can only run if the previous run of the task in the previous DAG Run succeeded. To use this, you just need to set the depends_on_past argument on your Task to True.
+
+Note that if you are running the DAG at the very start of its life—specifically, its first ever automated run—then the Task will still run, as there is no previous run to depend on.
+
+Trigger Rules
+By default, Airflow will wait for all upstream (direct parents) tasks for a task to be successful before it runs that task.
+
+However, this is just the default behaviour, and you can control it using the trigger_rule argument to a Task. The options for trigger_rule are:
+
+all_success (default): All upstream tasks have succeeded
+
+all_failed: All upstream tasks are in a failed or upstream_failed state
+
+all_done: All upstream tasks are done with their execution
+
+all_skipped: All upstream tasks are in a skipped state
+
+one_failed: At least one upstream task has failed (does not wait for all upstream tasks to be done)
+
+one_success: At least one upstream task has succeeded (does not wait for all upstream tasks to be done)
+
+one_done: At least one upstream task succeeded or failed
+
+none_failed: All upstream tasks have not failed or upstream_failed - that is, all upstream tasks have succeeded or been skipped
+
+none_failed_min_one_success: All upstream tasks have not failed or upstream_failed, and at least one upstream task has succeeded.
+
+none_skipped: No upstream task is in a skipped state - that is, all upstream tasks are in a success, failed, or upstream_failed state
+
+always: No dependencies at all, run this task at any time
+
+You can also combine this with the Depends On Past functionality if you wish.
+
+Note
+
+It’s important to be aware of the interaction between trigger rules and skipped tasks, especially tasks that are skipped as part of a branching operation. You almost never want to use all_success or all_failed downstream of a branching operation.
+
+Skipped tasks will cascade through trigger rules all_success and all_failed, and cause them to skip as well. Consider the following DAG:
+
+# dags/branch_without_trigger.py
+import pendulum
+
+from airflow.decorators import task
+from airflow.models import DAG
+from airflow.operators.empty import EmptyOperator
+
+dag = DAG(
+    dag_id="branch_without_trigger",
+    schedule="@once",
+    start_date=pendulum.datetime(2019, 2, 28, tz="UTC"),
+)
+
+run_this_first = EmptyOperator(task_id="run_this_first", dag=dag)
+
+
+@task.branch(task_id="branching")
+def do_branching():
+    return "branch_a"
+
+
+branching = do_branching()
+
+branch_a = EmptyOperator(task_id="branch_a", dag=dag)
+follow_branch_a = EmptyOperator(task_id="follow_branch_a", dag=dag)
+
+branch_false = EmptyOperator(task_id="branch_false", dag=dag)
+
+join = EmptyOperator(task_id="join", dag=dag)
+
+run_this_first >> branching
+branching >> branch_a >> follow_branch_a >> join
+branching >> branch_false >> join
+join is downstream of follow_branch_a and branch_false. The join task will show up as skipped because its trigger_rule is set to all_success by default, and the skip caused by the branching operation cascades down to skip a task marked as all_success.
+
+../_images/branch_without_trigger.png
+By setting trigger_rule to none_failed_min_one_success in the join task, we can instead get the intended behaviour:
+
+../_images/branch_with_trigger.png
+Setup and teardown
+In data workflows it’s common to create a resource (such as a compute resource), use it to do some work, and then tear it down. Airflow provides setup and teardown tasks to support this need.
+
+Please see main article Setup and Teardown for details on how to use this feature.
+
+Dynamic DAGs
+Since a DAG is defined by Python code, there is no need for it to be purely declarative; you are free to use loops, functions, and more to define your DAG.
+
+For example, here is a DAG that uses a for loop to define some tasks:
+
+ with DAG("loop_example", ...):
+     first = EmptyOperator(task_id="first")
+     last = EmptyOperator(task_id="last")
+
+     options = ["branch_a", "branch_b", "branch_c", "branch_d"]
+     for option in options:
+         t = EmptyOperator(task_id=option)
+         first >> t >> last
+In general, we advise you to try and keep the topology (the layout) of your DAG tasks relatively stable; dynamic DAGs are usually better used for dynamically loading configuration options or changing operator options.
+
+DAG Visualization
+If you want to see a visual representation of a DAG, you have two options:
+
+You can load up the Airflow UI, navigate to your DAG, and select “Graph”
+
+You can run airflow dags show, which renders it out as an image file
+
+We generally recommend you use the Graph view, as it will also show you the state of all the Task Instances within any DAG Run you select.
+
+Of course, as you develop out your DAGs they are going to get increasingly complex, so we provide a few ways to modify these DAG views to make them easier to understand.
+
+TaskGroups
+A TaskGroup can be used to organize tasks into hierarchical groups in Graph view. It is useful for creating repeating patterns and cutting down visual clutter.
+
+Unlike SubDAGs, TaskGroups are purely a UI grouping concept. Tasks in TaskGroups live on the same original DAG, and honor all the DAG settings and pool configurations.
+
+../_images/task_group.gif
+Dependency relationships can be applied across all tasks in a TaskGroup with the >> and << operators. For example, the following code puts task1 and task2 in TaskGroup group1 and then puts both tasks upstream of task3:
+
+ from airflow.decorators import task_group
+
+
+ @task_group()
+ def group1():
+     task1 = EmptyOperator(task_id="task1")
+     task2 = EmptyOperator(task_id="task2")
+
+
+ task3 = EmptyOperator(task_id="task3")
+
+ group1() >> task3
+TaskGroup also supports default_args like DAG, it will overwrite the default_args in DAG level:
+
+import datetime
+
+from airflow import DAG
+from airflow.decorators import task_group
+from airflow.operators.bash import BashOperator
+from airflow.operators.empty import EmptyOperator
+
+with DAG(
+    dag_id="dag1",
+    start_date=datetime.datetime(2016, 1, 1),
+    schedule="@daily",
+    default_args={"retries": 1},
+):
+
+    @task_group(default_args={"retries": 3})
+    def group1():
+        """This docstring will become the tooltip for the TaskGroup."""
+        task1 = EmptyOperator(task_id="task1")
+        task2 = BashOperator(task_id="task2", bash_command="echo Hello World!", retries=2)
+        print(task1.retries)  # 3
+        print(task2.retries)  # 2
+If you want to see a more advanced use of TaskGroup, you can look at the example_task_group_decorator.py example DAG that comes with Airflow.
+
+Note
+
+By default, child tasks/TaskGroups have their IDs prefixed with the group_id of their parent TaskGroup. This helps to ensure uniqueness of group_id and task_id throughout the DAG.
+
+To disable the prefixing, pass prefix_group_id=False when creating the TaskGroup, but note that you will now be responsible for ensuring every single task and group has a unique ID of its own.
+
+Note
+
+When using the @task_group decorator, the decorated-function’s docstring will be used as the TaskGroups tooltip in the UI except when a tooltip value is explicitly supplied.
+
+Edge Labels
+As well as grouping tasks into groups, you can also label the dependency edges between different tasks in the Graph view - this can be especially useful for branching areas of your DAG, so you can label the conditions under which certain branches might run.
+
+To add labels, you can use them directly inline with the >> and << operators:
+
+from airflow.utils.edgemodifier import Label
+
+my_task >> Label("When empty") >> other_task
+Or, you can pass a Label object to set_upstream/set_downstream:
+
+from airflow.utils.edgemodifier import Label
+
+my_task.set_downstream(other_task, Label("When empty"))
+Here’s an example DAG which illustrates labeling different branches:
+
+../_images/edge_label_example.png
+airflow/example_dags/example_branch_labels.py
+[source]
+
+
+with DAG(
+    "example_branch_labels",
+    schedule="@daily",
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    catchup=False,
+) as dag:
+    ingest = EmptyOperator(task_id="ingest")
+    analyse = EmptyOperator(task_id="analyze")
+    check = EmptyOperator(task_id="check_integrity")
+    describe = EmptyOperator(task_id="describe_integrity")
+    error = EmptyOperator(task_id="email_error")
+    save = EmptyOperator(task_id="save")
+    report = EmptyOperator(task_id="report")
+
+    ingest >> analyse >> check
+    check >> Label("No errors") >> save >> report
+    check >> Label("Errors found") >> describe >> error >> report
+DAG & Task Documentation
+It’s possible to add documentation or notes to your DAGs & task objects that are visible in the web interface (“Graph” & “Tree” for DAGs, “Task Instance Details” for tasks).
+
+There are a set of special task attributes that get rendered as rich content if defined:
+
+attribute
+
+rendered to
+
+doc
+
+monospace
+
+doc_json
+
+json
+
+doc_yaml
+
+yaml
+
+doc_md
+
+markdown
+
+doc_rst
+
+reStructuredText
+
+Please note that for DAGs, doc_md is the only attribute interpreted. For DAGs it can contain a string or the reference to a template file. Template references are recognized by str ending in .md. If a relative path is supplied it will start from the folder of the DAG file. Also the template file must exist or Airflow will throw a jinja2.exceptions.TemplateNotFound exception.
+
+This is especially useful if your tasks are built dynamically from configuration files, as it allows you to expose the configuration that led to the related tasks in Airflow:
+
+"""
+### My great DAG
+"""
+import pendulum
+
+dag = DAG(
+    "my_dag",
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    schedule="@daily",
+    catchup=False,
+)
+dag.doc_md = __doc__
+
+t = BashOperator("foo", dag=dag)
+t.doc_md = """\
+#Title"
+Here's a [url](www.airbnb.com)
+"""
+SubDAGs
+Note
+
+SubDAG is deprecated hence TaskGroup is always the preferred choice.
+
+Sometimes, you will find that you are regularly adding exactly the same set of tasks to every DAG, or you want to group a lot of tasks into a single, logical unit. This is what SubDAGs are for.
+
+For example, here’s a DAG that has a lot of parallel tasks in two sections:
+
+../_images/subdag_before.png
+We can combine all of the parallel task-* operators into a single SubDAG, so that the resulting DAG resembles the following:
+
+../_images/subdag_after.png
+Note that SubDAG operators should contain a factory method that returns a DAG object. This will prevent the SubDAG from being treated like a separate DAG in the main UI - remember, if Airflow sees a DAG at the top level of a Python file, it will load it as its own DAG. For example:
+
+airflow/example_dags/subdags/subdag.py
+[source]
+
+import pendulum
+
+from airflow.models.dag import DAG
+from airflow.operators.empty import EmptyOperator
+
+
+def subdag(parent_dag_name, child_dag_name, args) -> DAG:
+    """
+    Generate a DAG to be used as a subdag.
+
+    :param str parent_dag_name: Id of the parent DAG
+    :param str child_dag_name: Id of the child DAG
+    :param dict args: Default arguments to provide to the subdag
+    :return: DAG to use as a subdag
+    """
+    dag_subdag = DAG(
+        dag_id=f"{parent_dag_name}.{child_dag_name}",
+        default_args=args,
+        start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+        catchup=False,
+        schedule="@daily",
+    )
+
+    for i in range(5):
+        EmptyOperator(
+            task_id=f"{child_dag_name}-task-{i + 1}",
+            default_args=args,
+            dag=dag_subdag,
+        )
+
+    return dag_subdag
+
+
+This SubDAG can then be referenced in your main DAG file:
+
+airflow/example_dags/example_subdag_operator.py
+[source]
+
+import datetime
+
+from airflow.example_dags.subdags.subdag import subdag
+from airflow.models.dag import DAG
+from airflow.operators.empty import EmptyOperator
+from airflow.operators.subdag import SubDagOperator
+
+DAG_NAME = "example_subdag_operator"
+
+with DAG(
+    dag_id=DAG_NAME,
+    default_args={"retries": 2},
+    start_date=datetime.datetime(2022, 1, 1),
+    schedule="@once",
+    tags=["example"],
+) as dag:
+    start = EmptyOperator(
+        task_id="start",
+    )
+
+    section_1 = SubDagOperator(
+        task_id="section-1",
+        subdag=subdag(DAG_NAME, "section-1", dag.default_args),
+    )
+
+    some_other_task = EmptyOperator(
+        task_id="some-other-task",
+    )
+
+    section_2 = SubDagOperator(
+        task_id="section-2",
+        subdag=subdag(DAG_NAME, "section-2", dag.default_args),
+    )
+
+    end = EmptyOperator(
+        task_id="end",
+    )
+
+    start >> section_1 >> some_other_task >> section_2 >> end
+You can zoom into a SubDagOperator from the graph view of the main DAG to show the tasks contained within the SubDAG:
+
+../_images/subdag_zoom.png
+Some other tips when using SubDAGs:
+
+By convention, a SubDAG’s dag_id should be prefixed by the name of its parent DAG and a dot (parent.child)
+
+You should share arguments between the main DAG and the SubDAG by passing arguments to the SubDAG operator (as demonstrated above)
+
+SubDAGs must have a schedule and be enabled. If the SubDAG’s schedule is set to None or @once, the SubDAG will succeed without having done anything.
+
+Clearing a SubDagOperator also clears the state of the tasks within it.
+
+Marking success on a SubDagOperator does not affect the state of the tasks within it.
+
+Refrain from using Depends On Past in tasks within the SubDAG as this can be confusing.
+
+You can specify an executor for the SubDAG. It is common to use the SequentialExecutor if you want to run the SubDAG in-process and effectively limit its parallelism to one. Using LocalExecutor can be problematic as it may over-subscribe your worker, running multiple tasks in a single slot.
+
+See airflow/example_dags for a demonstration.
+
+Note
+
+Parallelism is not honored by SubDagOperator, and so resources could be consumed by SubdagOperators beyond any limits you may have set.
+
+TaskGroups vs SubDAGs
+SubDAGs, while serving a similar purpose as TaskGroups, introduces both performance and functional issues due to its implementation.
+
+The SubDagOperator starts a BackfillJob, which ignores existing parallelism configurations potentially oversubscribing the worker environment.
+
+SubDAGs have their own DAG attributes. When the SubDAG DAG attributes are inconsistent with its parent DAG, unexpected behavior can occur.
+
+Unable to see the “full” DAG in one view as SubDAGs exists as a full fledged DAG.
+
+SubDAGs introduces all sorts of edge cases and caveats. This can disrupt user experience and expectation.
+
+TaskGroups, on the other hand, is a better option given that it is purely a UI grouping concept. All tasks within the TaskGroup still behave as any other tasks outside of the TaskGroup.
+
+You can see the core differences between these two constructs.
+
+TaskGroup
+
+SubDAG
+
+Repeating patterns as part of the same DAG
+
+Repeating patterns as a separate DAG
+
+One set of views and statistics for the DAG
+
+Separate set of views and statistics between parent and child DAGs
+
+One set of DAG configuration
+
+Several sets of DAG configurations
+
+Honors parallelism configurations through existing SchedulerJob
+
+Does not honor parallelism configurations due to newly spawned BackfillJob
+
+Simple construct declaration with context manager
+
+Complex DAG factory with naming restrictions
+
+Packaging DAGs
+While simpler DAGs are usually only in a single Python file, it is not uncommon that more complex DAGs might be spread across multiple files and have dependencies that should be shipped with them (“vendored”).
+
+You can either do this all inside of the DAG_FOLDER, with a standard filesystem layout, or you can package the DAG and all of its Python files up as a single zip file. For instance, you could ship two DAGs along with a dependency they need as a zip file with the following contents:
+
+my_dag1.py
+my_dag2.py
+package1/__init__.py
+package1/functions.py
+Note that packaged DAGs come with some caveats:
+
+They cannot be used if you have pickling enabled for serialization
+
+They cannot contain compiled libraries (e.g. libz.so), only pure Python
+
+They will be inserted into Python’s sys.path and importable by any other code in the Airflow process, so ensure the package names don’t clash with other packages already installed on your system.
+
+In general, if you have a complex set of compiled dependencies and modules, you are likely better off using the Python virtualenv system and installing the necessary packages on your target systems with pip.
+
+.airflowignore
+An .airflowignore file specifies the directories or files in DAG_FOLDER or PLUGINS_FOLDER that Airflow should intentionally ignore. Airflow supports two syntax flavors for patterns in the file, as specified by the DAG_IGNORE_FILE_SYNTAX configuration parameter (added in Airflow 2.3): regexp and glob.
+
+Note
+
+The default DAG_IGNORE_FILE_SYNTAX is regexp to ensure backwards compatibility.
+
+For the regexp pattern syntax (the default), each line in .airflowignore specifies a regular expression pattern, and directories or files whose names (not DAG id) match any of the patterns would be ignored (under the hood, Pattern.search() is used to match the pattern). Use the # character to indicate a comment; all characters on lines starting with # will be ignored.
+
+As with most regexp matching in Airflow, the regexp engine is re2, which explicitly doesn’t support many advanced features, please check its documentation for more information.
+
+With the glob syntax, the patterns work just like those in a .gitignore file:
+
+The * character will any number of characters, except /
+
+The ? character will match any single character, except /
+
+The range notation, e.g. [a-zA-Z], can be used to match one of the characters in a range
+
+A pattern can be negated by prefixing with !. Patterns are evaluated in order so a negation can override a previously defined pattern in the same file or patterns defined in a parent directory.
+
+A double asterisk (**) can be used to match across directories. For example, **/__pycache__/ will ignore __pycache__ directories in each sub-directory to infinite depth.
+
+If there is a / at the beginning or middle (or both) of the pattern, then the pattern is relative to the directory level of the particular .airflowignore file itself. Otherwise the pattern may also match at any level below the .airflowignore level.
+
+The .airflowignore file should be put in your DAG_FOLDER. For example, you can prepare a .airflowignore file using the regexp syntax with content
+
+project_a
+tenant_[\d]
+Or, equivalently, in the glob syntax
+
+**/*project_a*
+tenant_[0-9]*
+Then files like project_a_dag_1.py, TESTING_project_a.py, tenant_1.py, project_a/dag_1.py, and tenant_1/dag_1.py in your DAG_FOLDER would be ignored (If a directory’s name matches any of the patterns, this directory and all its subfolders would not be scanned by Airflow at all. This improves efficiency of DAG finding).
+
+The scope of a .airflowignore file is the directory it is in plus all its subfolders. You can also prepare .airflowignore file for a subfolder in DAG_FOLDER and it would only be applicable for that subfolder.
+
+DAG Dependencies
+Added in Airflow 2.1
+
+While dependencies between tasks in a DAG are explicitly defined through upstream and downstream relationships, dependencies between DAGs are a bit more complex. In general, there are two ways in which one DAG can depend on another:
+
+triggering - TriggerDagRunOperator
+
+waiting - ExternalTaskSensor
+
+Additional difficulty is that one DAG could wait for or trigger several runs of the other DAG with different data intervals. The Dag Dependencies view Menu -> Browse -> DAG Dependencies helps visualize dependencies between DAGs. The dependencies are calculated by the scheduler during DAG serialization and the webserver uses them to build the dependency graph.
+
+The dependency detector is configurable, so you can implement your own logic different than the defaults in DependencyDetector
+
+DAG pausing, deactivation and deletion
+The DAGs have several states when it comes to being “not running”. DAGs can be paused, deactivated and finally all metadata for the DAG can be deleted.
+
+Dag can be paused via UI when it is present in the DAGS_FOLDER, and scheduler stored it in the database, but the user chose to disable it via the UI. The “pause” and “unpause” actions are available via UI and API. Paused DAG is not scheduled by the Scheduler, but you can trigger them via UI for manual runs. In the UI, you can see Paused DAGs (in Paused tab). The DAGs that are un-paused can be found in the Active tab. When a DAG is paused, any running tasks are allowed to complete and all downstream tasks are put in to a state of “Scheduled”. When the DAG is unpaused, any “scheduled” tasks will begin running according to the DAG logic. DAGs with no “scheduled” tasks will begin running according to their schedule.
+
+Dag can be deactivated (do not confuse it with Active tag in the UI) by removing them from the DAGS_FOLDER. When scheduler parses the DAGS_FOLDER and misses the DAG that it had seen before and stored in the database it will set is as deactivated. The metadata and history of the DAG` is kept for deactivated DAGs and when the DAG is re-added to the DAGS_FOLDER it will be again activated and history will be visible. You cannot activate/deactivate DAG via UI or API, this can only be done by removing files from the DAGS_FOLDER. Once again - no data for historical runs of the DAG are lost when it is deactivated by the scheduler. Note that the Active tab in Airflow UI refers to DAGs that are not both Activated and Not paused so this might initially be a little confusing.
+
+You can’t see the deactivated DAGs in the UI - you can sometimes see the historical runs, but when you try to see the information about those you will see the error that the DAG is missing.
+
+You can also delete the DAG metadata from the metadata database using UI or API, but it does not always result in disappearing of the DAG from the UI - which might be also initially a bit confusing. If the DAG is still in DAGS_FOLDER when you delete the metadata, the DAG will re-appear as Scheduler will parse the folder, only historical runs information for the DAG will be removed.
+
+This all means that if you want to actually delete a DAG and its all historical metadata, you need to do it in three steps:
+
+pause the DAG
+
+delete the historical metadata from the database, via UI or API
+
+delete the DAG file from the DAGS_FOLDER and wait until it becomes inactive
+
+DAG Auto-pausing (Experimental)
+Dags can be configured to be auto-paused as well. There is a Airflow configuration which allows for automatically disabling of a dag if it fails for N number of times consecutively.
+
+max_consecutive_failed_dag_runs_per_dag
+
+we can also provide and override these configuration from DAG argument:
+
+max_consecutive_failed_dag_runs: Overrides max_consecutive_failed_dag_runs_per_dag.
+DAG Runs
+A DAG Run is an object representing an instantiation of the DAG in time. Any time the DAG is executed, a DAG Run is created and all tasks inside it are executed. The status of the DAG Run depends on the tasks states. Each DAG Run is run separately from one another, meaning that you can have many runs of a DAG at the same time.
+
+DAG Run Status
+A DAG Run status is determined when the execution of the DAG is finished. The execution of the DAG depends on its containing tasks and their dependencies. The status is assigned to the DAG Run when all of the tasks are in the one of the terminal states (i.e. if there is no possible transition to another state) like success, failed or skipped. The DAG Run is having the status assigned based on the so-called “leaf nodes” or simply “leaves”. Leaf nodes are the tasks with no children.
+
+There are two possible terminal states for the DAG Run:
+
+success if all of the leaf nodes states are either success or skipped,
+
+failed if any of the leaf nodes state is either failed or upstream_failed.
+
+Note
+
+Be careful if some of your tasks have defined some specific trigger rule. These can lead to some unexpected behavior, e.g. if you have a leaf task with trigger rule “all_done”, it will be executed regardless of the states of the rest of the tasks and if it will succeed, then the whole DAG Run will also be marked as success, even if something failed in the middle.
+
+Added in Airflow 2.7
+
+DAGs that have a currently running DAG run can be shown on the UI dashboard in the “Running” tab. Similarly, DAGs whose latest DAG run is marked as failed can be found on the “Failed” tab.
+
+Data Interval
+Each DAG run in Airflow has an assigned “data interval” that represents the time range it operates in. For a DAG scheduled with @daily, for example, each of its data interval would start each day at midnight (00:00) and end at midnight (24:00).
+
+A DAG run is usually scheduled after its associated data interval has ended, to ensure the run is able to collect all the data within the time period. In other words, a run covering the data period of 2020-01-01 generally does not start to run until 2020-01-01 has ended, i.e. after 2020-01-02 00:00:00.
+
+All dates in Airflow are tied to the data interval concept in some way. The “logical date” (also called execution_date in Airflow versions prior to 2.2) of a DAG run, for example, denotes the start of the data interval, not when the DAG is actually executed.
+
+Similarly, since the start_date argument for the DAG and its tasks points to the same logical date, it marks the start of the DAG’s first data interval, not when tasks in the DAG will start running. In other words, a DAG run will only be scheduled one interval after start_date.
+
+Tip
+
+If a cron expression or timedelta object is not enough to express your DAG’s schedule, logical date, or data interval, see Timetables. For more information on logical date, see Running DAGs and What does execution_date mean?
+
+Re-run DAG
+There can be cases where you will want to execute your DAG again. One such case is when the scheduled DAG run fails.
+
+Catchup
+An Airflow DAG defined with a start_date, possibly an end_date, and a non-dataset schedule, defines a series of intervals which the scheduler turns into individual DAG runs and executes. The scheduler, by default, will kick off a DAG Run for any data interval that has not been run since the last data interval (or has been cleared). This concept is called Catchup.
+
+If your DAG is not written to handle its catchup (i.e., not limited to the interval, but instead to Now for instance.), then you will want to turn catchup off. This can be done by setting catchup=False in DAG or catchup_by_default=False in the configuration file. When turned off, the scheduler creates a DAG run only for the latest interval.
+
+"""
+Code that goes along with the Airflow tutorial located at:
+https://github.com/apache/airflow/blob/main/airflow/example_dags/tutorial.py
+"""
+from airflow.models.dag import DAG
+from airflow.operators.bash import BashOperator
+
+import datetime
+import pendulum
+
+dag = DAG(
+    "tutorial",
+    default_args={
+        "depends_on_past": True,
+        "retries": 1,
+        "retry_delay": datetime.timedelta(minutes=3),
+    },
+    start_date=pendulum.datetime(2015, 12, 1, tz="UTC"),
+    description="A simple tutorial DAG",
+    schedule="@daily",
+    catchup=False,
+)
+In the example above, if the DAG is picked up by the scheduler daemon on 2016-01-02 at 6 AM, (or from the command line), a single DAG Run will be created with a data between 2016-01-01 and 2016-01-02, and the next one will be created just after midnight on the morning of 2016-01-03 with a data interval between 2016-01-02 and 2016-01-03.
+
+Be aware that using a datetime.timedelta object as schedule can lead to a different behavior. In such a case, the single DAG Run created will cover data between 2016-01-01 06:00 and 2016-01-02 06:00 (one schedule interval ending now). For a more detailed description of the differences between a cron and a delta based schedule, take a look at the timetables comparison
+
+If the dag.catchup value had been True instead, the scheduler would have created a DAG Run for each completed interval between 2015-12-01 and 2016-01-02 (but not yet one for 2016-01-02, as that interval hasn’t completed) and the scheduler will execute them sequentially.
+
+Catchup is also triggered when you turn off a DAG for a specified period and then re-enable it.
+
+This behavior is great for atomic datasets that can easily be split into periods. Turning catchup off is great if your DAG performs catchup internally.
+
+Backfill
+There can be the case when you may want to run the DAG for a specified historical period e.g., A data filling DAG is created with start_date 2019-11-21, but another user requires the output data from a month ago i.e., 2019-10-21. This process is known as Backfill.
+
+You may want to backfill the data even in the cases when catchup is disabled. This can be done through CLI. Run the below command
+
+airflow dags backfill \
+    --start-date START_DATE \
+    --end-date END_DATE \
+    dag_id
+The backfill command will re-run all the instances of the dag_id for all the intervals within the start date and end date.
+
+Re-run Tasks
+Some of the tasks can fail during the scheduled run. Once you have fixed the errors after going through the logs, you can re-run the tasks by clearing them for the scheduled date. Clearing a task instance doesn’t delete the task instance record. Instead, it updates max_tries to 0 and sets the current task instance state to None, which causes the task to re-run.
+
+Click on the failed task in the Tree or Graph views and then click on Clear. The executor will re-run it.
+
+There are multiple options you can select to re-run -
+
+Past - All the instances of the task in the runs before the DAG’s most recent data interval
+
+Future - All the instances of the task in the runs after the DAG’s most recent data interval
+
+Upstream - The upstream tasks in the current DAG
+
+Downstream - The downstream tasks in the current DAG
+
+Recursive - All the tasks in the child DAGs and parent DAGs
+
+Failed - Only the failed tasks in the DAG’s most recent run
+
+You can also clear the task through CLI using the command:
+
+airflow tasks clear dag_id \
+    --task-regex task_regex \
+    --start-date START_DATE \
+    --end-date END_DATE
+For the specified dag_id and time interval, the command clears all instances of the tasks matching the regex. For more options, you can check the help of the clear command :
+
+airflow tasks clear --help
+External Triggers
+Note that DAG Runs can also be created manually through the CLI. Just run the command -
+
+airflow dags trigger --exec-date logical_date run_id
+The DAG Runs created externally to the scheduler get associated with the trigger’s timestamp and are displayed in the UI alongside scheduled DAG runs. The logical date passed inside the DAG can be specified using the -e argument. The default is the current date in the UTC timezone.
+
+In addition, you can also manually trigger a DAG Run using the web UI (tab DAGs -> column Links -> button Trigger Dag)
+
+Passing Parameters when triggering DAGs
+When triggering a DAG from the CLI, the REST API or the UI, it is possible to pass configuration for a DAG Run as a JSON blob.
+
+Example of a parameterized DAG:
+
+import pendulum
+
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+
+dag = DAG(
+    "example_parameterized_dag",
+    schedule=None,
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    catchup=False,
+)
+
+parameterized_task = BashOperator(
+    task_id="parameterized_task",
+    bash_command="echo value: {{ dag_run.conf['conf1'] }}",
+    dag=dag,
+)
+Note: The parameters from dag_run.conf can only be used in a template field of an operator.
+
+Using CLI
+airflow dags trigger --conf '{"conf1": "value1"}' example_parameterized_dag
+Using UI
+In the UI the parameters to trigger a DAG can be better represented via params definition as described in Params documentation. Via defined params a proper form for value entry is rendered.
+
+If the DAG does not define params the form is usually skipped, via the configuration option show_trigger_form_if_no_params it is possible to force the display the classic form of a dict-only entry to pass configuration options.
+
+../_images/example_passing_conf.png
+Please consider to convert such usage to params as this is the more convenient way and allows also validation of user input.
+
+To Keep in Mind
+Marking task instances as failed can be done through the UI. This can be used to stop running task instances.
+
+Marking task instances as successful can be done through the UI. This is mostly to fix false negatives, or for instance, when the fix has been applied outside of Airflow.
+Tasks
+A Task is the basic unit of execution in Airflow. Tasks are arranged into DAGs, and then have upstream and downstream dependencies set between them into order to express the order they should run in.
+
+There are three basic kinds of Task:
+
+Operators, predefined task templates that you can string together quickly to build most parts of your DAGs.
+
+Sensors, a special subclass of Operators which are entirely about waiting for an external event to happen.
+
+A TaskFlow-decorated @task, which is a custom Python function packaged up as a Task.
+
+Internally, these are all actually subclasses of Airflow’s BaseOperator, and the concepts of Task and Operator are somewhat interchangeable, but it’s useful to think of them as separate concepts - essentially, Operators and Sensors are templates, and when you call one in a DAG file, you’re making a Task.
+
+Relationships
+The key part of using Tasks is defining how they relate to each other - their dependencies, or as we say in Airflow, their upstream and downstream tasks. You declare your Tasks first, and then you declare their dependencies second.
+
+Note
+
+We call the upstream task the one that is directly preceding the other task. We used to call it a parent task before. Be aware that this concept does not describe the tasks that are higher in the tasks hierarchy (i.e. they are not a direct parents of the task). Same definition applies to downstream task, which needs to be a direct child of the other task.
+
+There are two ways of declaring dependencies - using the >> and << (bitshift) operators:
+
+first_task >> second_task >> [third_task, fourth_task]
+Or the more explicit set_upstream and set_downstream methods:
+
+first_task.set_downstream(second_task)
+third_task.set_upstream(second_task)
+These both do exactly the same thing, but in general we recommend you use the bitshift operators, as they are easier to read in most cases.
+
+By default, a Task will run when all of its upstream (parent) tasks have succeeded, but there are many ways of modifying this behaviour to add branching, to only wait for some upstream tasks, or to change behaviour based on where the current run is in history. For more, see Control Flow.
+
+Tasks don’t pass information to each other by default, and run entirely independently. If you want to pass information from one Task to another, you should use XComs.
+
+Task Instances
+Much in the same way that a DAG is instantiated into a DAG Run each time it runs, the tasks under a DAG are instantiated into Task Instances.
+
+An instance of a Task is a specific run of that task for a given DAG (and thus for a given data interval). They are also the representation of a Task that has state, representing what stage of the lifecycle it is in.
+
+The possible states for a Task Instance are:
+
+none: The Task has not yet been queued for execution (its dependencies are not yet met)
+
+scheduled: The scheduler has determined the Task’s dependencies are met and it should run
+
+queued: The task has been assigned to an Executor and is awaiting a worker
+
+running: The task is running on a worker (or on a local/synchronous executor)
+
+success: The task finished running without errors
+
+restarting: The task was externally requested to restart when it was running
+
+failed: The task had an error during execution and failed to run
+
+skipped: The task was skipped due to branching, LatestOnly, or similar.
+
+upstream_failed: An upstream task failed and the Trigger Rule says we needed it
+
+up_for_retry: The task failed, but has retry attempts left and will be rescheduled.
+
+up_for_reschedule: The task is a Sensor that is in reschedule mode
+
+deferred: The task has been deferred to a trigger
+
+removed: The task has vanished from the DAG since the run started
+
+../_images/task_lifecycle_diagram.png
+Ideally, a task should flow from none, to scheduled, to queued, to running, and finally to success.
+
+When any custom Task (Operator) is running, it will get a copy of the task instance passed to it; as well as being able to inspect task metadata, it also contains methods for things like XComs.
+
+Relationship Terminology
+For any given Task Instance, there are two types of relationships it has with other instances.
+
+Firstly, it can have upstream and downstream tasks:
+
+task1 >> task2 >> task3
+When a DAG runs, it will create instances for each of these tasks that are upstream/downstream of each other, but which all have the same data interval.
+
+There may also be instances of the same task, but for different data intervals - from other runs of the same DAG. We call these previous and next - it is a different relationship to upstream and downstream!
+
+Note
+
+Some older Airflow documentation may still use “previous” to mean “upstream”. If you find an occurrence of this, please help us fix it!
+
+Timeouts
+If you want a task to have a maximum runtime, set its execution_timeout attribute to a datetime.timedelta value that is the maximum permissible runtime. This applies to all Airflow tasks, including sensors. execution_timeout controls the maximum time allowed for every execution. If execution_timeout is breached, the task times out and AirflowTaskTimeout is raised.
+
+In addition, sensors have a timeout parameter. This only matters for sensors in reschedule mode. timeout controls the maximum time allowed for the sensor to succeed. If timeout is breached, AirflowSensorTimeout will be raised and the sensor fails immediately without retrying.
+
+The following SFTPSensor example illustrates this. The sensor is in reschedule mode, meaning it is periodically executed and rescheduled until it succeeds.
+
+Each time the sensor pokes the SFTP server, it is allowed to take maximum 60 seconds as defined by execution_timeout.
+
+If it takes the sensor more than 60 seconds to poke the SFTP server, AirflowTaskTimeout will be raised. The sensor is allowed to retry when this happens. It can retry up to 2 times as defined by retries.
+
+From the start of the first execution, till it eventually succeeds (i.e. after the file ‘root/test’ appears), the sensor is allowed maximum 3600 seconds as defined by timeout. In other words, if the file does not appear on the SFTP server within 3600 seconds, the sensor will raise AirflowSensorTimeout. It will not retry when this error is raised.
+
+If the sensor fails due to other reasons such as network outages during the 3600 seconds interval, it can retry up to 2 times as defined by retries. Retrying does not reset the timeout. It will still have up to 3600 seconds in total for it to succeed.
+
+sensor = SFTPSensor(
+    task_id="sensor",
+    path="/root/test",
+    execution_timeout=timedelta(seconds=60),
+    timeout=3600,
+    retries=2,
+    mode="reschedule",
+)
+If you merely want to be notified if a task runs over but still let it run to completion, you want SLAs instead.
+
+SLAs
+An SLA, or a Service Level Agreement, is an expectation for the maximum time a Task should be completed relative to the Dag Run start time. If a task takes longer than this to run, it is then visible in the “SLA Misses” part of the user interface, as well as going out in an email of all tasks that missed their SLA.
+
+Tasks over their SLA are not cancelled, though - they are allowed to run to completion. If you want to cancel a task after a certain runtime is reached, you want Timeouts instead.
+
+To set an SLA for a task, pass a datetime.timedelta object to the Task/Operator’s sla parameter. You can also supply an sla_miss_callback that will be called when the SLA is missed if you want to run your own logic.
+
+If you want to disable SLA checking entirely, you can set check_slas = False in Airflow’s [core] configuration.
+
+To read more about configuring the emails, see Email Configuration.
+
+Note
+
+Manually-triggered tasks and tasks in event-driven DAGs will not be checked for an SLA miss. For more information on DAG schedule values see DAG Run.
+
+sla_miss_callback
+You can also supply an sla_miss_callback that will be called when the SLA is missed if you want to run your own logic. The function signature of an sla_miss_callback requires 5 parameters.
+
+dag
+
+Parent DAG Object for the DAGRun in which tasks missed their SLA.
+
+task_list
+
+String list (new-line separated, \n) of all tasks that missed their SLA since the last time that the sla_miss_callback ran.
+
+blocking_task_list
+
+Any task in the DAGRun(s) (with the same execution_date as a task that missed SLA) that is not in a SUCCESS state at the time that the sla_miss_callback runs. i.e. ‘running’, ‘failed’. These tasks are described as tasks that are blocking itself or another task from completing before its SLA window is complete.
+
+slas
+
+List of SlaMiss objects associated with the tasks in the task_list parameter.
+
+blocking_tis
+
+List of the TaskInstance objects that are associated with the tasks in the blocking_task_list parameter.
+
+Examples of sla_miss_callback function signature:
+
+def my_sla_miss_callback(dag, task_list, blocking_task_list, slas, blocking_tis):
+    ...
+def my_sla_miss_callback(*args):
+    ...
+Example DAG:
+
+airflow/example_dags/example_sla_dag.py
+[source]
+
+def sla_callback(dag, task_list, blocking_task_list, slas, blocking_tis):
+    print(
+        "The callback arguments are: ",
+        {
+            "dag": dag,
+            "task_list": task_list,
+            "blocking_task_list": blocking_task_list,
+            "slas": slas,
+            "blocking_tis": blocking_tis,
+        },
+    )
+
+
+@dag(
+    schedule="*/2 * * * *",
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    catchup=False,
+    sla_miss_callback=sla_callback,
+    default_args={"email": "email@example.com"},
+)
+def example_sla_dag():
+    @task(sla=datetime.timedelta(seconds=10))
+    def sleep_20():
+        """Sleep for 20 seconds"""
+        time.sleep(20)
+
+    @task
+    def sleep_30():
+        """Sleep for 30 seconds"""
+        time.sleep(30)
+
+    sleep_20() >> sleep_30()
+
+
+example_dag = example_sla_dag()
+
+Special Exceptions
+If you want to control your task’s state from within custom Task/Operator code, Airflow provides two special exceptions you can raise:
+
+AirflowSkipException will mark the current task as skipped
+
+AirflowFailException will mark the current task as failed ignoring any remaining retry attempts
+
+These can be useful if your code has extra knowledge about its environment and wants to fail/skip faster - e.g., skipping when it knows there’s no data available, or fast-failing when it detects its API key is invalid (as that will not be fixed by a retry).
+
+Zombie/Undead Tasks
+No system runs perfectly, and task instances are expected to die once in a while. Airflow detects two kinds of task/process mismatch:
+
+Zombie tasks are TaskInstances stuck in a running state despite their associated jobs being inactive (e.g. their process did not send a recent heartbeat as it got killed, or the machine died). Airflow will find these periodically, clean them up, and either fail or retry the task depending on its settings.
+
+Undead tasks are tasks that are not supposed to be running but are, often caused when you manually edit Task Instances via the UI. Airflow will find them periodically and terminate them.
+
+Below is the code snippet from the Airflow scheduler that runs periodically to detect zombie/undead tasks.
+
+airflow/jobs/scheduler_job_runner.py
+[source]
+
+    def _find_zombies(self) -> None:
+        """
+        Find zombie task instances and create a TaskCallbackRequest to be handled by the DAG processor.
+
+        Zombie instances are tasks haven't heartbeated for too long or have a no-longer-running LocalTaskJob.
+        """
+        from airflow.jobs.job import Job
+
+        self.log.debug("Finding 'running' jobs without a recent heartbeat")
+        limit_dttm = timezone.utcnow() - timedelta(seconds=self._zombie_threshold_secs)
+
+        with create_session() as session:
+            zombies: list[tuple[TI, str, str]] = (
+                session.execute(
+                    select(TI, DM.fileloc, DM.processor_subdir)
+                    .with_hint(TI, "USE INDEX (ti_state)", dialect_name="mysql")
+                    .join(Job, TI.job_id == Job.id)
+                    .join(DM, TI.dag_id == DM.dag_id)
+                    .where(TI.state == TaskInstanceState.RUNNING)
+                    .where(
+                        or_(
+                            Job.state != JobState.RUNNING,
+                            Job.latest_heartbeat < limit_dttm,
+                        )
+                    )
+                    .where(Job.job_type == "LocalTaskJob")
+                    .where(TI.queued_by_job_id == self.job.id)
+                )
+                .unique()
+                .all()
+            )
+
+        if zombies:
+            self.log.warning("Failing (%s) jobs without heartbeat after %s", len(zombies), limit_dttm)
+
+        for ti, file_loc, processor_subdir in zombies:
+            zombie_message_details = self._generate_zombie_message_details(ti)
+            request = TaskCallbackRequest(
+                full_filepath=file_loc,
+                processor_subdir=processor_subdir,
+                simple_task_instance=SimpleTaskInstance.from_ti(ti),
+                msg=str(zombie_message_details),
+            )
+            log_message = (
+                f"Detected zombie job: {request} "
+                "(See https://airflow.apache.org/docs/apache-airflow/"
+                "stable/core-concepts/tasks.html#zombie-undead-tasks)"
+            )
+            self._task_context_logger.error(log_message, ti=ti)
+            self.job.executor.send_callback(request)
+            Stats.incr("zombies_killed", tags={"dag_id": ti.dag_id, "task_id": ti.task_id})
+
+The explanation of the criteria used in the above snippet to detect zombie tasks is as below:
+
+Task Instance State
+
+Only task instances in the RUNNING state are considered potential zombies.
+
+Job State and Heartbeat Check
+
+Zombie tasks are identified if the associated job is not in the RUNNING state or if the latest heartbeat of the job is earlier than the calculated time threshold (limit_dttm). The heartbeat is a mechanism to indicate that a task or job is still alive and running.
+
+Job Type
+
+The job associated with the task must be of type LocalTaskJob.
+
+Queued by Job ID
+
+Only tasks queued by the same job that is currently being processed are considered.
+
+These conditions collectively help identify running tasks that may be zombies based on their state, associated job state, heartbeat status, job type, and the specific job that queued them. If a task meets these criteria, it is considered a potential zombie, and further actions, such as logging and sending a callback request, are taken.
+
+Reproducing zombie tasks locally
+If you’d like to reproduce zombie tasks for development/testing processes, follow the steps below:
+
+Set the below environment variables for your local Airflow setup (alternatively you could tweak the corresponding config values in airflow.cfg)
+
+export AIRFLOW__SCHEDULER__LOCAL_TASK_JOB_HEARTBEAT_SEC=600
+export AIRFLOW__SCHEDULER__SCHEDULER_ZOMBIE_TASK_THRESHOLD=2
+export AIRFLOW__SCHEDULER__ZOMBIE_DETECTION_INTERVAL=5
+Have a DAG with a task that takes about 10 minutes to complete(i.e. a long-running task). For example, you could use the below DAG:
+
+from airflow.decorators import dag
+from airflow.operators.bash import BashOperator
+from datetime import datetime
+
+
+@dag(start_date=datetime(2021, 1, 1), schedule="@once", catchup=False)
+def sleep_dag():
+    t1 = BashOperator(
+        task_id="sleep_10_minutes",
+        bash_command="sleep 600",
+    )
+
+
+sleep_dag()
+Run the above DAG and wait for a while. You should see the task instance becoming a zombie task and then being killed by the scheduler.
+
+Executor Configuration
+Some Executors allow optional per-task configuration - such as the KubernetesExecutor, which lets you set an image to run the task on.
+
+This is achieved via the executor_config argument to a Task or Operator. Here’s an example of setting the Docker image for a task that will run on the KubernetesExecutor:
+
+MyOperator(...,
+    executor_config={
+        "KubernetesExecutor":
+            {"image": "myCustomDockerImage"}
+    }
+)
+The settings you can pass into executor_config vary by executor, so read the individual executor documentation in order to see what you can set.
+Operators
+An Operator is conceptually a template for a predefined Task, that you can just define declaratively inside your DAG:
+
+with DAG("my-dag") as dag:
+    ping = HttpOperator(endpoint="http://example.com/update/")
+    email = EmailOperator(to="admin@example.com", subject="Update complete")
+
+    ping >> email
+Airflow has a very extensive set of operators available, with some built-in to the core or pre-installed providers. Some popular operators from core include:
+
+BashOperator - executes a bash command
+
+PythonOperator - calls an arbitrary Python function
+
+EmailOperator - sends an email
+
+Use the @task decorator to execute an arbitrary Python function. It doesn’t support rendering jinja templates passed as arguments.
+
+Note
+
+The @task decorator is recommended over the classic PythonOperator to execute Python callables with no template rendering in its arguments.
+
+For a list of all core operators, see: Core Operators and Hooks Reference.
+
+If the operator you need isn’t installed with Airflow by default, you can probably find it as part of our huge set of community provider packages. Some popular operators from here include:
+
+HttpOperator
+
+MySqlOperator
+
+PostgresOperator
+
+MsSqlOperator
+
+OracleOperator
+
+JdbcOperator
+
+DockerOperator
+
+HiveOperator
+
+S3FileTransformOperator
+
+PrestoToMySqlOperator
+
+SlackAPIOperator
+
+But there are many, many more - you can see the full list of all community-managed operators, hooks, sensors and transfers in our providers packages documentation.
+
+Note
+
+Inside Airflow’s code, we often mix the concepts of Tasks and Operators, and they are mostly interchangeable. However, when we talk about a Task, we mean the generic “unit of execution” of a DAG; when we talk about an Operator, we mean a reusable, pre-made Task template whose logic is all done for you and that just needs some arguments.
+
+Jinja Templating
+Airflow leverages the power of Jinja Templating and this can be a powerful tool to use in combination with macros.
+
+For example, say you want to pass the start of the data interval as an environment variable to a Bash script using the BashOperator:
+
+# The start of the data interval as YYYY-MM-DD
+date = "{{ ds }}"
+t = BashOperator(
+    task_id="test_env",
+    bash_command="/tmp/test.sh ",
+    dag=dag,
+    env={"DATA_INTERVAL_START": date},
+)
+Here, {{ ds }} is a templated variable, and because the env parameter of the BashOperator is templated with Jinja, the data interval’s start date will be available as an environment variable named DATA_INTERVAL_START in your Bash script.
+
+You can use Jinja templating with every parameter that is marked as “templated” in the documentation. Template substitution occurs just before the pre_execute function of your operator is called.
+
+You can also use Jinja templating with nested fields, as long as these nested fields are marked as templated in the structure they belong to: fields registered in template_fields property will be submitted to template substitution, like the path field in the example below:
+
+class MyDataReader:
+    template_fields: Sequence[str] = ("path",)
+
+    def __init__(self, my_path):
+        self.path = my_path
+
+    # [additional code here...]
+
+
+t = PythonOperator(
+    task_id="transform_data",
+    python_callable=transform_data,
+    op_args=[MyDataReader("/tmp/{{ ds }}/my_file")],
+    dag=dag,
+)
+Note
+
+The template_fields property is a class variable and guaranteed to be of a Sequence[str] type (i.e. a list or tuple of strings).
+
+Deep nested fields can also be substituted, as long as all intermediate fields are marked as template fields:
+
+class MyDataTransformer:
+    template_fields: Sequence[str] = ("reader",)
+
+    def __init__(self, my_reader):
+        self.reader = my_reader
+
+    # [additional code here...]
+
+
+class MyDataReader:
+    template_fields: Sequence[str] = ("path",)
+
+    def __init__(self, my_path):
+        self.path = my_path
+
+    # [additional code here...]
+
+
+t = PythonOperator(
+    task_id="transform_data",
+    python_callable=transform_data,
+    op_args=[MyDataTransformer(MyDataReader("/tmp/{{ ds }}/my_file"))],
+    dag=dag,
+)
+You can pass custom options to the Jinja Environment when creating your DAG. One common usage is to avoid Jinja from dropping a trailing newline from a template string:
+
+my_dag = DAG(
+    dag_id="my-dag",
+    jinja_environment_kwargs={
+        "keep_trailing_newline": True,
+        # some other jinja2 Environment options here
+    },
+)
+See the Jinja documentation to find all available options.
+
+Some operators will also consider strings ending in specific suffixes (defined in template_ext) to be references to files when rendering fields. This can be useful for loading scripts or queries directly from files rather than including them into DAG code.
+
+For example, consider a BashOperator which runs a multi-line bash script, this will load the file at script.sh and use its contents as the value for bash_command:
+
+run_script = BashOperator(
+    task_id="run_script",
+    bash_command="script.sh",
+)
+By default, paths provided in this way should be provided relative to the DAG’s folder (as this is the default Jinja template search path), but additional paths can be added by setting the template_searchpath arg on the DAG.
+
+In some cases, you may want to exclude a string from templating and use it directly. Consider the following task:
+
+print_script = BashOperator(
+    task_id="print_script",
+    bash_command="cat script.sh",
+)
+This will fail with TemplateNotFound: cat script.sh since Airflow would treat the string as a path to a file, not a command. We can prevent airflow from treating this value as a reference to a file by wrapping it in literal(). This approach disables the rendering of both macros and files and can be applied to selected nested fields while retaining the default templating rules for the remainder of the content.
+
+from airflow.utils.template import literal
+
+
+fixed_print_script = BashOperator(
+    task_id="fixed_print_script",
+    bash_command=literal("cat script.sh"),
+)
+New in version 2.8: literal() was added.
+
+Alternatively, if you want to prevent Airflow from treating a value as a reference to a file, you can override template_ext:
+
+fixed_print_script = BashOperator(
+    task_id="fixed_print_script",
+    bash_command="cat script.sh",
+)
+fixed_print_script.template_ext = ()
+Rendering Fields as Native Python Objects
+By default, all the template_fields are rendered as strings.
+
+Example, let’s say extract task pushes a dictionary (Example: {"1001": 301.27, "1002": 433.21, "1003": 502.22}) to XCom table. Now, when the following task is run, order_data argument is passed a string, example: '{"1001": 301.27, "1002": 433.21, "1003": 502.22}'.
+
+transform = PythonOperator(
+    task_id="transform",
+    op_kwargs={"order_data": "{{ti.xcom_pull('extract')}}"},
+    python_callable=transform,
+)
+If you instead want the rendered template field to return a Native Python object (dict in our example), you can pass render_template_as_native_obj=True to the DAG as follows:
+
+dag = DAG(
+    dag_id="example_template_as_python_object",
+    schedule=None,
+    start_date=pendulum.datetime(2021, 1, 1, tz="UTC"),
+    catchup=False,
+    render_template_as_native_obj=True,
+)
+
+
+@task(task_id="extract")
+def extract():
+    data_string = '{"1001": 301.27, "1002": 433.21, "1003": 502.22}'
+    return json.loads(data_string)
+
+
+def transform(order_data):
+    print(type(order_data))
+    total_order_value = 0
+    for value in order_data.values():
+        total_order_value += value
+    return {"total_order_value": total_order_value}
+
+
+extract_task = extract()
+
+transform_task = PythonOperator(
+    task_id="transform",
+    op_kwargs={"order_data": "{{ti.xcom_pull('extract')}}"},
+    python_callable=transform,
+)
+
+extract_task >> transform_task
+In this case, order_data argument is passed: {"1001": 301.27, "1002": 433.21, "1003": 502.22}.
+
+Airflow uses Jinja’s NativeEnvironment when render_template_as_native_obj is set to True. With NativeEnvironment, rendering a template produces a native Python type.
+
+Reserved params keyword
+In Apache Airflow 2.2.0 params variable is used during DAG serialization. Please do not use that name in third party operators. If you upgrade your environment and get the following error:
+
+AttributeError: 'str' object has no attribute '__module__'
+change name from params in your operators.
+
+Sensors
+Sensors are a special type of Operator that are designed to do exactly one thing - wait for something to occur. It can be time-based, or waiting for a file, or an external event, but all they do is wait until something happens, and then succeed so their downstream tasks can run.
+
+Because they are primarily idle, Sensors have two different modes of running so you can be a bit more efficient about using them:
+
+poke (default): The Sensor takes up a worker slot for its entire runtime
+
+reschedule: The Sensor takes up a worker slot only when it is checking, and sleeps for a set duration between checks
+
+The poke and reschedule modes can be configured directly when you instantiate the sensor; generally, the trade-off between them is latency. Something that is checking every second should be in poke mode, while something that is checking every minute should be in reschedule mode.
+
+Much like Operators, Airflow has a large set of pre-built Sensors you can use, both in core Airflow as well as via our providers system.
+TaskFlow
+New in version 2.0.
+
+If you write most of your DAGs using plain Python code rather than Operators, then the TaskFlow API will make it much easier to author clean DAGs without extra boilerplate, all using the @task decorator.
+
+TaskFlow takes care of moving inputs and outputs between your Tasks using XComs for you, as well as automatically calculating dependencies - when you call a TaskFlow function in your DAG file, rather than executing it, you will get an object representing the XCom for the result (an XComArg), that you can then use as inputs to downstream tasks or operators. For example:
+
+from airflow.decorators import task
+from airflow.operators.email import EmailOperator
+
+@task
+def get_ip():
+    return my_ip_service.get_main_ip()
+
+@task(multiple_outputs=True)
+def compose_email(external_ip):
+    return {
+        'subject':f'Server connected from {external_ip}',
+        'body': f'Your server executing Airflow is connected from the external IP {external_ip}<br>'
+    }
+
+email_info = compose_email(get_ip())
+
+EmailOperator(
+    task_id='send_email',
+    to='example@example.com',
+    subject=email_info['subject'],
+    html_content=email_info['body']
+)
+Here, there are three tasks - get_ip, compose_email, and send_email.
+
+The first two are declared using TaskFlow, and automatically pass the return value of get_ip into compose_email, not only linking the XCom across, but automatically declaring that compose_email is downstream of get_ip.
+
+send_email is a more traditional Operator, but even it can use the return value of compose_email to set its parameters, and again, automatically work out that it must be downstream of compose_email.
+
+You can also use a plain value or variable to call a TaskFlow function - for example, this will work as you expect (but, of course, won’t run the code inside the task until the DAG is executed - the name value is persisted as a task parameter until that time):
+
+@task
+def hello_name(name: str):
+    print(f'Hello {name}!')
+
+hello_name('Airflow users')
+If you want to learn more about using TaskFlow, you should consult the TaskFlow tutorial.
+
+Context
+You can access Airflow context variables by adding them as keyword arguments as shown in the following example:
+
+from airflow.models.taskinstance import TaskInstance
+from airflow.models.dagrun import DagRun
+
+
+@task
+def print_ti_info(task_instance: TaskInstance | None = None, dag_run: DagRun | None = None):
+    print(f"Run ID: {task_instance.run_id}")  # Run ID: scheduled__2023-08-09T00:00:00+00:00
+    print(f"Duration: {task_instance.duration}")  # Duration: 0.972019
+    print(f"DAG Run queued at: {dag_run.queued_at}")  # 2023-08-10 00:00:01+02:20
+Alternatively, you may add **kwargs to the signature of your task and all Airflow context variables will be accessible in the kwargs dict:
+
+from airflow.models.taskinstance import TaskInstance
+from airflow.models.dagrun import DagRun
+
+
+@task
+def print_ti_info(**kwargs):
+    ti: TaskInstance = kwargs["task_instance"]
+    print(f"Run ID: {ti.run_id}")  # Run ID: scheduled__2023-08-09T00:00:00+00:00
+    print(f"Duration: {ti.duration}")  # Duration: 0.972019
+
+    dr: DagRun = kwargs["dag_run"]
+    print(f"DAG Run queued at: {dr.queued_at}")  # 2023-08-10 00:00:01+02:20
+For a full list of context variables, see context variables.
+
+Logging
+To use logging from your task functions, simply import and use Python’s logging system:
+
+logger = logging.getLogger("airflow.task")
+Every logging line created this way will be recorded in the task log.
+
+Passing Arbitrary Objects As Arguments
+New in version 2.5.0.
+
+As mentioned TaskFlow uses XCom to pass variables to each task. This requires that variables that are used as arguments need to be able to be serialized. Airflow out of the box supports all built-in types (like int or str) and it supports objects that are decorated with @dataclass or @attr.define. The following example shows the use of a Dataset, which is @attr.define decorated, together with TaskFlow.
+
+Note
+
+An additional benefit of using Dataset is that it automatically registers as an inlet in case it is used as an input argument. It also auto registers as an outlet if the return value of your task is a dataset or a list[Dataset]].
+
+import json
+import pendulum
+import requests
+
+from airflow import Dataset
+from airflow.decorators import dag, task
+
+SRC = Dataset(
+    "https://www.ncei.noaa.gov/access/monitoring/climate-at-a-glance/global/time-series/globe/land_ocean/ytd/12/1880-2022.json"
+)
+now = pendulum.now()
+
+
+@dag(start_date=now, schedule="@daily", catchup=False)
+def etl():
+    @task()
+    def retrieve(src: Dataset) -> dict:
+        resp = requests.get(url=src.uri)
+        data = resp.json()
+        return data["data"]
+
+    @task()
+    def to_fahrenheit(temps: dict[int, float]) -> dict[int, float]:
+        ret: dict[int, float] = {}
+        for year, celsius in temps.items():
+            ret[year] = float(celsius) * 1.8 + 32
+
+        return ret
+
+    @task()
+    def load(fahrenheit: dict[int, float]) -> Dataset:
+        filename = "/tmp/fahrenheit.json"
+        s = json.dumps(fahrenheit)
+        f = open(filename, "w")
+        f.write(s)
+        f.close()
+
+        return Dataset(f"file:///{filename}")
+
+    data = retrieve(SRC)
+    fahrenheit = to_fahrenheit(data)
+    load(fahrenheit)
+
+
+etl()
+Custom Objects
+It could be that you would like to pass custom objects. Typically you would decorate your classes with @dataclass or @attr.define and Airflow will figure out what it needs to do. Sometime you might want to control serialization yourself. To do so add the serialize() method to your class and the staticmethod deserialize(data: dict, version: int) to your class. Like so:
+
+from typing import ClassVar
+
+
+class MyCustom:
+    __version__: ClassVar[int] = 1
+
+    def __init__(self, x):
+        self.x = x
+
+    def serialize(self) -> dict:
+        return dict({"x": self.x})
+
+    @staticmethod
+    def deserialize(data: dict, version: int):
+        if version > 1:
+            raise TypeError(f"version > {MyCustom.version}")
+        return MyCustom(data["x"])
+Object Versioning
+It is good practice to version the objects that will be used in serialization. To do this add __version__: ClassVar[int] = <x> to your class. Airflow assumes that your classes are backwards compatible, so that a version 2 is able to deserialize a version 1. In case you need custom logic for deserialization ensure that deserialize(data: dict, version: int) is specified.
+
+Note
+
+Typing of __version__ is required and needs to be ClassVar[int]
+
+Sensors and the TaskFlow API
+New in version 2.5.0.
+
+For an example of writing a Sensor using the TaskFlow API, see Using the TaskFlow API with Sensor operators.
+
+Executor
+Executors are the mechanism by which task instances get run. They have a common API and are “pluggable”, meaning you can swap executors based on your installation needs.
+
+Airflow can only have one executor configured at a time; this is set by the executor option in the [core] section of the configuration file.
+
+Built-in executors are referred to by name, for example:
+
+[core]
+executor = KubernetesExecutor
+Note
+
+For more information on Airflow’s configuration, see Setting Configuration Options.
+
+If you want to check which executor is currently set, you can use the airflow config get-value core executor command:
+
+$ airflow config get-value core executor
+SequentialExecutor
+Executor Types
+There are two types of executors - those that run tasks locally (inside the scheduler process), and those that run their tasks remotely (usually via a pool of workers). Airflow comes configured with the SequentialExecutor by default, which is a local executor, and the simplest option for execution. However, the SequentialExecutor is not suitable for production since it does not allow for parallel task running and due to that, some Airflow features (e.g. running sensors) will not work properly. You should instead use the LocalExecutor for small, single-machine production installations, or one of the remote executors for a multi-machine/cloud installation.
+
+Local Executors
+
+Local Executor
+Sequential Executor
+Remote Executors
+
+CeleryExecutor
+
+CeleryKubernetesExecutor
+
+KubernetesExecutor
+
+KubernetesLocalExecutor
+
+Note
+
+New Airflow users may assume they need to run a separate executor process using one of the Local or Remote Executors. This is not correct. The executor logic runs inside the scheduler process, and will run the tasks locally or not depending the executor selected.
+
+Writing Your Own Executor
+All Airflow executors implement a common interface so that they are pluggable and any executor has access to all abilities and integrations within Airflow. Primarily, the Airflow scheduler uses this interface to interact with the executor, but other components such as logging, CLI and backfill do as well. The public interface is the BaseExecutor. You can look through the code for the most detailed and up to date interface, but some important highlights are outlined below.
+
+Note
+
+For more information about Airflow’s public interface see Public Interface of Airflow.
+
+Some reasons you may want to write a custom executor include:
+
+An executor does not exist which fits your specific use case, such as a specific tool or service for compute.
+
+You’d like to use an executor that leverages a compute service from your preferred cloud provider.
+
+You have a private tool/service for task execution that is only available to you or your organization.
+
+Important BaseExecutor Methods
+These methods don’t require overriding to implement your own executor, but are useful to be aware of:
+
+heartbeat: The Airflow scheduler Job loop will periodically call heartbeat on the executor. This is one of the main points of interaction between the Airflow scheduler and the executor. This method updates some metrics, triggers newly queued tasks to execute and updates state of running/completed tasks.
+
+queue_command: The Airflow Executor will call this method of the BaseExecutor to provide tasks to be run by the executor. The BaseExecutor simply adds the TaskInstances to an internal list of queued tasks within the executor.
+
+get_event_buffer: The Airflow scheduler calls this method to retrieve the current state of the TaskInstances the executor is executing.
+
+has_task: The scheduler uses this BaseExecutor method to determine if an executor already has a specific task instance queued or running.
+
+send_callback: Sends any callbacks to the sink configured on the executor.
+
+Mandatory Methods to Implement
+The following methods must be overridden at minimum to have your executor supported by Airflow:
+
+sync: Sync will get called periodically during executor heartbeats. Implement this method to update the state of the tasks which the executor knows about. Optionally, attempting to execute queued tasks that have been received from the scheduler.
+
+execute_async: Executes a command asynchronously. A command in this context is an Airflow CLI command to run an Airflow task. This method is called (after a few layers) during executor heartbeat which is run periodically by the scheduler. In practice, this method often just enqueues tasks into an internal or external queue of tasks to be run (e.g. KubernetesExecutor). But can also execute the tasks directly as well (e.g. LocalExecutor). This will depend on the executor.
+
+Optional Interface Methods to Implement
+The following methods aren’t required to override to have a functional Airflow executor. However, some powerful capabilities and stability can come from implementing them:
+
+start: The Airflow scheduler (and backfill) job will call this method after it initializes the executor object. Any additional setup required by the executor can be completed here.
+
+end: The Airflow scheduler (and backfill) job will call this method as it is tearing down. Any synchronous cleanup required to finish running jobs should be done here.
+
+terminate: More forcefully stop the executor, even killing/stopping in-flight tasks instead of synchronously waiting for completion.
+
+cleanup_stuck_queued_tasks: If tasks are stuck in the queued state for longer than task_queued_timeout then they are collected by the scheduler and provided to the executor to have an opportunity to handle them (perform any graceful cleanup/teardown) via this method and return the Task Instances for a warning message displayed to users.
+
+try_adopt_task_instances: Tasks that have been abandoned (e.g. from a scheduler job that died) are provided to the executor to adopt or otherwise handle them via this method. Any tasks that cannot be adopted (by default the BaseExector assumes all cannot be adopted) should be returned.
+
+get_cli_commands: Executors may vend CLI commands to users by implementing this method, see the CLI section below for more details.
+
+get_task_log: Executors may vend log messages to Airflow task logs by implementing this method, see the Logging section below for more details.
+
+Compatibility Attributes
+The BaseExecutor class interface contains a set of attributes that Airflow core code uses to check the features that your executor is compatible with. When writing your own Airflow executor be sure to set these correctly for your use case. Each attribute is simply a boolean to enable/disable a feature or indicate that a feature is supported/unsupported by the executor:
+
+supports_pickling: Whether or not the executor supports reading pickled DAGs from the Database before execution (rather than reading the DAG definition from the file system).
+
+supports_sentry: Whether or not the executor supports Sentry.
+
+is_local: Whether or not the executor is remote or local. See the Executor Types section above.
+
+is_single_threaded: Whether or not the executor is single threaded. This is particularly relevant to what database backends are supported. Single threaded executors can run with any backend, including SQLite.
+
+is_production: Whether or not the executor should be used for production purposes. A UI message is displayed to users when they are using a non-production ready executor.
+
+change_sensor_mode_to_reschedule: Running Airflow sensors in poke mode can block the thread of executors and in some cases Airflow.
+
+serve_logs: Whether or not the executor supports serving logs, see Logging for Tasks.
+
+CLI
+Executors may vend CLI commands which will be included in the airflow command line tool by implementing the get_cli_commands method. Executors such as CeleryExecutor and KubernetesExecutor for example, make use of this mechanism. The commands can be used to setup required workers, initialize environment or set other configuration. Commands are only vended for the currently configured executor. A pseudo-code example of implementing CLI command vending from an executor can be seen below:
+
+@staticmethod
+def get_cli_commands() -> list[GroupCommand]:
+    sub_commands = [
+        ActionCommand(
+            name="command_name",
+            help="Description of what this specific command does",
+            func=lazy_load_command("path.to.python.function.for.command"),
+            args=(),
+        ),
+    ]
+
+    return [
+        GroupCommand(
+            name="my_cool_executor",
+            help="Description of what this group of commands do",
+            subcommands=sub_commands,
+        ),
+    ]
+Note
+
+Currently there are no strict rules in place for the Airflow command namespace. It is up to developers to use names for their CLI commands that are sufficiently unique so as to not cause conflicts with other Airflow executors or components.
+
+Note
+
+When creating a new executor, or updating any existing executors, be sure to not import or execute any expensive operations/code at the module level. Executor classes are imported in several places and if they are slow to import this will negatively impact the performance of your Airflow environment, especially for CLI commands.
+
+Logging
+Executors may vend log messages which will be included in the Airflow task logs by implementing the get_task_logs method. This can be helpful if the execution environment has extra context in the case of task failures, which may be due to the execution environment itself rather than the Airflow task code. It can also be helpful to include setup/teardown logging from the execution environment. The KubernetesExecutor leverages this this capability to include logs from the pod which ran a specific Airflow task and display them in the logs for that Airflow task. A pseudo-code example of implementing task log vending from an executor can be seen below:
+
+def get_task_log(self, ti: TaskInstance, try_number: int) -> tuple[list[str], list[str]]:
+    messages = []
+    log = []
+    try:
+        res = helper_function_to_fetch_logs_from_execution_env(ti, try_number)
+        for line in res:
+            log.append(remove_escape_codes(line.decode()))
+        if log:
+            messages.append("Found logs from execution environment!")
+    except Exception as e:  # No exception should cause task logs to fail
+        messages.append(f"Failed to find logs from execution environment: {e}")
+    return messages, ["\n".join(log)]
+    Auth manager
+Auth (for authentication/authorization) manager is the component in Airflow to handle user authentication and user authorization. They have a common API and are “pluggable”, meaning you can swap auth managers based on your installation needs.
+
+../_images/diagram_auth_manager_airflow_architecture.png
+Airflow can only have one auth manager configured at a time; this is set by the auth_manager option in the [core] section of the configuration file.
+
+Note
+
+For more information on Airflow’s configuration, see Setting Configuration Options.
+
+If you want to check which auth manager is currently set, you can use the airflow config get-value core auth_manager command:
+
+$ airflow config get-value core auth_manager
+airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
+Why pluggable auth managers?
+Airflow is used by a lot of different users with a lot of different configurations. Some Airflow environment might be used by only one user and some might be used by thousand of users. An Airflow environment with only one (or very few) users does not need the same user management as an environment used by thousand of them.
+
+This is why the whole user management (user authentication and user authorization) is packaged in one component called auth manager. So that it is easy to plug-and-play an auth manager that suits your specific needs.
+
+By default, Airflow comes with the Flask AppBuilder (FAB) auth manager.
+
+Note
+
+Switching to a different auth manager is a heavy operation and should be considered as such. It will impact users of the environment. The sign-in and sign-off experience will very likely change and disturb them if they are not advised. Plus, all current users and permissions will have to be copied over from the previous auth manager to the next.
+
+Writing your own auth manager
+All Airflow auth managers implement a common interface so that they are pluggable and any auth manager has access to all abilities and integrations within Airflow. This interface is used across Airflow to perform all user authentication and user authorization related operation.
+
+The public interface is BaseAuthManager. You can look through the code for the most detailed and up to date interface, but some important highlights are outlined below.
+
+Note
+
+For more information about Airflow’s public interface see Public Interface of Airflow.
+
+Some reasons you may want to write a custom auth manager include:
+
+An auth manager does not exist which fits your specific use case, such as a specific tool or service for user management.
+
+You’d like to use an auth manager that leverages an identity provider from your preferred cloud provider.
+
+You have a private user management tool that is only available to you or your organization.
+
+Authentication related BaseAuthManager methods
+is_logged_in: Return whether the user is signed-in.
+
+get_user: Return the signed-in user.
+
+get_url_login: Return the URL the user is redirected to for signing in.
+
+get_url_logout: Return the URL the user is redirected to for signing out.
+
+Authorization related BaseAuthManager methods
+Most of authorization methods in BaseAuthManager look the same. Let’s go over the different parameters used by most of these methods.
+
+method: Use HTTP method naming to determine the type of action being done on a specific resource.
+
+GET: Can the user read the resource?
+
+POST: Can the user create a resource?
+
+PUT: Can the user modify the resource?
+
+DELETE: Can the user delete the resource?
+
+MENU: Can the user see the resource in the menu?
+
+details: Optional details about the resource being accessed.
+
+user: The user trying to access the resource.
+
+These authorization methods are:
+
+is_authorized_configuration: Return whether the user is authorized to access Airflow configuration. Some details about the configuration can be provided (e.g. the config section).
+
+is_authorized_connection: Return whether the user is authorized to access Airflow connections. Some details about the connection can be provided (e.g. the connection ID).
+
+is_authorized_dag: Return whether the user is authorized to access a DAG. Some details about the DAG can be provided (e.g. the DAG ID). Also, is_authorized_dag is called for any entity related to DAGs (e.g. task instances, dag runs, …). This information is passed in access_entity. Example: auth_manager.is_authorized_dag(method="GET", access_entity=DagAccessEntity.Run, details=DagDetails(id="dag-1")) asks whether the user has permission to read the Dag runs of the dag “dag-1”.
+
+is_authorized_dataset: Return whether the user is authorized to access Airflow datasets. Some details about the dataset can be provided (e.g. the dataset uri).
+
+is_authorized_pool: Return whether the user is authorized to access Airflow pools. Some details about the pool can be provided (e.g. the pool name).
+
+is_authorized_variable: Return whether the user is authorized to access Airflow variables. Some details about the variable can be provided (e.g. the variable key).
+
+is_authorized_view: Return whether the user is authorized to access a specific view in Airflow. The view is specified through access_view (e.g. AccessView.CLUSTER_ACTIVITY).
+
+is_authorized_custom_view: Return whether the user is authorized to access a specific view not defined in Airflow. This view can be provided by the auth manager itself or a plugin defined by the user.
+
+Optional methods recommended to override for optimization
+The following methods aren’t required to override to have a functional Airflow auth manager. However, it is recommended to override these to make your auth manager faster (and potentially less costly):
+
+batch_is_authorized_dag: Batch version of is_authorized_dag. If not overridden, it will call is_authorized_dag for every single item.
+
+batch_is_authorized_connection: Batch version of is_authorized_connection. If not overridden, it will call is_authorized_connection for every single item.
+
+batch_is_authorized_pool: Batch version of is_authorized_pool. If not overridden, it will call is_authorized_pool for every single item.
+
+batch_is_authorized_variable: Batch version of is_authorized_variable. If not overridden, it will call is_authorized_variable for every single item.
+
+get_permitted_dag_ids: Return the list of DAG IDs the user has access to. If not overridden, it will call is_authorized_dag for every single DAG available in the environment.
+
+filter_permitted_menu_items: Return the menu items the user has access to. If not overridden, it will call has_access in AirflowSecurityManagerV2 for every single menu item.
+
+CLI
+Auth managers may vend CLI commands which will be included in the airflow command line tool by implementing the get_cli_commands method. The commands can be used to setup required resources. Commands are only vended for the currently configured auth manager. A pseudo-code example of implementing CLI command vending from an auth manager can be seen below:
+
+@staticmethod
+def get_cli_commands() -> list[CLICommand]:
+    sub_commands = [
+        ActionCommand(
+            name="command_name",
+            help="Description of what this specific command does",
+            func=lazy_load_command("path.to.python.function.for.command"),
+            args=(),
+        ),
+    ]
+
+    return [
+        GroupCommand(
+            name="my_cool_auth_manager",
+            help="Description of what this group of commands do",
+            subcommands=sub_commands,
+        ),
+    ]
+Note
+
+Currently there are no strict rules in place for the Airflow command namespace. It is up to developers to use names for their CLI commands that are sufficiently unique so as to not cause conflicts with other Airflow components.
+
+Note
+
+When creating a new auth manager, or updating any existing auth manager, be sure to not import or execute any expensive operations/code at the module level. Auth manager classes are imported in several places and if they are slow to import this will negatively impact the performance of your Airflow environment, especially for CLI commands.
+
+Rest API
+Auth managers may vend Rest API endpoints which will be included in the REST API Reference by implementing the get_api_endpoints method. The endpoints can be used to manage resources such as users, groups, roles (if any) handled by your auth manager. Endpoints are only vended for the currently configured auth manager.
+
+Next Steps
+Once you have created a new auth manager class implementing the BaseAuthManager interface, you can configure Airflow to use it by setting the core.auth_manager configuration value to the module path of your auth manager:
+
+[core]
+auth_manager = my_company.auth_managers.MyCustomAuthManager
+Object Storage
+New in version 2.8.0.
+
+This is an experimental feature.
+
+All major cloud providers offer persistent data storage in object stores. These are not classic “POSIX” file systems. In order to store hundreds of petabytes of data without any single points of failure, object stores replace the classic file system directory tree with a simpler model of object-name => data. To enable remote access, operations on objects are usually offered as (slow) HTTP REST operations.
+
+Airflow provides a generic abstraction on top of object stores, like s3, gcs, and azure blob storage. This abstraction allows you to use a variety of object storage systems in your DAGs without having to change your code to deal with every different object storage system. In addition, it allows you to use most of the standard Python modules, like shutil, that can work with file-like objects.
+
+Support for a particular object storage system depends on the providers you have installed. For example, if you have installed the apache-airflow-providers-google provider, you will be able to use the gcs scheme for object storage. Out of the box, Airflow provides support for the file scheme.
+
+Note
+
+Support for s3 requires you to install apache-airflow-providers-amazon[s3fs]. This is because it depends on aiobotocore, which is not installed by default as it can create dependency challenges with botocore.
+
+Cloud Object Stores are not real file systems
+Object stores are not real file systems although they can appear so. They do not support all the operations that a real file system does. Key differences are:
+
+No guaranteed atomic rename operation. This means that if you move a file from one location to another, it will be copied and then deleted. If the copy fails, you will lose the file.
+
+Directories are emulated and might make working with them slow. For example, listing a directory might require listing all the objects in the bucket and filtering them by prefix.
+
+Seeking within a file may require significant call overhead hurting performance or might not be supported at all.
+
+Airflow relies on fsspec to provide a consistent experience across different object storage systems. It implements local file caching to speed up access. However, you should be aware of the limitations of object storage when designing your DAGs.
+
+Basic Use
+To use object storage, you need to instantiate a Path (see below) object with the URI of the object you want to interact with. For example, to point to a bucket in s3, you would do the following:
+
+from airflow.io.path import ObjectStoragePath
+
+base = ObjectStoragePath("s3://aws_default@my-bucket/")
+The username part of the URI represents the Airflow connection id and is optional. It can alternatively be passed in as a separate keyword argument:
+
+# Equivalent to the previous example.
+base = ObjectStoragePath("s3://my-bucket/", conn_id="aws_default")
+Listing file-objects:
+
+@task
+def list_files() -> list[ObjectStoragePath]:
+    files = [f for f in base.iterdir() if f.is_file()]
+    return files
+Navigating inside a directory tree:
+
+base = ObjectStoragePath("s3://my-bucket/")
+subdir = base / "subdir"
+
+# prints ObjectStoragePath("s3://my-bucket/subdir")
+print(subdir)
+Opening a file:
+
+@task
+def read_file(path: ObjectStoragePath) -> str:
+    with path.open() as f:
+        return f.read()
+Leveraging XCOM, you can pass paths between tasks:
+
+@task
+def create(path: ObjectStoragePath) -> ObjectStoragePath:
+    return path / "new_file.txt"
+
+
+@task
+def write_file(path: ObjectStoragePath, content: str):
+    with path.open("wb") as f:
+        f.write(content)
+
+
+new_file = create(base)
+write = write_file(new_file, b"data")
+
+read >> write
+Configuration
+In its basic use, the object storage abstraction does not require much configuration and relies upon the standard Airflow connection mechanism. This means that you can use the conn_id argument to specify the connection to use. Any settings by the connection are pushed down to the underlying implementation. For example, if you are using s3, you can specify the aws_access_key_id and aws_secret_access_key but also add extra arguments like endpoint_url to specify a custom endpoint.
+
+Alternative backends
+It is possible to configure an alternative backend for a scheme or protocol. This is done by attaching a backend to the scheme. For example, to enable the databricks backend for the dbfs scheme, you would do the following:
+
+from airflow.io.path import ObjectStoragePath
+from airflow.io.store import attach
+
+from fsspec.implementations.dbfs import DBFSFileSystem
+
+attach(protocol="dbfs", fs=DBFSFileSystem(instance="myinstance", token="mytoken"))
+base = ObjectStoragePath("dbfs://my-location/")
+Note
+
+To reuse the registration across tasks make sure to attach the backend at the top-level of your DAG. Otherwise, the backend will not be available across multiple tasks.
+
+Path API
+The object storage abstraction is implemented as a Path API. and builds upon Universal Pathlib This means that you can mostly use the same API to interact with object storage as you would with a local filesystem. In this section we only list the differences between the two APIs. Extended operations beyond the standard Path API, like copying and moving, are listed in the next section. For details about each operation, like what arguments they take, see the documentation of the ObjectStoragePath class.
+
+mkdir
+Create a directory entry at the specified path or within a bucket/container. For systems that don’t have true directories, it may create a directory entry for this instance only and not affect the real filesystem.
+
+If parents is True, any missing parents of this path are created as needed.
+
+touch
+Create a file at this given path, or update the timestamp. If truncate is True, the file is truncated, which is the default. If the file already exists, the function succeeds if exists_ok is true (and its modification time is updated to the current time), otherwise FileExistsError is raised.
+
+stat
+Returns a stat_result like object that supports the following attributes: st_size, st_mtime, st_mode, but also acts like a dictionary that can provide additional metadata about the object. For example, for s3 it will, return the additional keys like: ['ETag', 'ContentType']. If your code needs to be portable across different object stores do not rely on the extended metadata.
+
+Extensions
+The following operations are not part of the standard Path API, but are supported by the object storage abstraction.
+
+bucket
+Returns the bucket name.
+
+checksum
+Returns the checksum of the file.
+
+container
+Alias of bucket
+
+fs
+Convenience attribute to access an instantiated filesystem
+
+key
+Returns the object key.
+
+namespace
+Returns the namespace of the object. Typically this is the protocol, like s3:// with the bucket name.
+
+path
+the fsspec compatible path for use with filesystem instances
+
+protocol
+the filesystem_spec protocol.
+
+read_block
+Read a block of bytes from the file at this given path.
+
+Starting at offset of the file, read length bytes. If delimiter is set then we ensure that the read starts and stops at delimiter boundaries that follow the locations offset and offset + length. If offset is zero then we start at zero. The bytestring returned WILL include the end delimiter string.
+
+If offset+length is beyond the eof, reads to eof.
+
+sign
+Create a signed URL representing the given path. Some implementations allow temporary URLs to be generated, as a way of delegating credentials.
+
+size
+Returns the size in bytes of the file at the given path.
+
+storage_options
+The storage options for instantiating the underlying filesystem.
+
+ukey
+Hash of file properties, to tell if it has changed.
+
+Copying and Moving
+This documents the expected behavior of the copy and move operations, particularly for cross object store (e.g. file -> s3) behavior. Each method copies or moves files or directories from a source to a target location. The intended behavior is the same as specified by fsspec. For cross object store directory copying, Airflow needs to walk the directory tree and copy each file individually. This is done by streaming each file from the source to the target.
+
+External Integrations
+Many other projects, like DuckDB, Apache Iceberg etc, can make use of the object storage abstraction. Often this is done by passing the underlying fsspec implementation. For this this purpose ObjectStoragePath exposes the fs property. For example, the following works with duckdb so that the connection details from Airflow are used to connect to s3 and a parquet file, indicated by a ObjectStoragePath, is read:
+
+import duckdb
+from airflow.io.path import ObjectStoragePath
+
+path = ObjectStoragePath("s3://my-bucket/my-table.parquet", conn_id="aws_default")
+conn = duckdb.connect(database=":memory:")
+conn.register_filesystem(path.fs)
+conn.execute(f"CREATE OR REPLACE TABLE my_table AS SELECT * FROM read_parquet('{path}');")
+XComs
+XComs (short for “cross-communications”) are a mechanism that let Tasks talk to each other, as by default Tasks are entirely isolated and may be running on entirely different machines.
+
+An XCom is identified by a key (essentially its name), as well as the task_id and dag_id it came from. They can have any (serializable) value, but they are only designed for small amounts of data; do not use them to pass around large values, like dataframes.
+
+XComs are explicitly “pushed” and “pulled” to/from their storage using the xcom_push and xcom_pull methods on Task Instances.
+
+To push a value within a task called “task-1” that will be used by another task:
+
+# pushes data in any_serializable_value into xcom with key "identifier as string"
+task_instance.xcom_push(key="identifier as a string", value=any_serializable_value)
+To pull the value that was pushed in the code above in a different task:
+
+# pulls the xcom variable with key "identifier as string" that was pushed from within task-1
+task_instance.xcom_pull(key="identifier as string", task_ids="task-1")
+Many operators will auto-push their results into an XCom key called return_value if the do_xcom_push argument is set to True (as it is by default), and @task functions do this as well. xcom_pull defaults to using return_value as key if no key is passed to it, meaning it’s possible to write code like this:
+
+# Pulls the return_value XCOM from "pushing_task"
+value = task_instance.xcom_pull(task_ids='pushing_task')
+You can also use XComs in templates:
+
+SELECT * FROM {{ task_instance.xcom_pull(task_ids='foo', key='table_name') }}
+XComs are a relative of Variables, with the main difference being that XComs are per-task-instance and designed for communication within a DAG run, while Variables are global and designed for overall configuration and value sharing.
+
+If you want to push multiple XComs at once or rename the pushed XCom key, you can use set do_xcom_push and multiple_outputs arguments to True, and then return a dictionary of values.
+
+Note
+
+If the first task run is not succeeded then on every retry task XComs will be cleared to make the task run idempotent.
+
+Object Storage XCom Backend
+The default XCom backend is the BaseXCom class, which stores XComs in the Airflow database. This is fine for small values, but can be problematic for large values, or for large numbers of XComs.
+
+To enable storing XComs in an object store, you can set the xcom_backend configuration option to airflow.providers.common.io.xcom.backend.XComObjectStorageBackend. You will also need to set xcom_objectstorage_path to the desired location. The connection id is obtained from the user part of the url the you will provide, e.g. xcom_objectstorage_path = s3://conn_id@mybucket/key. Furthermore, xcom_objectstorage_threshold is required to be something larger than -1. Any object smaller than the threshold in bytes will be stored in the database and anything larger will be be put in object storage. This will allow a hybrid setup. If an xcom is stored on object storage a reference will be saved in the database. Finally, you can set xcom_objectstorage_compression to fsspec supported compression methods like zip or snappy to compress the data before storing it in object storage.
+
+So for example the following configuration will store anything above 1MB in S3 and will compress it using gzip:
+
+[core]
+xcom_backend = airflow.providers.common.io.xcom.backend.XComObjectStorageBackend
+
+[common.io]
+xcom_objectstorage_path = s3://conn_id@mybucket/key
+xcom_objectstorage_threshold = 1048576
+xcom_objectstoragee_compression = gzip
+Note
+
+Compression requires the support for it is installed in your python environment. For example, to use snappy compression, you need to install python-snappy. Zip, gzip and bz2 work out of the box.
+
+Custom XCom Backends
+The XCom system has interchangeable backends, and you can set which backend is being used via the xcom_backend configuration option.
+
+If you want to implement your own backend, you should subclass BaseXCom, and override the serialize_value and deserialize_value methods.
+
+There is also an orm_deserialize_value method that is called whenever the XCom objects are rendered for UI or reporting purposes; if you have large or expensive-to-retrieve values in your XComs, you should override this method to avoid calling that code (and instead return a lighter, incomplete representation) so the UI remains responsive.
+
+You can also override the clear method and use it when clearing results for given DAGs and tasks. This allows the custom XCom backend to process the data lifecycle easier.
+
+Working with Custom XCom Backends in Containers
+Depending on where Airflow is deployed i.e., local, Docker, K8s, etc. it can be useful to be assured that a custom XCom backend is actually being initialized. For example, the complexity of the container environment can make it more difficult to determine if your backend is being loaded correctly during container deployment. Luckily the following guidance can be used to assist you in building confidence in your custom XCom implementation.
+
+Firstly, if you can exec into a terminal in the container then you should be able to do:
+
+from airflow.models.xcom import XCom
+
+print(XCom.__name__)
+which will print the actual class that is being used.
+
+You can also examine Airflow’s configuration:
+
+from airflow.settings import conf
+
+conf.get("core", "xcom_backend")
+Working with Custom Backends in K8s via Helm
+Running custom XCom backends in K8s will introduce even more complexity to you Airflow deployment. Put simply, sometimes things go wrong which can be difficult to debug.
+
+For example, if you define a custom XCom backend in the Chart values.yaml (via the xcom_backend configuration) and Airflow fails to load the class, the entire Chart deployment will fail with each pod container attempting to restart time and time again.
+
+When deploying in K8s your custom XCom backend needs to be reside in a config directory otherwise it cannot be located during Chart deployment.
+
+An observed problem is that it is very difficult to acquire logs from the container because there is a very small window of availability where the trace can be obtained. The only way you can determine the root cause is if you are fortunate enough to query and acquire the container logs at the right time. This in turn prevents the entire Helm chart from deploying successfully.
+Variables
+Variables are Airflow’s runtime configuration concept - a general key/value store that is global and can be queried from your tasks, and easily set via Airflow’s user interface, or bulk-uploaded as a JSON file.
+
+To use them, just import and call get on the Variable model:
+
+from airflow.models import Variable
+
+# Normal call style
+foo = Variable.get("foo")
+
+# Auto-deserializes a JSON value
+bar = Variable.get("bar", deserialize_json=True)
+
+# Returns the value of default_var (None) if the variable is not set
+baz = Variable.get("baz", default_var=None)
+You can also use them from templates:
+
+# Raw value
+echo {{ var.value.<variable_name> }}
+
+# Auto-deserialize JSON value
+echo {{ var.json.<variable_name> }}
+Variables are global, and should only be used for overall configuration that covers the entire installation; to pass data from one Task/Operator to another, you should use XComs instead.
+
+We also recommend that you try to keep most of your settings and configuration in your DAG files, so it can be versioned using source control; Variables are really only for values that are truly runtime-dependent.
+
+Params
+Params enable you to provide runtime configuration to tasks. You can configure default Params in your DAG code and supply additional Params, or overwrite Param values, at runtime when you trigger a DAG. Param values are validated with JSON Schema. For scheduled DAG runs, default Param values are used.
+
+Also defined Params are used to render a nice UI when triggering manually. When you trigger a DAG manually, you can modify its Params before the dagrun starts. If the user-supplied values don’t pass validation, Airflow shows a warning instead of creating the dagrun.
+
+DAG-level Params
+To add Params to a DAG, initialize it with the params kwarg. Use a dictionary that maps Param names to either a Param or an object indicating the parameter’s default value.
+
+ from airflow import DAG
+ from airflow.models.param import Param
+
+ with DAG(
+     "the_dag",
+     params={
+         "x": Param(5, type="integer", minimum=3),
+         "my_int_param": 6
+     },
+ ):
+Task-level Params
+You can also add Params to individual tasks.
+
+def print_my_int_param(params):
+  print(params.my_int_param)
+
+PythonOperator(
+    task_id="print_my_int_param",
+    params={"my_int_param": 10},
+    python_callable=print_my_int_param,
+)
+Task-level params take precedence over DAG-level params, and user-supplied params (when triggering the DAG) take precedence over task-level params.
+
+Referencing Params in a Task
+Params can be referenced in templated strings under params. For example:
+
+ PythonOperator(
+     task_id="from_template",
+     op_args=[
+         "{{ params.my_int_param + 10 }}",
+     ],
+     python_callable=(
+         lambda my_int_param: print(my_int_param)
+     ),
+ )
+Even though Params can use a variety of types, the default behavior of templates is to provide your task with a string. You can change this by setting render_template_as_native_obj=True while initializing the DAG.
+
+ with DAG(
+     "the_dag",
+     params={"my_int_param": Param(5, type="integer", minimum=3)},
+     render_template_as_native_obj=True
+ ):
+This way, the Param’s type is respected when it’s provided to your task:
+
+# prints <class 'str'> by default
+# prints <class 'int'> if render_template_as_native_obj=True
+PythonOperator(
+    task_id="template_type",
+    op_args=[
+        "{{ params.my_int_param }}",
+    ],
+    python_callable=(
+        lambda my_int_param: print(type(my_int_param))
+    ),
+)
+Another way to access your param is via a task’s context kwarg.
+
+ def print_my_int_param(**context):
+     print(context["params"]["my_int_param"])
+
+ PythonOperator(
+     task_id="print_my_int_param",
+     python_callable=print_my_int_param,
+     params={"my_int_param": 12345},
+ )
+JSON Schema Validation
+Param makes use of JSON Schema, so you can use the full JSON Schema specifications mentioned at https://json-schema.org/draft/2020-12/json-schema-validation.html to define Param objects.
+
+with DAG(
+    "my_dag",
+    params={
+        # an int with a default value
+        "my_int_param": Param(10, type="integer", minimum=0, maximum=20),
+
+        # a required param which can be of multiple types
+        # a param must have a default value
+        "multi_type_param": Param(5, type=["null", "number", "string"]),
+
+        # an enum param, must be one of three values
+        "enum_param": Param("foo", enum=["foo", "bar", 42]),
+
+        # a param which uses json-schema formatting
+        "email": Param(
+            default="example@example.com",
+            type="string",
+            format="idn-email",
+            minLength=5,
+            maxLength=255,
+        ),
+    },
+):
+Note
+
+If schedule is defined for a DAG, params with defaults must be valid. This is validated during DAG parsing. If schedule=None then params are not validated during DAG parsing but before triggering a DAG. This is useful in cases where the DAG author does not want to provide defaults but wants to force users provide valid parameters at time of trigger.
+
+Note
+
+As of now, for security reasons, one can not use Param objects derived out of custom classes. We are planning to have a registration system for custom Param classes, just like we’ve for Operator ExtraLinks.
+
+Use Params to Provide a Trigger UI Form
+New in version 2.6.0.
+
+DAG level params are used to render a user friendly trigger form. This form is provided when a user clicks on the “Trigger DAG” button.
+
+The Trigger UI Form is rendered based on the pre-defined DAG Params. If the DAG has no params defined, the trigger form is skipped. The form elements can be defined with the Param class and attributes define how a form field is displayed.
+
+The following features are supported in the Trigger UI Form:
+
+Direct scalar values (boolean, int, string, lists, dicts) from top-level DAG params are auto-boxed into Param objects. From the native Python data type the type attribute is auto detected. So these simple types render to a corresponding field type. The name of the parameter is used as label and no further validation is made, all values are treated as optional.
+
+If you use the Param class as definition of the parameter value, the following attributes can be added:
+
+The Param attribute title is used to render the form field label of the entry box. If no title is defined the parameter name/key is used instead.
+
+The Param attribute description is rendered below an entry field as help text in gray color. If you want to provide special formatting or links you need to use the Param attribute description_md. See tutorial DAG example_params_ui_tutorial for an example.
+
+The Param attribute type influences how a field is rendered. The following types are supported:
+
+Param type
+
+Form element type
+
+Additional supported attributes
+
+Example
+
+string
+
+Generates a single-line text box to edit text.
+
+minLength: Minimum text length
+
+maxLength: Maximum text length
+
+format="date": Generate a date-picker
+with calendar pop-up
+format="date-time": Generate a date and
+time-picker with calendar pop-up
+format="time": Generate a time-picker
+
+enum=["a", "b", "c"]: Generates a
+drop-down select list for scalar values.
+As of JSON validation, a value must be
+selected or the field must be marked as
+optional explicit. See also details inside
+the JSON Schema Description for Enum.
+values_display={"a": "Alpha", "b": "Beta"}:
+For select drop-downs generated via
+enum you can add the attribute
+values_display with a dict and map data
+values to display labels.
+examples=["One", "Two", "Three"]: If you
+want to present proposals for values
+(not restricting the user to a fixed enum
+as above) you can make use of examples
+which is a list of items.
+Also see
+further JSON Schema string type validation options
+which are checked before DAG trigger in the backend.
+Param("default", type="string", maxLength=10)
+
+Param(f"{datetime.date.today()}", type="string", format="date")
+
+number or
+
+integer
+
+Generates a field which restricts adding
+numeric values only. The HTML browser
+typically also adds a spinner on the
+right side to increase or decrease the
+value. integer only permits int
+numbers, number allows also
+fractional values.
+minimum: Minimum number value
+
+maximum: Maximum number value
+
+Also see
+further JSON Schema numeric type validation options
+which are checked before DAG trigger in the backend.
+Param(42, type="integer", minimum=14, multipleOf=7)
+
+boolean
+
+Generates a toggle button to be used
+as True or False.
+none.
+
+Param(True, type="boolean")
+
+array
+
+Generates a HTML multi line text field,
+every line edited will be made into a
+string array as value.
+If you add the attribute examples
+with a list, a multi-value select option
+will be generated instead of a free text field.
+values_display={"a": "Alpha", "b": "Beta"}:
+For multi-value selects examples you can add
+the attribute values_display with a dict and
+map data values to display labels.
+If you add the attribute items, a JSON entry
+field will be generated for more array types and
+additional type validation as described in
+JSON Schema Array Items.
+Param(["a", "b", "c"], type="array")
+
+Param(["two", "three"], type="array", examples=["one", "two", "three", "four", "five"])
+
+object
+
+Generates a JSON entry field with
+text validation.
+The HTML form does only validate the syntax of the
+JSON input. In order to validate the content for
+specific structures take a look to the
+JSON Schema Object details.
+Param({"key": "value"}, type=["object", "null"])
+
+null
+
+Specifies that no content is expected.
+Standalone this does not make much sense
+but it is useful for type combinations
+like type=["null", "string"] as the
+type attribute also accepts a list of
+types.
+Per default if you specify a type, a
+field will be made required with
+input - because of JSON validation.
+If you want to have a field value being
+added optional only, you must allow
+JSON schema validation allowing null
+values.
+Param(None, type=["null", "string"])
+
+If a form field is left empty, it is passed as None value to the params dict.
+
+Form fields are rendered in the order of definition of params in the DAG.
+
+If you want to add sections to the Form, add the attribute section to each field. The text will be used as section label. Fields w/o section will be rendered in the default area. Additional sections will be collapsed per default.
+
+If you want to have params not being displayed, use the const attribute. These Params will be submitted but hidden in the Form. The const value must match the default value to pass JSON Schema validation.
+
+On the bottom of the form the generated JSON configuration can be expanded. If you want to change values manually, the JSON configuration can be adjusted. Changes are overridden when form fields change.
+
+To pre-populate values in the form when publishing a link to the trigger form you can call the trigger URL /dags/<dag_name>/trigger and add query parameter to the URL in the form name=value, for example /dags/example_params_ui_tutorial/trigger?required_field=some%20text. To pre-define the run id of the DAG run, use the URL parameter run_id.
+
+Note
+
+If the field is required the default value must be valid according to the schema as well. If the DAG is defined with schedule=None the parameter value validation is made at time of trigger.
+
+For examples also please take a look to two example DAGs provided: example_params_trigger_ui and example_params_ui_tutorial.
+
+../_images/trigger-dag-tutorial-form.png
+New in version 2.7.0: The trigger form can also be forced to be displayed also if no params are defined using the configuration switch webserver.show_trigger_form_if_no_params.
+
+Changed in version 2.8.0: By default custom HTML is not allowed to prevent injection of scripts or other malicious HTML code. If you trust your DAG authors you can change the trust level of parameter descriptions to allow raw HTML by setting the configuration entry webserver.allow_raw_html_descriptions to True. With the default setting all HTML will be displayed as plain text. This relates to the previous feature to enable rich formatting with the attribute description_html which is now super-seeded with the attribute description_md. Custom form elements using the attribute custom_html_form allow a DAG author to specify raw HTML form templates. These custom HTML form elements are deprecated as of version 2.8.0.
+
+Disabling Runtime Param Modification
+The ability to update params while triggering a DAG depends on the flag core.dag_run_conf_overrides_params. Setting this config to False will effectively turn your default params into constants.
+Debugging Airflow DAGs
+Testing DAGs with dag.test()
+To debug DAGs in an IDE, you can set up the dag.test command in your dag file and run through your DAG in a single serialized python process.
+
+This approach can be used with any supported database (including a local SQLite database) and will fail fast as all tasks run in a single process.
+
+To set up dag.test, add these two lines to the bottom of your dag file:
+
+if __name__ == "__main__":
+    dag.test()
+and that’s it! You can add argument such as execution_date if you want to test argument-specific DAG runs, but otherwise you can run or debug DAGs as needed.
+
+Comparison with DebugExecutor
+The dag.test command has the following benefits over the DebugExecutor class, which is now deprecated:
+
+It does not require running an executor at all. Tasks are run one at a time with no executor or scheduler logs.
+
+It is significantly faster than running code with a DebugExecutor as it does not need to go through a scheduler loop.
+
+It does not perform a backfill.
+
+Debugging Airflow DAGs on the command line
+With the same two line addition as mentioned in the above section, you can now easily debug a DAG using pdb as well. Run python -m pdb <path to dag file>.py for an interactive debugging experience on the command line.
+
+root@ef2c84ad4856:/opt/airflow# python -m pdb airflow/example_dags/example_bash_operator.py
+> /opt/airflow/airflow/example_dags/example_bash_operator.py(18)<module>()
+-> """Example DAG demonstrating the usage of the BashOperator."""
+(Pdb) b 45
+Breakpoint 1 at /opt/airflow/airflow/example_dags/example_bash_operator.py:45
+(Pdb) c
+> /opt/airflow/airflow/example_dags/example_bash_operator.py(45)<module>()
+-> bash_command='echo 1',
+(Pdb) run_this_last
+<Task(EmptyOperator): run_this_last>
+Debug Executor (deprecated)
+The DebugExecutor is meant as a debug tool and can be used from IDE. It is a single process executor that queues TaskInstance and executes them by running _run_raw_task method.
+
+Due to its nature the executor can be used with SQLite database. When used with sensors the executor will change sensor mode to reschedule to avoid blocking the execution of DAG.
+
+Additionally DebugExecutor can be used in a fail-fast mode that will make all other running or scheduled tasks fail immediately. To enable this option set AIRFLOW__DEBUG__FAIL_FAST=True or adjust fail_fast option in your airflow.cfg. For more information on setting the configuration, see Setting Configuration Options.
+
+IDE setup steps:
+
+Add main block at the end of your DAG file to make it runnable.
+
+It will run a backfill job:
+
+if __name__ == "__main__":
+    from airflow.utils.state import State
+
+    dag.clear()
+    dag.run()
+Setup AIRFLOW__CORE__EXECUTOR=DebugExecutor in run configuration of your IDE. In this step you should also setup all environment variables required by your DAG.
+
+Run / debug the DAG file.
