@@ -28,12 +28,12 @@ Response:
 
 def main(emd_local, ext_local):
     query_rag(
-        "can you tell me the databases details getting used?", "", emd_local, ext_local
+        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv"
     )
 
 
 def query_rag(
-    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool
+    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str
 ):
     # Prepare the DB.
     db = load_chroma_db(emb_local)
@@ -84,6 +84,7 @@ def query_rag(
         response_time,
         setup_database_time,
         similarity_results,
+        logger_file_path
     )
     return response_text
 

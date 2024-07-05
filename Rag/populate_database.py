@@ -1,5 +1,4 @@
 import os
-import shutil
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 import pymupdf4llm
@@ -16,7 +15,7 @@ def setup_database(document_path, reset: bool, emb_local: bool,create_doc: bool)
     # Check if the database should be cleared (using the --clear flag).
 
     if reset:
-        clear_database()
+        clear_database(emb_local)
         print("✨  Database Cleared")
 
     # Create (or update) the data store.
@@ -123,10 +122,15 @@ def dir_name_washing(dir_str):
     return dir_str
 
 
-def clear_database():
-    if os.path.exists(CHROMA_PATH):
-        shutil.rmtree(CHROMA_PATH)
+def clear_database(emb_local):
+    db = load_chroma_db(emb_local, db_path=CHROMA_PATH)
+    db.delete_collection()
+    # if os.path.exists(CHROMA_PATH):
+    #     shutil.rmtree(CHROMA_PATH)
 
 if __name__ == "__main__":
-    setup_database("documentsFromText/hadoop/content.txt", True, False,True)
+    path=["documentsFromText/Cassandra/content.txt","documentsFromText/Cloudfare/content.txt"]
+    for item in path:
+        setup_database(item, True, True,True)
+    
 

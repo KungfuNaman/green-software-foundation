@@ -16,7 +16,6 @@ EMBEDDINGS_LOG_DIR = os.getenv(
 def load_chroma_db(emb_locally: bool, db_path=CHROMA_PATH):
     embedder, collection_name = get_embedding_function(run_local=emb_locally)
     persistent_client = chromadb.PersistentClient()
-    # collection = persistent_client.get_or_create_collection(collection_name)
     db = Chroma(
         persist_directory=db_path,
         client=persistent_client,

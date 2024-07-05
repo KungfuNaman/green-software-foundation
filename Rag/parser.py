@@ -11,8 +11,8 @@ def read_ecoDoc_results(csv_file_path):
     return df.to_dict(orient="records")
 
 
-def add_parsed_results(csv_file_path):
-    records=read_ecoDoc_results(csv_file_path)
+def add_parsed_results(logger_file_path,combined_path):
+    records=read_ecoDoc_results(logger_file_path)
     conclusion_arr=[]
     explanation_arr=[]
     result_arr=[]
@@ -32,7 +32,7 @@ def add_parsed_results(csv_file_path):
     df['result'] = result_arr
 
     # Save the updated DataFrame to a CSV file
-    df.to_csv(COMBINED_RESULTS_PATH, index=False)
+    df.to_csv(combined_path, index=False)
 
 def parse_generated_response(generated_response):
      # Extract the explanation
@@ -92,10 +92,12 @@ def categorize_text(text):
     else:
         return 'No'
 
-with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/categories.json", "r", encoding="utf-8") as file:
-        categories_json = json.load(file)["Questions"]
+
 
 def export_combined_results_to_json(combined_results_path):
+    with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/categories.json", "r", encoding="utf-8") as file:
+        categories_json = json.load(file)["Questions"]
+        
     df = pd.read_csv(combined_results_path)
     
     records=df.to_dict(orient="records")
@@ -122,4 +124,4 @@ def export_combined_results_to_json(combined_results_path):
 
 
 # add_parsed_results(CSV_FILE_PATH)
-export_combined_results_to_json(COMBINED_RESULTS_PATH)
+# export_combined_results_to_json(COMBINED_RESULTS_PATH)
