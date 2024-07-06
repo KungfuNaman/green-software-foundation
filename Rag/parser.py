@@ -95,21 +95,20 @@ def categorize_text(text):
 
 
 def export_combined_results_to_json(combined_results_path):
-    with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/categories.json", "r", encoding="utf-8") as file:
-        categories_json = json.load(file)["Questions"]
+    with open("Rag/prompts/queries.json", "r", encoding="utf-8") as file:
+        queries = json.load(file)["queries"]
         
     df = pd.read_csv(combined_results_path)
     
     records=df.to_dict(orient="records")
-    result_arr=[]
+    result_arr=[]    
     for item in records:
-        
         obj={}
         obj["query"] = "" if pd.isna(item["query"]) else item["query"]
         obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
         obj["result"] = "" if pd.isna(item["result"]) else item["result"]
 
-        for question in categories_json:
+        for question in queries:
             if item["query"] in question["query"]:
                 obj["category"]=question["category"]
                 obj["practice"]=question["practice"]
@@ -118,10 +117,41 @@ def export_combined_results_to_json(combined_results_path):
         if "type" in obj and obj["type"] is not None:
              result_arr.append(obj)
 
-    with open("/Users/naman/Documents/groupProject/green-software-foundation/frontend/src/api_results/graphResponse.json", "w") as f:
+    json_file={"response":result_arr}
+    graphResponsePath=combined_results_path.split("/")[-1].replace(".csv","")+".json"
+    with open("frontend/src/api_results/"+graphResponsePath, "w") as f:
+            json.dump(json_file, f)
+
+    
+
+def addCategories():
+    with open("frontend/src/api_results/categories.json", "r", encoding="utf-8") as file:
+        categories_json = json.load(file)["Questions"]
+    with open("Rag/prompts/queries.json", "r", encoding="utf-8") as file:
+        queries = json.load(file)["queries"]
+    final_result={}
+    for item in categories_json:
+        obj={}
+        obj["category"]=item["category"]
+        obj["type"]=item["type"]
+        final_result[item["practice"]]=obj
+
+    for item in queries:
+        if item["practice"] in final_result:
+            item["category"]= final_result[item["practice"]]["category"] 
+    
+    result_arr={"queries":queries}
+
+    with open("Rag/prompts/queries.json", "w") as f:
             json.dump(result_arr, f)
-
-
+    print("hello")
 
 # add_parsed_results(CSV_FILE_PATH)
-# export_combined_results_to_json(COMBINED_RESULTS_PATH)
+
+files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+for item in files:
+    path="Rag/logger/Results_Phi3_prompt1/phi3_"+item+"_combined.csv"
+    export_combined_results_to_json(path)
+
+
+
