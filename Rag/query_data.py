@@ -28,15 +28,15 @@ Response:
 
 def main(emd_local, ext_local):
     query_rag(
-        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv"
+        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv","collection_name"
     )
 
 
 def query_rag(
-    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str
+    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name
 ):
     # Prepare the DB.
-    db = load_chroma_db(emb_local)
+    db = load_chroma_db(emb_local,collection_name)
 
     print("data added to db : ", setup_database_time, "s")
 

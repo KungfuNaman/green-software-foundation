@@ -5,24 +5,25 @@ import pymupdf4llm
 from dotenv import load_dotenv
 
 from rag_utils import load_chroma_db
-from rag_utils import log_embeddings_to_tensorboard
+# from rag_utils import log_embeddings_to_tensorboard
 
 
 load_dotenv()
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 
-def setup_database(document_path, reset: bool, emb_local: bool,create_doc: bool):
+def setup_database(document_path, reset: bool, emb_local: bool,create_doc: bool,collection_name:str):
     # Check if the database should be cleared (using the --clear flag).
+   
 
     if reset:
-        clear_database(emb_local)
+        clear_database(emb_local,collection_name)
         print("✨  Database Cleared")
 
     # Create (or update) the data store.
     documents = load_documents(document_path,create_doc)   # list of langchain_Doc(page_content, meta_data)
     chunks = split_documents(documents)         # split to n chunks of langchain_Doc
-    success = add_to_chroma(chunks, emb_local)
-    log_embeddings_to_tensorboard(emb_local)
+    success = add_to_chroma(chunks, emb_local,collection_name)
+    # log_embeddings_to_tensorboard(emb_local)
 
     return success
 
@@ -59,9 +60,9 @@ def split_documents(documents: list[Document]):
     return text_splitter.split_documents(documents)
 
 
-def add_to_chroma(chunks: list[Document], emb_local: bool):
+def add_to_chroma(chunks: list[Document], emb_local: bool,collection_name):
     # Initialize langchain db
-    db = load_chroma_db(emb_local, db_path=CHROMA_PATH)
+    db = load_chroma_db(emb_local, collection_name,db_path=CHROMA_PATH)
 
     # Calculate Page IDs.
     chunks_with_ids = calculate_chunk_ids(chunks)
@@ -122,8 +123,8 @@ def dir_name_washing(dir_str):
     return dir_str
 
 
-def clear_database(emb_local):
-    db = load_chroma_db(emb_local, db_path=CHROMA_PATH)
+def clear_database(emb_local,collection_name):
+    db = load_chroma_db(emb_local, collection_name,db_path=CHROMA_PATH)
     db.delete_collection()
     # if os.path.exists(CHROMA_PATH):
     #     shutil.rmtree(CHROMA_PATH)
@@ -131,6 +132,6 @@ def clear_database(emb_local):
 if __name__ == "__main__":
     path=["documentsFromText/Cassandra/content.txt","documentsFromText/Cloudfare/content.txt"]
     for item in path:
-        setup_database(item, True, True,True)
+        setup_database(item, True, True,True,"collection_name")
     
 

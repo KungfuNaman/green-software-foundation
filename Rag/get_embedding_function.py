@@ -3,14 +3,14 @@ from hf_model import Embedder
 import os
 LLM_MODEL = os.getenv("LLM_MODEL")
 
-def get_embedding_function(run_local=False):
-    embedder, collection_name = None, None
+def get_embedding_function(collection_name,run_local=False):
+    embedder = None
     if run_local:
         model_id = LLM_MODEL
         embedder = OllamaEmbeddings(model=model_id)
-        collection_name = "local"
+        collection_name = collection_name
     else:
         embedder = Embedder()
         model_id = embedder.model
-        collection_name = "remote"
+        collection_name = collection_name
     return embedder, collection_name

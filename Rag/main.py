@@ -13,10 +13,14 @@ def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_do
     """Function to execute the whole Rag Pipeline"""
     emb_local = True
     extract_local = True
+    parts = document_path.split('/')
+
+    # Get the last part
+    collection_name = parts[-2]
 
     # set up database
     setup_database_start_time = time.time()
-    is_document_embedded = setup_database(document_path, True, emb_local,create_doc)
+    is_document_embedded = setup_database(document_path, False, emb_local,create_doc,collection_name)
     setup_database_end_time = time.time()
     setup_database_time = setup_database_end_time - setup_database_start_time if is_document_embedded else "0"
 
@@ -33,7 +37,7 @@ def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_do
             break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
-        query_rag(query_text, setup_database_time, emb_local, extract_local,logger_file_path)
+        query_rag(query_text, setup_database_time, emb_local, extract_local,logger_file_path,collection_name)
         print("count: ",count)
         add_parsed_results(logger_file_path,combined_path)
         count=count+1
