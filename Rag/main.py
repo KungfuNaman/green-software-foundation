@@ -9,7 +9,7 @@ from parser import add_parsed_results
 LLM_MODEL = os.getenv("LLM_MODEL")
 
 
-def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_doc):
+def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_doc,prompt_template):
     """Function to execute the whole Rag Pipeline"""
     emb_local = True
     extract_local = True
@@ -37,20 +37,27 @@ def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_do
             break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
-        query_rag(query_text, setup_database_time, emb_local, extract_local,logger_file_path,collection_name)
+        query_rag(query_text, setup_database_time, emb_local, extract_local,logger_file_path,collection_name,prompt_template)
         print("count: ",count)
         add_parsed_results(logger_file_path,combined_path)
         count=count+1
 
+
+with open("Rag/prompts/prompt.json", 'r') as file:
+    prompts = json.load(file)
+
 def main():
     
     # for documents from text
-    documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark"]
+    documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+    PROMPT_ID="P2"
+
+    prompt_template=prompts[PROMPT_ID]
     for item in documentsFromText:
         doc_path="documentsFromText/"+item+"/content.txt"
-        log_path="./Rag/logger/"+LLM_MODEL+"_"+item+ ".csv"
-        combined_path="./Rag/logger/"+LLM_MODEL+"_"+item+ "_combined.csv"
-        evaluate_docs_in_bulk(doc_path,log_path,combined_path,True)
+        log_path="./Rag/logger/"+LLM_MODEL+"_"+PROMPT_ID+"_"+item+ ".csv"
+        combined_path="./Rag/logger/"+LLM_MODEL+"_"+PROMPT_ID+"_"+item+ "_combined.csv"
+        evaluate_docs_in_bulk(doc_path,log_path,combined_path,True,prompt_template)
     
     # for documents from pdf
     # documents=["3","2","1"]

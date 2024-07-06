@@ -9,31 +9,16 @@ from rag_utils import load_chroma_db
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 
-PROMPT_TEMPLATE = """
-Answer the question based only on the following context:
-
-{context}
-
----
-
-Answer the question based on the above context.
-
-Question: {question}
-
-Response:
-- Answer: [Provide the detailed answer here]
-- Conclusion: [Yes/No/Not Applicable]
-"""
 
 
 def main(emd_local, ext_local):
     query_rag(
-        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv","collection_name"
+        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv","collection_name","template"
     )
 
 
 def query_rag(
-    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name
+    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name,prompt_template
 ):
     # Prepare the DB.
     db = load_chroma_db(emb_local,collection_name)
@@ -53,7 +38,7 @@ def query_rag(
     print("context is taken out : ", search_time, "s")
 
     # Prompt
-    prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+    prompt_template = ChatPromptTemplate.from_template(prompt_template)
     prompt = prompt_template.format(context=context_text, question=query_text)
     # print('*'*25, '  prompt  ', '*'*25)
     # print(prompt)
