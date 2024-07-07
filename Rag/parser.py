@@ -11,14 +11,14 @@ def read_ecoDoc_results(csv_file_path):
     return df.to_dict(orient="records")
 
 
-def add_parsed_results(logger_file_path,combined_path):
+def add_parsed_results(logger_file_path,combined_path,PROMPT_ID):
     records=read_ecoDoc_results(logger_file_path)
     conclusion_arr=[]
     explanation_arr=[]
     result_arr=[]
     for item in records:
         generated_response=item["response_text"]
-        explanation,final_answer,result=parse_generated_response_P2(generated_response)
+        explanation,final_answer,result=parse_generated_response(generated_response,PROMPT_ID)
         explanation_arr.append(explanation)
         conclusion_arr.append(final_answer)
         result_arr.append(result)
@@ -34,67 +34,69 @@ def add_parsed_results(logger_file_path,combined_path):
     # Save the updated DataFrame to a CSV file
     df.to_csv(combined_path, index=False)
 
-def parse_generated_response(generated_response):
-     # Extract the explanation
-    if "about scaling down applications during idle periods." in generated_response:
-        print("hello")
-    response_start = None
-    if "Response:" in generated_response:
-        response_start = generated_response.find("Response:") + len("Response:")
-    elif "**Response**:" in generated_response:
-        response_start = generated_response.find("**Response**:") + len("**Response**:")
-    elif "Answer:" in generated_response:
-        response_start = generated_response.find("Answer:") + len("Answer:")
-    elif "**Answer**:" in generated_response:
-        response_start = generated_response.find("**Answer**:") + len("**Answer**:")
-    
-    if response_start is not None:
-        response_end = generated_response.find("Conclusion:")
-        if response_end == -1:  # if "**Conclusion**:" is not found
-            response_end = generated_response.find("**Conclusion**")
-        if response_end == -1:  # if "Conclusion:" is not found
-            response = generated_response[response_start:].strip()
+def parse_generated_response(generated_response,PROMPT_ID):
+    if PROMPT_ID=="P1":
+         # Extract the explanation
+        if "about scaling down applications during idle periods." in generated_response:
+            print("hello")
+        response_start = None
+        if "Response:" in generated_response:
+            response_start = generated_response.find("Response:") + len("Response:")
+        elif "**Response**:" in generated_response:
+            response_start = generated_response.find("**Response**:") + len("**Response**:")
+        elif "Answer:" in generated_response:
+            response_start = generated_response.find("Answer:") + len("Answer:")
+        elif "**Answer**:" in generated_response:
+            response_start = generated_response.find("**Answer**:") + len("**Answer**:")
+        
+        if response_start is not None:
+            response_end = generated_response.find("Conclusion:")
+            if response_end == -1:  # if "**Conclusion**:" is not found
+                response_end = generated_response.find("**Conclusion**")
+            if response_end == -1:  # if "Conclusion:" is not found
+                response = generated_response[response_start:].strip()
+            else:
+                response = generated_response[response_start:response_end].strip()
         else:
-            response = generated_response[response_start:response_end].strip()
-    else:
-        response = ""
-    
-    # Extract the conclusion
-    conclusion_start = None
-    if "Conclusion:" in generated_response:
-        conclusion_start = generated_response.find("Conclusion:") + len("Conclusion:")
-    elif "**Conclusion**:" in generated_response:
-        conclusion_start = generated_response.find("**Conclusion**:") + len("**Conclusion**:")
-    
-    if conclusion_start is not None:
-        conclusion = generated_response[conclusion_start:].strip()
-    else:
-        conclusion = ""    
+            response = ""
+        
+        # Extract the conclusion
+        conclusion_start = None
+        if "Conclusion:" in generated_response:
+            conclusion_start = generated_response.find("Conclusion:") + len("Conclusion:")
+        elif "**Conclusion**:" in generated_response:
+            conclusion_start = generated_response.find("**Conclusion**:") + len("**Conclusion**:")
+        
+        if conclusion_start is not None:
+            conclusion = generated_response[conclusion_start:].strip()
+        else:
+            conclusion = ""    
 
-    # Extract the result
-    result = categorize_text(conclusion)
-    
-    return response, conclusion, result
+        # Extract the result
+        result = categorize_text(conclusion)
+        
+        return response, conclusion, result
+    elif PROMPT_ID=="P2" :  
+        start_keyword = "Judgement:"
+        end_keyword = "Explanation:"
+        
+        start_index = generated_response.find(start_keyword) + len(start_keyword)
+        end_index = generated_response.find(end_keyword)
+        
+        # Extract and strip any leading/trailing whitespace
+        judgement = generated_response[start_index:end_index].strip()
 
-def parse_generated_response_P2(generated_response):
-    start_keyword = "Judgement:"
-    end_keyword = "Explanation:"
-    
-    start_index = generated_response.find(start_keyword) + len(start_keyword)
-    end_index = generated_response.find(end_keyword)
-    
-    # Extract and strip any leading/trailing whitespace
-    judgement = generated_response[start_index:end_index].strip()
+        start_keyword = "Explanation:"
+        end_keyword = "Explanation:"
+        
+        start_index = generated_response.find(start_keyword) + len(start_keyword)
+        end_index = generated_response.find(end_keyword)
+        explanation = generated_response[start_index:].strip()
 
-    start_keyword = "Explanation:"
-    end_keyword = "Explanation:"
+        judgement=judgement.replace(":","").strip()
+        return explanation,judgement,judgement
     
-    start_index = generated_response.find(start_keyword) + len(start_keyword)
-    end_index = generated_response.find(end_keyword)
-    explanation = generated_response[start_index:].strip()
-
-    judgement=judgement.replace(":","").strip()
-    return explanation,judgement,judgement
+    return "","",""   
 
 def categorize_text(text):
     # Convert text to lowercase to ensure case-insensitive matching
