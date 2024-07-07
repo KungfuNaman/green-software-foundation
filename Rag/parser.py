@@ -18,7 +18,7 @@ def add_parsed_results(logger_file_path,combined_path):
     result_arr=[]
     for item in records:
         generated_response=item["response_text"]
-        explanation,final_answer,result=parse_generated_response(generated_response)
+        explanation,final_answer,result=parse_generated_response_P2(generated_response)
         explanation_arr.append(explanation)
         conclusion_arr.append(final_answer)
         result_arr.append(result)
@@ -75,6 +75,26 @@ def parse_generated_response(generated_response):
     result = categorize_text(conclusion)
     
     return response, conclusion, result
+
+def parse_generated_response_P2(generated_response):
+    start_keyword = "Judgement:"
+    end_keyword = "Explanation:"
+    
+    start_index = generated_response.find(start_keyword) + len(start_keyword)
+    end_index = generated_response.find(end_keyword)
+    
+    # Extract and strip any leading/trailing whitespace
+    judgement = generated_response[start_index:end_index].strip()
+
+    start_keyword = "Explanation:"
+    end_keyword = "Explanation:"
+    
+    start_index = generated_response.find(start_keyword) + len(start_keyword)
+    end_index = generated_response.find(end_keyword)
+    explanation = generated_response[start_index:].strip()
+
+    judgement=judgement.replace(":","").strip()
+    return explanation,judgement,judgement
 
 def categorize_text(text):
     # Convert text to lowercase to ensure case-insensitive matching
@@ -148,10 +168,10 @@ def addCategories():
 
 # add_parsed_results(CSV_FILE_PATH)
 
-# files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-# for item in files:
-#     path="Rag/logger/Results_Phi3_prompt1/phi3_"+item+"_combined.csv"
-#     export_combined_results_to_json(path)
+files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+for item in files:
+    path="Rag/logger/Results_Phi3_prompt1/phi3_"+item+"_combined.csv"
+    export_combined_results_to_json(path)
 
 
 
