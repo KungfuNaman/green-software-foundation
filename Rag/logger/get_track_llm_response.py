@@ -7,12 +7,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CSV_FILE_PATH = os.getenv("LLM_RESPONSE_LOGGER")
 # Add the parent directory to the Python path
 
 print("hello")
 def append_to_csv(
-    query, context, search_time, response, response_time, db_time, similarity_results
+    query, context, search_time, response, response_time, db_time, similarity_results,logger_file_path
 ):
     """add data to local csv and mongo cloud"""
     header = [
@@ -36,11 +35,11 @@ def append_to_csv(
 
     try:
         # Ensure the directory exists
-        os.makedirs(os.path.dirname(CSV_FILE_PATH), exist_ok=True)
+        os.makedirs(os.path.dirname(logger_file_path), exist_ok=True)
 
-        file_exists = os.path.isfile(CSV_FILE_PATH)
+        file_exists = os.path.isfile(logger_file_path)
 
-        with open(CSV_FILE_PATH, mode="a", newline="", encoding="utf-8") as file:
+        with open(logger_file_path, mode="a", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
             if not file_exists:  # If file does not exist, write the header
                 writer.writerow(header)

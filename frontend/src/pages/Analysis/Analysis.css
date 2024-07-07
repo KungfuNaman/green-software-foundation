@@ -69,3 +69,12 @@
     /* height: 100%; */
     /* align-items: center; */
 }
+.documents-container{
+  display: flex;
+  flex-wrap: wrap;
+}
+.DocumentList{
+  flex: 1 1 11%; /* Grow, shrink, and set basis to 10% */
+  box-sizing: border-box!important;
+  padding: 5px!important;
+}
