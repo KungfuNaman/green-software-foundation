@@ -17,6 +17,15 @@ const jsonFiles = {
   "Spark": import("./../../api_results/phi3_Spark_combined.json"),
   "Airflow": import("./../../api_results/phi3_Airflow_combined.json"),
   "TrafficServer": import("./../../api_results/phi3_TrafficServer_combined.json"),
+  "CloudFare_P2": import("./../../api_results/phi3_P2_CloudFare_combined.json"),
+  "Cassandra_P2": import("./../../api_results/phi3_P2_Cassandra_combined.json"),
+  "Flink_P2": import("./../../api_results/phi3_P2_Flink_combined.json"),
+  "Hadoop_P2": import("./../../api_results/phi3_P2_Hadoop_combined.json"),
+  "Kafka_P2": import("./../../api_results/phi3_P2_Kafka_combined.json"),
+  "SkyWalking_P2": import("./../../api_results/phi3_P2_SkyWalking_combined.json"),
+  "Spark_P2": import("./../../api_results/phi3_P2_Spark_combined.json"),
+  "Airflow_P2": import("./../../api_results/phi3_P2_Airflow_combined.json"),
+  "TrafficServer_P2": import("./../../api_results/phi3_P2_TrafficServer_combined.json")
 };
 
 const Analysis = () => {
@@ -117,9 +126,9 @@ const Analysis = () => {
 
   return (
     <div className="analysis-container">
-      <div>
+      <div className="documents-container">
         {Object.keys(jsonFiles).map(item=>{
-          return <Button variant={activeButton === item ?"contained":"text"}  onClick={(event) => onFileClick(event, item)}>{item}</Button>
+          return <Button className="DocumentList" variant={activeButton === item ?"contained":"text"}  onClick={(event) => onFileClick(event, item)}>{item}</Button>
         })}
       </div>
       <div className="analysisContent">

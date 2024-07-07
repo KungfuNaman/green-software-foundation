@@ -170,7 +170,7 @@ def addCategories():
 
 files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
 for item in files:
-    path="Rag/logger/Results_Phi3_prompt1/phi3_"+item+"_combined.csv"
+    path="Rag/logger/Results_Phi3_prompt2/phi3_P2_"+item+"_combined.csv"
     export_combined_results_to_json(path)
 
 
