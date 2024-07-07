@@ -33,8 +33,8 @@ def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_do
     queries = data.get("queries", [])
     count = 0
     for query_obj in queries:
-        if count==1:
-            break
+        # if count==1:
+        #     break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
         query_rag(query_text, setup_database_time, emb_local, extract_local,logger_file_path,collection_name,prompt_template)
