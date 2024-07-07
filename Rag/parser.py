@@ -148,10 +148,10 @@ def addCategories():
 
 # add_parsed_results(CSV_FILE_PATH)
 
-files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-for item in files:
-    path="Rag/logger/Results_Phi3_prompt1/phi3_"+item+"_combined.csv"
-    export_combined_results_to_json(path)
+# files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+# for item in files:
+#     path="Rag/logger/Results_Phi3_prompt1/phi3_"+item+"_combined.csv"
+#     export_combined_results_to_json(path)
 
 
 
