@@ -1,26 +1,26 @@
 import time
 import json
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 from populate_database import setup_database
 from query_data import query_rag
-
-# to use existing pdf
-DOCUMENT_PATH = "./documents/3.pdf"
-CREATE_DOC= False
+from parser import add_parsed_results
+LLM_MODEL = os.getenv("LLM_MODEL")
 
 
-# to use text
-# DOCUMENT_PATH="documentsFromText/hadoop/content.txt"
-# CREATE_DOC= True
-
-def main():
+def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_doc,prompt_template,PROMPT_ID):
     """Function to execute the whole Rag Pipeline"""
     emb_local = True
     extract_local = True
+    parts = document_path.split('/')
+
+    # Get the last part
+    collection_name = parts[-2]
 
     # set up database
     setup_database_start_time = time.time()
-    is_document_embedded = setup_database(DOCUMENT_PATH, False, emb_local,CREATE_DOC)
+    is_document_embedded = setup_database(document_path, False, emb_local,create_doc,collection_name)
     setup_database_end_time = time.time()
     setup_database_time = setup_database_end_time - setup_database_start_time if is_document_embedded else "0"
 
@@ -33,14 +33,46 @@ def main():
     queries = data.get("queries", [])
     count = 0
     for query_obj in queries:
-        # if count==1:
-            # break
+        if count==1:
+            break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
-        query_rag(query_text, setup_database_time, emb_local, extract_local)
+        query_rag(query_text, setup_database_time, emb_local, extract_local,logger_file_path,collection_name,prompt_template)
         print("count: ",count)
-
+        add_parsed_results(logger_file_path,combined_path,PROMPT_ID)
         count=count+1
+
+
+with open("Rag/prompts/prompt.json", 'r') as file:
+    prompts = json.load(file)
+
+def main():
+    
+    PROMPT_ID="P1"
+
+    prompt_template=prompts[PROMPT_ID]
+
+    
+    # for documents from text
+    documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+    for item in documentsFromText:
+        doc_path="documentsFromText/"+item+"/content.txt"
+        log_path="./Rag/logger/"+LLM_MODEL+"_"+PROMPT_ID+"_"+item+ ".csv"
+        combined_path="./Rag/logger/"+LLM_MODEL+"_"+PROMPT_ID+"_"+item+ "_combined.csv"
+        evaluate_docs_in_bulk(doc_path,log_path,combined_path,True,prompt_template,PROMPT_ID)
+    
+    # for documents from pdf
+    # documents=["3"]
+    # for item in documents:
+    #   doc_path="./documents/"+item+".pdf"
+    #   log_path="./Rag/logger/"+LLM_MODEL+"_"+PROMPT_ID+"_"+item+ ".csv"
+    #   combined_path="./Rag/logger/"+LLM_MODEL+"_"+PROMPT_ID+"_"+item+ "_combined.csv"
+    #   evaluate_docs_in_bulk(doc_path,log_path,combined_path,False,prompt_template,PROMPT_ID)
+
+
+
+
+
 
 
 if __name__ == "__main__":

@@ -1,914 +1,1096 @@
 {
-    "queries": [
+  "queries": [
     {
-        "type": "Cloud",
-        "practice": "Cache static data",
-        "query": "Does the application/framework use content delivery networks (CDNs) to minimize recomputation or fetching of static data?"
+      "type": "Cloud",
+      "practice": "Cache static data",
+      "query": "Does the application/framework use content delivery networks (CDNs) to minimize recomputation or fetching of static data?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Cache static data",
-        "query": "Does the application/framework utilize browser caching to decrease the need for fetching static data?"
+      "type": "Cloud",
+      "practice": "Cache static data",
+      "query": "Does the application/framework utilize browser caching to decrease the need for fetching static data?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Cache static data",
-        "query": "Does the application/framework implement edge caching strategies to reduce static data retrieval times?"
+      "type": "Cloud",
+      "practice": "Cache static data",
+      "query": "Does the application/framework implement edge caching strategies to reduce static data retrieval times?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Choose the region that is closest to users",
-        "query": "Does the application/framework select cloud regions based on the geographical location of the majority of its users to reduce latency?"
+      "type": "Cloud",
+      "practice": "Choose the region that is closest to users",
+      "query": "Does the application/framework select cloud regions based on the geographical location of the majority of its users to reduce latency?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Choose the region that is closest to users",
-        "query": "Does the application/framework utilize geo-IP routing to direct users to the nearest server location?"
+      "type": "Cloud",
+      "practice": "Choose the region that is closest to users",
+      "query": "Does the application/framework utilize geo-IP routing to direct users to the nearest server location?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Choose the region that is closest to users",
-        "query": "Does the application/framework use dynamic content delivery optimization to minimize energy consumption by serving data from the closest possible servers?"
+      "type": "Cloud",
+      "practice": "Choose the region that is closest to users",
+      "query": "Does the application/framework use dynamic content delivery optimization to minimize energy consumption by serving data from the closest possible servers?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Compress stored data",
-        "query": "Does the application/framework employ gzip compression to reduce storage requirements and bandwidth?"
+      "type": "Cloud",
+      "practice": "Compress stored data",
+      "query": "Does the application/framework employ gzip compression to reduce storage requirements and bandwidth?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Compress stored data",
-        "query": "Does the application/framework utilize Brotli compression for stored data to enhance storage efficiency?"
+      "type": "Cloud",
+      "practice": "Compress stored data",
+      "query": "Does the application/framework utilize Brotli compression for stored data to enhance storage efficiency?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Compress stored data",
-        "query": "Does the application/framework implement LZ4 compression to decrease data storage space and speed up data retrieval?"
+      "type": "Cloud",
+      "practice": "Compress stored data",
+      "query": "Does the application/framework implement LZ4 compression to decrease data storage space and speed up data retrieval?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Compress transmitted data",
-        "query": "Does the application/framework utilize gzip compression for data transmitted over networks to minimize bandwidth usage?"
+      "type": "Cloud",
+      "practice": "Compress transmitted data",
+      "query": "Does the application/framework utilize gzip compression for data transmitted over networks to minimize bandwidth usage?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Compress transmitted data",
-        "query": "Does the application/framework use Brotli compression for data transmitted to improve network efficiency?"
+      "type": "Cloud",
+      "practice": "Compress transmitted data",
+      "query": "Does the application/framework use Brotli compression for data transmitted to improve network efficiency?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Compress transmitted data",
-        "query": "Does the application/framework apply custom or adaptive compression strategies to reduce the volume of data transmitted?"
+      "type": "Cloud",
+      "practice": "Compress transmitted data",
+      "query": "Does the application/framework apply custom or adaptive compression strategies to reduce the volume of data transmitted?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Containerize your workloads",
-        "query": "Does the application/framework deploy workloads in Docker containers to optimize resource allocation?"
+      "type": "Cloud",
+      "practice": "Containerize your workloads",
+      "query": "Does the application/framework deploy workloads in Docker containers to optimize resource allocation?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Containerize your workloads",
-        "query": "Does the application/framework use Kubernetes for orchestrating containers to ensure efficient scaling and management of resources?"
+      "type": "Cloud",
+      "practice": "Containerize your workloads",
+      "query": "Does the application/framework use Kubernetes for orchestrating containers to ensure efficient scaling and management of resources?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Containerize your workloads",
-        "query": "Does the application/framework implement microservices architecture within containers to enhance resource efficiency?"
+      "type": "Cloud",
+      "practice": "Containerize your workloads",
+      "query": "Does the application/framework implement microservices architecture within containers to enhance resource efficiency?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Delete unused storage resources",
-        "query": "Does the application/framework automatically delete unattached volumes to conserve storage space?"
+      "type": "Cloud",
+      "practice": "Delete unused storage resources",
+      "query": "Does the application/framework automatically delete unattached volumes to conserve storage space?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Delete unused storage resources",
-        "query": "Does the application/framework utilize lifecycle management policies to remove outdated data from storage?"
+      "type": "Cloud",
+      "practice": "Delete unused storage resources",
+      "query": "Does the application/framework utilize lifecycle management policies to remove outdated data from storage?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Delete unused storage resources",
-        "query": "Does the application/framework employ monitoring tools to identify and remove unused storage resources?"
+      "type": "Cloud",
+      "practice": "Delete unused storage resources",
+      "query": "Does the application/framework employ monitoring tools to identify and remove unused storage resources?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Encrypt what is necessary",
-        "query": "Does the application/framework apply encryption selectively to only sensitive data to optimize energy usage?"
+      "type": "Cloud",
+      "practice": "Encrypt what is necessary",
+      "query": "Does the application/framework apply encryption selectively to only sensitive data to optimize energy usage?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Encrypt what is necessary",
-        "query": "Does the application/framework use energy-efficient encryption algorithms for protecting critical data?"
+      "type": "Cloud",
+      "practice": "Encrypt what is necessary",
+      "query": "Does the application/framework use energy-efficient encryption algorithms for protecting critical data?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Encrypt what is necessary",
-        "query": "Does the application/framework implement conditional access policies to minimize the overhead of unnecessary encryption?"
+      "type": "Cloud",
+      "practice": "Encrypt what is necessary",
+      "query": "Does the application/framework implement conditional access policies to minimize the overhead of unnecessary encryption?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Evaluate other CPU architectures",
-        "query": "Does the application/framework consider ARM-based CPUs for their energy efficiency benefits?"
+      "type": "Cloud",
+      "practice": "Evaluate other CPU architectures",
+      "query": "Does the application/framework consider ARM-based CPUs for their energy efficiency benefits?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Evaluate other CPU architectures",
-        "query": "Does the application/framework use AMD EPYC processors to enhance performance and energy efficiency?"
+      "type": "Cloud",
+      "practice": "Evaluate other CPU architectures",
+      "query": "Does the application/framework use AMD EPYC processors to enhance performance and energy efficiency?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Evaluate other CPU architectures",
-        "query": "Is the application/framework exploring the use of RISC-V architecture to improve energy efficiency in processing tasks?"
+      "type": "Cloud",
+      "practice": "Evaluate other CPU architectures",
+      "query": "Is the application/framework exploring the use of RISC-V architecture to improve energy efficiency in processing tasks?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Use a service mesh only if needed",
-        "query": "Does the application/framework evaluate the necessity of implementing a service mesh to prevent unnecessary overhead?"
+      "type": "Cloud",
+      "practice": "Use a service mesh only if needed",
+      "query": "Does the application/framework evaluate the necessity of implementing a service mesh to prevent unnecessary overhead?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use a service mesh only if needed",
-      "query": "Does the application/framework use lightweight service mesh alternatives when simpler solutions can suffice?"
+      "type": "Cloud",
+      "practice": "Use a service mesh only if needed",
+      "query": "Does the application/framework use lightweight service mesh alternatives when simpler solutions can suffice?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use a service mesh only if needed",
-        "query": "Is the application/framework configured to dynamically enable or disable service mesh features based on real-time demand to reduce overhead?"
+      "type": "Cloud",
+      "practice": "Use a service mesh only if needed",
+      "query": "Is the application/framework configured to dynamically enable or disable service mesh features based on real-time demand to reduce overhead?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Terminate TLS at border gateway",
-        "query": "Does the application/framework terminate TLS connections at the border gateway to minimize internal network encryption overhead?"
+      "type": "Cloud",
+      "practice": "Terminate TLS at border gateway",
+      "query": "Does the application/framework terminate TLS connections at the border gateway to minimize internal network encryption overhead?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Terminate TLS at border gateway",
-        "query": "Does the application/framework use dedicated hardware security modules (HSMs) at border gateways for efficient TLS termination?"
+      "type": "Cloud",
+      "practice": "Terminate TLS at border gateway",
+      "query": "Does the application/framework use dedicated hardware security modules (HSMs) at border gateways for efficient TLS termination?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Terminate TLS at border gateway",
-        "query": "Is the application/framework configured to offload TLS processing to the border gateway to improve overall system performance?"
+      "type": "Cloud",
+      "practice": "Terminate TLS at border gateway",
+      "query": "Is the application/framework configured to offload TLS processing to the border gateway to improve overall system performance?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Implement stateless design",
-        "query": "Does the application/framework utilize stateless protocols to ensure scalability across multiple servers?"
+      "type": "Cloud",
+      "practice": "Implement stateless design",
+      "query": "Does the application/framework utilize stateless protocols to ensure scalability across multiple servers?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Implement stateless design",
-        "query": "Does the application/framework deploy containers or microservices in a stateless manner to facilitate easy scaling?"
+      "type": "Cloud",
+      "practice": "Implement stateless design",
+      "query": "Does the application/framework deploy containers or microservices in a stateless manner to facilitate easy scaling?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Implement stateless design",
-        "query": "Is the application/framework designed to store session state in a centralized data store to maintain a stateless application architecture?"
+      "type": "Cloud",
+      "practice": "Implement stateless design",
+      "query": "Is the application/framework designed to store session state in a centralized data store to maintain a stateless application architecture?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Match your service level objectives to business needs",
-        "query": "Does the application/framework tailor its service level objectives specifically to meet the actual needs of the business?"
+      "type": "Cloud",
+      "practice": "Match your service level objectives to business needs",
+      "query": "Does the application/framework tailor its service level objectives specifically to meet the actual needs of the business?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Match your service level objectives to business needs",
-        "query": "Does the application/framework regularly review and adjust its service level objectives to remain aligned with changing business goals?"
+      "type": "Cloud",
+      "practice": "Match your service level objectives to business needs",
+      "query": "Does the application/framework regularly review and adjust its service level objectives to remain aligned with changing business goals?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Match your service level objectives to business needs",
-        "query": "Is there a process in place for involving business stakeholders in setting and evaluating service level objectives for the cloud services?"
+      "type": "Cloud",
+      "practice": "Match your service level objectives to business needs",
+      "query": "Is there a process in place for involving business stakeholders in setting and evaluating service level objectives for the cloud services?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Match utilization requirements of virtual machines (VMs)",
-        "query": "Does the application/framework regularly assess and adjust VM sizes to ensure they are optimized for their current workloads?"
+      "type": "Cloud",
+      "practice": "Match utilization requirements of virtual machines (VMs)",
+      "query": "Does the application/framework regularly assess and adjust VM sizes to ensure they are optimized for their current workloads?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Match utilization requirements of virtual machines (VMs)",
-        "query": "Does the application/framework use auto-scaling features to dynamically adjust VM capacities based on real-time demand?"
+      "type": "Cloud",
+      "practice": "Match utilization requirements of virtual machines (VMs)",
+      "query": "Does the application/framework use auto-scaling features to dynamically adjust VM capacities based on real-time demand?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Match utilization requirements of virtual machines (VMs)",
-        "query": "Is the application/framework utilizing predictive analytics to forecast and right-size VM allocations according to anticipated workload changes?"
+      "type": "Cloud",
+      "practice": "Match utilization requirements of virtual machines (VMs)",
+      "query": "Is the application/framework utilizing predictive analytics to forecast and right-size VM allocations according to anticipated workload changes?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Match utilization requirements with pre-configured servers",
-        "query": "Does the application/framework use pre-configured server instances that are specifically tailored to match the workload requirements?"
+      "type": "Cloud",
+      "practice": "Match utilization requirements with pre-configured servers",
+      "query": "Does the application/framework use pre-configured server instances that are specifically tailored to match the workload requirements?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Match utilization requirements with pre-configured servers",
-        "query": "Does the application/framework periodically review and adjust the selection of pre-configured servers to ensure they align with changing workload needs?"
+      "type": "Cloud",
+      "practice": "Match utilization requirements with pre-configured servers",
+      "query": "Does the application/framework periodically review and adjust the selection of pre-configured servers to ensure they align with changing workload needs?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Match utilization requirements with pre-configured servers",
-        "query": "Is the application/framework leveraging cloud provider recommendations to choose pre-configured servers that best fit the utilization requirements?"
+      "type": "Cloud",
+      "practice": "Match utilization requirements with pre-configured servers",
+      "query": "Is the application/framework leveraging cloud provider recommendations to choose pre-configured servers that best fit the utilization requirements?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Set storage retention policies",
-        "query": "Does the application/framework define and enforce storage retention policies to automatically delete old or unused data?"
+      "type": "Cloud",
+      "practice": "Set storage retention policies",
+      "query": "Does the application/framework define and enforce storage retention policies to automatically delete old or unused data?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Set storage retention policies",
-        "query": "Does the application/framework periodically review and update storage retention policies to ensure they remain effective and relevant?"
+      "type": "Cloud",
+      "practice": "Set storage retention policies",
+      "query": "Does the application/framework periodically review and update storage retention policies to ensure they remain effective and relevant?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Set storage retention policies",
-        "query": "Is the application/framework using automated tools to manage and enforce storage retention policies for data cleanup?"
+      "type": "Cloud",
+      "practice": "Set storage retention policies",
+      "query": "Is the application/framework using automated tools to manage and enforce storage retention policies for data cleanup?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Cloud",
-        "practice": "Shed lower priority traffic",
-        "query": "Does the application/framework implement traffic management policies to prioritize critical traffic over lower priority traffic?"
+      "type": "Cloud",
+      "practice": "Shed lower priority traffic",
+      "query": "Does the application/framework implement traffic management policies to prioritize critical traffic over lower priority traffic?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Shed lower priority traffic",
-        "query": "Does the application/framework use quality of service (QoS) mechanisms to ensure critical traffic is prioritized and lower priority traffic is limited during peak times?"
+      "type": "Cloud",
+      "practice": "Shed lower priority traffic",
+      "query": "Does the application/framework use quality of service (QoS) mechanisms to ensure critical traffic is prioritized and lower priority traffic is limited during peak times?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Shed lower priority traffic",
-        "query": "Is the application/framework configured to dynamically adjust traffic prioritization based on real-time performance needs and workload demands?"
+      "type": "Cloud",
+      "practice": "Shed lower priority traffic",
+      "query": "Is the application/framework configured to dynamically adjust traffic prioritization based on real-time performance needs and workload demands?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Time-shift Kubernetes cron jobs",
-        "query": "Does the application/framework schedule Kubernetes cron jobs during off-peak hours to reduce resource contention?"
+      "type": "Cloud",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Does the application/framework schedule Kubernetes cron jobs during off-peak hours to reduce resource contention?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Time-shift Kubernetes cron jobs",
-        "query": "Does the application/framework use tools or scripts to automatically adjust the timing of Kubernetes cron jobs to off-peak periods?"
+      "type": "Cloud",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Does the application/framework use tools or scripts to automatically adjust the timing of Kubernetes cron jobs to off-peak periods?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Time-shift Kubernetes cron jobs",
-        "query": "Is the application/framework configured to monitor and adjust the scheduling of Kubernetes cron jobs based on real-time usage patterns to optimize resource utilization?"
+      "type": "Cloud",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Is the application/framework configured to monitor and adjust the scheduling of Kubernetes cron jobs based on real-time usage patterns to optimize resource utilization?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use asynchronous network calls instead of synchronous",
-        "query": "Does the application/framework implement asynchronous network calls to minimize waiting times and improve performance?"
+      "type": "Cloud",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Does the application/framework implement asynchronous network calls to minimize waiting times and improve performance?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use asynchronous network calls instead of synchronous",
-        "query": "Does the application/framework use non-blocking I/O operations to facilitate asynchronous communication between services?"
+      "type": "Cloud",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Does the application/framework use non-blocking I/O operations to facilitate asynchronous communication between services?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use asynchronous network calls instead of synchronous",
-        "query": "Is the application/framework configured to handle responses from asynchronous network calls efficiently to enhance overall system responsiveness?"
+      "type": "Cloud",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Is the application/framework configured to handle responses from asynchronous network calls efficiently to enhance overall system responsiveness?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use circuit breaker patterns",
-        "query": "Does the application/framework implement circuit breaker patterns to manage and mitigate service failures?"
+      "type": "Cloud",
+      "practice": "Use circuit breaker patterns",
+      "query": "Does the application/framework implement circuit breaker patterns to manage and mitigate service failures?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use circuit breaker patterns",
-        "query": "Does the application/framework use monitoring tools to dynamically adjust circuit breaker thresholds based on real-time service performance?"
+      "type": "Cloud",
+      "practice": "Use circuit breaker patterns",
+      "query": "Does the application/framework use monitoring tools to dynamically adjust circuit breaker thresholds based on real-time service performance?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use circuit breaker patterns",
-        "query": "Is the application/framework configured to log and analyze circuit breaker events to identify and resolve underlying issues promptly?"
+      "type": "Cloud",
+      "practice": "Use circuit breaker patterns",
+      "query": "Is the application/framework configured to log and analyze circuit breaker events to identify and resolve underlying issues promptly?",
+      "category": "Performance Management"
     },
     {
-        "type": "Cloud",
-        "practice": "Use cloud native network security tools and controls",
-        "query": "Does the application/framework leverage cloud-native security tools to protect network communications?"
+      "type": "Cloud",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Does the application/framework leverage cloud-native security tools to protect network communications?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Use cloud native network security tools and controls",
-        "query": "Does the application/framework use cloud provider security services like AWS Security Hub, Azure Security Center, or Google Cloud Security Command Center to enhance network security?"
+      "type": "Cloud",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Does the application/framework use cloud provider security services like AWS Security Hub, Azure Security Center, or Google Cloud Security Command Center to enhance network security?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Use cloud native network security tools and controls",
-        "query": "Is the application/framework configured to automatically apply security patches and updates using cloud-native security tools?"
+      "type": "Cloud",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Is the application/framework configured to automatically apply security patches and updates using cloud-native security tools?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Use DDoS protection",
-        "query": "Does the application/framework implement DDoS protection services provided by the cloud provider to safeguard against attacks?"
+      "type": "Cloud",
+      "practice": "Use DDoS protection",
+      "query": "Does the application/framework implement DDoS protection services provided by the cloud provider to safeguard against attacks?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Use DDoS protection",
-        "query": "Does the application/framework utilize rate limiting and traffic filtering techniques to mitigate potential DDoS attacks?"
+      "type": "Cloud",
+      "practice": "Use DDoS protection",
+      "query": "Does the application/framework utilize rate limiting and traffic filtering techniques to mitigate potential DDoS attacks?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Use DDoS protection",
-        "query": "Is the application/framework configured to monitor and automatically respond to DDoS threats in real-time to maintain service availability?"
+      "type": "Cloud",
+      "practice": "Use DDoS protection",
+      "query": "Is the application/framework configured to monitor and automatically respond to DDoS threats in real-time to maintain service availability?",
+      "category": "Security"
     },
-       {
-        "type": "Cloud",
-        "practice": "Use cloud native processor VMs",
-        "query": "Does the application/framework utilize cloud-native processor VMs optimized for the cloud environment to enhance performance?"
+    {
+      "type": "Cloud",
+      "practice": "Use cloud native processor VMs",
+      "query": "Does the application/framework utilize cloud-native processor VMs optimized for the cloud environment to enhance performance?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Use cloud native processor VMs",
+      "query": "Does the application/framework use instance types specifically designed for cloud-native workloads, such as AWS Nitro-based instances, Azure H-series, or Google Cloud's Tau VMs?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Use cloud native processor VMs",
+      "query": "Is the application/framework configured to take advantage of features provided by cloud-native VMs, such as enhanced networking, optimized storage, and automatic scaling?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Use serverless cloud services",
+      "query": "Does the application/framework adopt serverless cloud services like AWS Lambda, Azure Functions, or Google Cloud Functions to optimize resource usage?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Use serverless cloud services",
+      "query": "Does the application/framework use serverless architectures to automatically scale resources based on demand?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Use serverless cloud services",
+      "query": "Is the application/framework configured to leverage serverless services for event-driven processing to minimize idle resource consumption?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Minimize total number of deployed environments",
+      "query": "Does the application/framework regularly review and consolidate environments to reduce the number of active deployments and save resources?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Minimize total number of deployed environments",
+      "query": "Does the application/framework use shared environments for development and testing to minimize the total number of deployed environments?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Cloud",
+      "practice": "Minimize total number of deployed environments",
+      "query": "Is the application/framework configured to automatically shut down and clean up inactive environments to conserve resources?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Minimize the total number of deployed environments",
+      "query": "Does the application/framework utilize a single production environment to reduce resource usage?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Minimize the total number of deployed environments",
+      "query": "Does the application/framework limit the use of separate staging environments to essential testing only?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Minimize the total number of deployed environments",
+      "query": "Does the application/framework avoid deploying multiple redundant development environments?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize storage utilization",
+      "query": "Does the application/framework implement data compression techniques to reduce storage space?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize storage utilization",
+      "query": "Does the application/framework use deduplication to eliminate redundant copies of data?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize storage utilization",
+      "query": "Does the application/framework archive infrequently accessed data to less energy-intensive storage solutions?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize average CPU utilization",
+      "query": "Does the application/framework implement load balancing to distribute workloads evenly across servers?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize average CPU utilization",
+      "query": "Does the application/framework use auto-scaling to match CPU resources with current demand?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize average CPU utilization",
+      "query": "Does the application/framework optimize code to reduce CPU cycles required for processing?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize impact on customer devices and equipment",
+      "query": "Does the application/framework minimize background processes to reduce CPU and battery usage on end-user devices?",
+      "category": "User Impact"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize impact on customer devices and equipment",
+      "query": "Does the application/framework use efficient data transmission protocols to minimize network usage and energy consumption on end-user devices?",
+      "category": "User Impact"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize impact on customer devices and equipment",
+      "query": "Does the application/framework ensure compatibility with power-saving modes on end-user devices?",
+      "category": "User Impact"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize peak CPU utilization",
+      "query": "Does the application/framework implement request throttling to manage peak CPU usage?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize peak CPU utilization",
+      "query": "Does the application/framework use task scheduling to distribute CPU-intensive tasks during off-peak times?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Optimize peak CPU utilization",
+      "query": "Does the application/framework use caching to reduce the load on the CPU during peak times?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Queue non-urgent processing requests",
+      "query": "Does the application/framework use a queuing system to delay non-critical tasks?",
+      "category": "Performance Management"
+    },
+    {
+      "type": "Web",
+      "practice": "Queue non-urgent processing requests",
+      "query": "Does the application/framework prioritize critical tasks over non-urgent ones to manage peak loads?",
+      "category": "Performance Management"
+    },
+    {
+      "type": "Web",
+      "practice": "Queue non-urgent processing requests",
+      "query": "Does the application/framework schedule non-urgent processing during off-peak hours to reduce peak loads?",
+      "category": "Performance Management"
+    },
+    {
+      "type": "Web",
+      "practice": "Reduce transmitted data",
+      "query": "Does the application/framework use data compression to minimize the amount of transmitted data?",
+      "category": "Data Efficiency"
+    },
+    {
+      "type": "Web",
+      "practice": "Reduce transmitted data",
+      "query": "Does the application/framework implement lazy loading to load data only when needed?",
+      "category": "Data Efficiency"
+    },
+    {
+      "type": "Web",
+      "practice": "Reduce transmitted data",
+      "query": "Does the application/framework use efficient data formats like JSON or protobuf to reduce data size?",
+      "category": "Data Efficiency"
+    },
+    {
+      "type": "Web",
+      "practice": "Remove unused assets",
+      "query": "Does the application/framework regularly audit and remove unused images and media files?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Remove unused assets",
+      "query": "Does the application/framework eliminate unused CSS and JavaScript files from the codebase?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Remove unused assets",
+      "query": "Does the application/framework use tools to identify and clean up unused code and libraries?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale down Kubernetes applications when not in use",
+      "query": "Does the application/framework use Kubernetes auto-scaling to reduce resource usage during idle periods?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale down Kubernetes applications when not in use",
+      "query": "Does the application/framework implement resource limits to scale down pods when they are not in use?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale down Kubernetes applications when not in use",
+      "query": "Does the application/framework use scheduled scaling policies to minimize Kubernetes resource usage during off-peak hours?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale down applications when not in use",
+      "query": "Does the application/framework implement auto-scaling to reduce resources during idle periods?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale down applications when not in use",
+      "query": "Does the application/framework use serverless functions to automatically scale down when not in use?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale down applications when not in use",
+      "query": "Does the application/framework employ resource allocation policies to minimize resources for idle applications?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale infrastructure with user load",
+      "query": "Does the application/framework use auto-scaling groups to adjust the number of servers based on real-time user demand?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale infrastructure with user load",
+      "query": "Does the application/framework employ load balancers to distribute user load across multiple servers dynamically?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale infrastructure with user load",
+      "query": "Does the application/framework use serverless architectures to scale infrastructure in response to user load?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale Kubernetes workloads based on relevant demand metrics",
+      "query": "Does the application/framework use Kubernetes Horizontal Pod Autoscaler (HPA) to scale workloads based on CPU and memory usage?",
+      "category": "Resource Optimization"
+    },
+    {
+      "type": "Web",
+      "practice": "Scale Kubernetes workloads based on relevant demand metrics",
+      "query": "Does the application/framework implement custom metrics in Kubernetes to scale workloads dynamically?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Use cloud native processor VMs",
-        "query": "Does the application/framework use instance types specifically designed for cloud-native workloads, such as AWS Nitro-based instances, Azure H-series, or Google Cloud's Tau VMs?"
+      "type": "Web",
+      "practice": "Scale Kubernetes workloads based on relevant demand metrics",
+      "query": "Does the application/framework use Kubernetes Vertical Pod Autoscaler (VPA) to adjust resource allocation based on demand?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Use cloud native processor VMs",
-        "query": "Is the application/framework configured to take advantage of features provided by cloud-native VMs, such as enhanced networking, optimized storage, and automatic scaling?"
+      "type": "Web",
+      "practice": "Scale logical components independently",
+      "query": "Does the application/framework use microservices architecture to enable independent scaling of components?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Use serverless cloud services",
-        "query": "Does the application/framework adopt serverless cloud services like AWS Lambda, Azure Functions, or Google Cloud Functions to optimize resource usage?"
+      "type": "Web",
+      "practice": "Scale logical components independently",
+      "query": "Does the application/framework deploy services in separate containers to allow for independent scaling?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Use serverless cloud services",
-        "query": "Does the application/framework use serverless architectures to automatically scale resources based on demand?"
+      "type": "Web",
+      "practice": "Scale logical components independently",
+      "query": "Does the application/framework implement service mesh to manage and scale individual components independently?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Cloud",
-        "practice": "Use serverless cloud services",
-        "query": "Is the application/framework configured to leverage serverless services for event-driven processing to minimize idle resource consumption?"
+      "type": "Web",
+      "practice": "Scan for vulnerabilities",
+      "query": "Does the application/framework use automated security scanning tools to identify vulnerabilities regularly?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Minimize total number of deployed environments",
-        "query": "Does the application/framework regularly review and consolidate environments to reduce the number of active deployments and save resources?"
+      "type": "Web",
+      "practice": "Scan for vulnerabilities",
+      "query": "Does the application/framework conduct regular penetration testing to uncover and address security issues?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Minimize total number of deployed environments",
-        "query": "Does the application/framework use shared environments for development and testing to minimize the total number of deployed environments?"
+      "type": "Web",
+      "practice": "Scan for vulnerabilities",
+      "query": "Does the application/framework implement a continuous integration pipeline that includes security checks?",
+      "category": "Security"
     },
     {
-        "type": "Cloud",
-        "practice": "Minimize total number of deployed environments",
-        "query": "Is the application/framework configured to automatically shut down and clean up inactive environments to conserve resources?"
+      "type": "Web",
+      "practice": "Set storage retention policies",
+      "query": "Does the application/framework implement automated storage retention policies to delete old data after a specified period?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Minimize the total number of deployed environments",
-        "query": "Does the application/framework utilize a single production environment to reduce resource usage?"
+      "type": "Web",
+      "practice": "Set storage retention policies",
+      "query": "Does the application/framework use lifecycle management rules to transition old data to cheaper storage options before deletion?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Minimize the total number of deployed environments",
-        "query": "Does the application/framework limit the use of separate staging environments to essential testing only?"
+      "type": "Web",
+      "practice": "Set storage retention policies",
+      "query": "Does the application/framework regularly audit and enforce storage retention policies to ensure compliance?",
+      "category": "Data Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Minimize the total number of deployed environments",
-        "query": "Does the application/framework avoid deploying multiple redundant development environments?"
+      "type": "Web",
+      "practice": "Shed lower priority traffic",
+      "query": "Does the application/framework implement traffic prioritization to ensure critical requests are processed first?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize storage utilization",
-        "query": "Does the application/framework implement data compression techniques to reduce storage space?"
+      "type": "Web",
+      "practice": "Shed lower priority traffic",
+      "query": "Does the application/framework use rate limiting to control the flow of lower priority traffic?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize storage utilization",
-        "query": "Does the application/framework use deduplication to eliminate redundant copies of data?"
+      "type": "Web",
+      "practice": "Shed lower priority traffic",
+      "query": "Does the application/framework employ traffic shaping techniques to manage lower priority traffic during peak times?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize storage utilization",
-        "query": "Does the application/framework archive infrequently accessed data to less energy-intensive storage solutions?"
+      "type": "Web",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Does the application/framework schedule Kubernetes cron jobs during off-peak hours to reduce peak load?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize average CPU utilization",
-        "query": "Does the application/framework implement load balancing to distribute workloads evenly across servers?"
+      "type": "Web",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Does the application/framework use Kubernetes cron job schedules to optimize resource usage by running tasks at non-peak times?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize average CPU utilization",
-        "query": "Does the application/framework use auto-scaling to match CPU resources with current demand?"
+      "type": "Web",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Does the application/framework configure Kubernetes cron jobs to execute maintenance tasks during low-demand periods?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize average CPU utilization",
-        "query": "Does the application/framework optimize code to reduce CPU cycles required for processing?"
+      "type": "Web",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Does the application/framework implement asynchronous network calls to minimize waiting times and improve performance?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize impact on customer devices and equipment",
-        "query": "Does the application/framework minimize background processes to reduce CPU and battery usage on end-user devices?"
+      "type": "Web",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Does the application/framework use async/await patterns to handle network requests more efficiently?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize impact on customer devices and equipment",
-        "query": "Does the application/framework use efficient data transmission protocols to minimize network usage and energy consumption on end-user devices?"
+      "type": "Web",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Does the application/framework utilize non-blocking I/O operations for network communication?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize impact on customer devices and equipment",
-        "query": "Does the application/framework ensure compatibility with power-saving modes on end-user devices?"
+      "type": "Web",
+      "practice": "Use circuit breaker patterns",
+      "query": "Does the application/framework implement circuit breaker patterns to prevent cascading failures?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize peak CPU utilization",
-        "query": "Does the application/framework implement request throttling to manage peak CPU usage?"
+      "type": "Web",
+      "practice": "Use circuit breaker patterns",
+      "query": "Does the application/framework use circuit breakers to detect and recover from service failures gracefully?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize peak CPU utilization",
-        "query": "Does the application/framework use task scheduling to distribute CPU-intensive tasks during off-peak times?"
+      "type": "Web",
+      "practice": "Use circuit breaker patterns",
+      "query": "Does the application/framework monitor circuit breaker status to adjust load and prevent overloads?",
+      "category": "Performance Management"
     },
     {
-        "type": "Web",
-        "practice": "Optimize peak CPU utilization",
-        "query": "Does the application/framework use caching to reduce the load on the CPU during peak times?"
+      "type": "Web",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Does the application/framework use cloud-native firewalls to enhance network security?",
+      "category": "Security"
     },
     {
-        "type": "Web",
-        "practice": "Queue non-urgent processing requests",
-        "query": "Does the application/framework use a queuing system to delay non-critical tasks?"
+      "type": "Web",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Does the application/framework implement cloud-native intrusion detection systems (IDS) for efficient security monitoring?",
+      "category": "Security"
     },
     {
-        "type": "Web",
-        "practice": "Queue non-urgent processing requests",
-        "query": "Does the application/framework prioritize critical tasks over non-urgent ones to manage peak loads?"
+      "type": "Web",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Does the application/framework leverage cloud-native access control mechanisms to secure network resources?",
+      "category": "Security"
     },
     {
-        "type": "Web",
-        "practice": "Queue non-urgent processing requests",
-        "query": "Does the application/framework schedule non-urgent processing during off-peak hours to reduce peak loads?"
+      "type": "Web",
+      "practice": "Use DDoS protection",
+      "query": "Does the application/framework implement DDoS protection services to maintain service availability during attacks?",
+      "category": "Security"
     },
     {
-        "type": "Web",
-        "practice": "Reduce transmitted data",
-        "query": "Does the application/framework use data compression to minimize the amount of transmitted data?"
+      "type": "Web",
+      "practice": "Use DDoS protection",
+      "query": "Does the application/framework use cloud-based DDoS mitigation tools to protect against large-scale attacks?",
+      "category": "Security"
     },
     {
-        "type": "Web",
-        "practice": "Reduce transmitted data",
-        "query": "Does the application/framework implement lazy loading to load data only when needed?"
+      "type": "Web",
+      "practice": "Use DDoS protection",
+      "query": "Does the application/framework monitor network traffic patterns to detect and mitigate potential DDoS attacks?",
+      "category": "Security"
     },
     {
-        "type": "Web",
-        "practice": "Reduce transmitted data",
-        "query": "Does the application/framework use efficient data formats like JSON or protobuf to reduce data size?"
+      "type": "Web",
+      "practice": "Use serverless cloud services",
+      "query": "Does the application/framework use serverless functions to automatically scale based on demand and optimize resource usage?",
+      "category": "Resource Optimization"
     },
-            {
-        "type": "Web",
-        "practice": "Remove unused assets",
-        "query": "Does the application/framework regularly audit and remove unused images and media files?"
+    {
+      "type": "Web",
+      "practice": "Use serverless cloud services",
+      "query": "Does the application/framework adopt serverless databases to handle data storage efficiently?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Web",
-        "practice": "Remove unused assets",
-        "query": "Does the application/framework eliminate unused CSS and JavaScript files from the codebase?"
+      "type": "Web",
+      "practice": "Use serverless cloud services",
+      "query": "Does the application/framework leverage serverless architectures to reduce idle resource consumption?",
+      "category": "Resource Optimization"
     },
     {
-        "type": "Web",
-        "practice": "Remove unused assets",
-        "query": "Does the application/framework use tools to identify and clean up unused code and libraries?"
+      "type": "AI",
+      "practice": "Optimize the size of AI/ML models",
+      "query": "Does the application/framework use model pruning to reduce the size of AI models and save storage space?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Scale down Kubernetes applications when not in use",
-        "query": "Does the application/framework use Kubernetes auto-scaling to reduce resource usage during idle periods?"
+      "type": "AI",
+      "practice": "Optimize the size of AI/ML models",
+      "query": "Does the application/framework use quantization to reduce the size of AI models and save storage space?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Scale down Kubernetes applications when not in use",
-        "query": "Does the application/framework implement resource limits to scale down pods when they are not in use?"
+      "type": "AI",
+      "practice": "Optimize the size of AI/ML models",
+      "query": "Does the application/framework use knowledge distillation to reduce the size of AI models and save storage space?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Scale down Kubernetes applications when not in use",
-        "query": "Does the application/framework use scheduled scaling policies to minimize Kubernetes resource usage during off-peak hours?"
+      "type": "AI",
+      "practice": "Optimize the size of AI/ML models",
+      "query": "Does the application/framework employ low-rank factorization techniques to reduce the size of AI models and save storage space?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Scale down applications when not in use",
-        "query": "Does the application/framework implement auto-scaling to reduce resources during idle periods?"
+      "type": "AI",
+      "practice": "Optimize the size of AI/ML models",
+      "query": "Does the application/framework use efficient neural network architectures (like MobileNet, SqueezeNet) to reduce the size of AI models and save storage space?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Scale down applications when not in use",
-        "query": "Does the application/framework use serverless functions to automatically scale down when not in use?"
+      "type": "AI",
+      "practice": "Use efficient file formats for AI/ML development",
+      "query": "Does the application/framework use Parquet file format for better data storage and retrieval?",
+      "category": "Data Management"
     },
     {
-        "type": "Web",
-        "practice": "Scale down applications when not in use",
-        "query": "Does the application/framework employ resource allocation policies to minimize resources for idle applications?"
+      "type": "AI",
+      "practice": "Use efficient file formats for AI/ML development",
+      "query": "Does the application/framework use ORC file format for better data storage and retrieval?",
+      "category": "Data Management"
     },
-        {
-        "type": "Web",
-        "practice": "Scale infrastructure with user load",
-        "query": "Does the application/framework use auto-scaling groups to adjust the number of servers based on real-time user demand?"
+    {
+      "type": "AI",
+      "practice": "Use efficient file formats for AI/ML development",
+      "query": "Does the application/framework use Avro file format for better data storage and retrieval?",
+      "category": "Data Management"
     },
     {
-        "type": "Web",
-        "practice": "Scale infrastructure with user load",
-        "query": "Does the application/framework employ load balancers to distribute user load across multiple servers dynamically?"
+      "type": "AI",
+      "practice": "Use efficient file formats for AI/ML development",
+      "query": "Does the application/framework use Feather file format for better data storage and retrieval?",
+      "category": "Data Management"
     },
     {
-        "type": "Web",
-        "practice": "Scale infrastructure with user load",
-        "query": "Does the application/framework use serverless architectures to scale infrastructure in response to user load?"
+      "type": "AI",
+      "practice": "Run AI models at the edge",
+      "query": "Does the application/framework deploy AI models on edge devices to reduce energy consumption?",
+      "category": "Deployment Strategy"
     },
     {
-        "type": "Web",
-        "practice": "Scale Kubernetes workloads based on relevant demand metrics",
-        "query": "Does the application/framework use Kubernetes Horizontal Pod Autoscaler (HPA) to scale workloads based on CPU and memory usage?"
+      "type": "AI",
+      "practice": "Run AI models at the edge",
+      "query": "Does the application/framework deploy AI models on edge devices to minimize data transfer?",
+      "category": "Deployment Strategy"
     },
     {
-        "type": "Web",
-        "practice": "Scale Kubernetes workloads based on relevant demand metrics",
-        "query": "Does the application/framework implement custom metrics in Kubernetes to scale workloads dynamically?"
+      "type": "AI",
+      "practice": "Run AI models at the edge",
+      "query": "Does the application/framework use edge computing to perform AI inference locally on devices?",
+      "category": "Deployment Strategy"
     },
     {
-        "type": "Web",
-        "practice": "Scale Kubernetes workloads based on relevant demand metrics",
-        "query": "Does the application/framework use Kubernetes Vertical Pod Autoscaler (VPA) to adjust resource allocation based on demand?"
+      "type": "AI",
+      "practice": "Run AI models at the edge",
+      "query": "Does the application/framework utilize AI accelerators (e.g., TPUs, NPUs) on edge devices to optimize performance and reduce energy consumption?",
+      "category": "Deployment Strategy"
     },
     {
-        "type": "Web",
-        "practice": "Scale logical components independently",
-        "query": "Does the application/framework use microservices architecture to enable independent scaling of components?"
+      "type": "AI",
+      "practice": "Run AI models at the edge",
+      "query": "Does the application/framework implement model optimization techniques for edge deployment to ensure efficient use of resources?",
+      "category": "Deployment Strategy"
     },
     {
-        "type": "Web",
-        "practice": "Scale logical components independently",
-        "query": "Does the application/framework deploy services in separate containers to allow for independent scaling?"
+      "type": "AI",
+      "practice": "Select a more energy efficient AI/ML framework",
+      "query": "Does the application/framework use AI/ML frameworks built on energy-efficient programming languages like C or C++?",
+      "category": "Framework Selection"
     },
     {
-        "type": "Web",
-        "practice": "Scale logical components independently",
-        "query": "Does the application/framework implement service mesh to manage and scale individual components independently?"
+      "type": "AI",
+      "practice": "Select a more energy efficient AI/ML framework",
+      "query": "Does the application/framework utilize TensorFlow Lite for its energy-efficient operations on edge devices?",
+      "category": "Framework Selection"
     },
-        {
-        "type": "Web",
-        "practice": "Scan for vulnerabilities",
-        "query": "Does the application/framework use automated security scanning tools to identify vulnerabilities regularly?"
+    {
+      "type": "AI",
+      "practice": "Select a more energy efficient AI/ML framework",
+      "query": "Does the application/framework leverage PyTorch with optimizations for lower power consumption?",
+      "category": "Framework Selection"
     },
     {
-        "type": "Web",
-        "practice": "Scan for vulnerabilities",
-        "query": "Does the application/framework conduct regular penetration testing to uncover and address security issues?"
+      "type": "AI",
+      "practice": "Select a more energy efficient AI/ML framework",
+      "query": "Does the application/framework employ MXNet, known for its efficient resource utilization?",
+      "category": "Framework Selection"
     },
     {
-        "type": "Web",
-        "practice": "Scan for vulnerabilities",
-        "query": "Does the application/framework implement a continuous integration pipeline that includes security checks?"
+      "type": "AI",
+      "practice": "Select a more energy efficient AI/ML framework",
+      "query": "Does the application/framework make use of ONNX Runtime for executing models with optimized performance and energy efficiency?",
+      "category": "Framework Selection"
     },
     {
-        "type": "Web",
-        "practice": "Set storage retention policies",
-        "query": "Does the application/framework implement automated storage retention policies to delete old data after a specified period?"
+      "type": "AI",
+      "practice": "Use energy efficient AI/ML models",
+      "query": "Does the application/framework use AI models specifically designed to consume less energy while maintaining performance?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Set storage retention policies",
-        "query": "Does the application/framework use lifecycle management rules to transition old data to cheaper storage options before deletion?"
+      "type": "AI",
+      "practice": "Use energy efficient AI/ML models",
+      "query": "Does the application/framework implement lightweight neural networks like MobileNet or EfficientNet for energy efficiency?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Set storage retention policies",
-        "query": "Does the application/framework regularly audit and enforce storage retention policies to ensure compliance?"
+      "type": "AI",
+      "practice": "Use energy efficient AI/ML models",
+      "query": "Does the application/framework employ energy-efficient RNN architectures such as LSTM or GRU?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Shed lower priority traffic",
-        "query": "Does the application/framework implement traffic prioritization to ensure critical requests are processed first?"
+      "type": "AI",
+      "practice": "Use energy efficient AI/ML models",
+      "query": "Does the application/framework leverage model compression techniques to create more energy-efficient AI models?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Shed lower priority traffic",
-        "query": "Does the application/framework use rate limiting to control the flow of lower priority traffic?"
+      "type": "AI",
+      "practice": "Use energy efficient AI/ML models",
+      "query": "Does the application/framework use transformer models optimized for energy efficiency, like DistilBERT?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Shed lower priority traffic",
-        "query": "Does the application/framework employ traffic shaping techniques to manage lower priority traffic during peak times?"
+      "type": "AI",
+      "practice": "Use sustainable regions for AI/ML training",
+      "query": "Does the application/framework train AI models in cloud regions with lower carbon intensity?",
+      "category": "Sustainable Practices"
     },
-            {
-        "type": "Web",
-        "practice": "Time-shift Kubernetes cron jobs",
-        "query": "Does the application/framework schedule Kubernetes cron jobs during off-peak hours to reduce peak load?"
+    {
+      "type": "AI",
+      "practice": "Use sustainable regions for AI/ML training",
+      "query": "Does the application/framework utilize cloud regions that are powered by renewable energy sources for AI model training?",
+      "category": "Sustainable Practices"
     },
     {
-        "type": "Web",
-        "practice": "Time-shift Kubernetes cron jobs",
-        "query": "Does the application/framework use Kubernetes cron job schedules to optimize resource usage by running tasks at non-peak times?"
+      "type": "AI",
+      "practice": "Use sustainable regions for AI/ML training",
+      "query": "Does the application/framework consider the carbon footprint of cloud regions when selecting where to train AI models?",
+      "category": "Sustainable Practices"
     },
     {
-        "type": "Web",
-        "practice": "Time-shift Kubernetes cron jobs",
-        "query": "Does the application/framework configure Kubernetes cron jobs to execute maintenance tasks during low-demand periods?"
+      "type": "AI",
+      "practice": "Use sustainable regions for AI/ML training",
+      "query": "Does the application/framework migrate AI/ML workloads to cloud regions with a commitment to sustainability?",
+      "category": "Sustainable Practices"
     },
-        {
-        "type": "Web",
-        "practice": "Use asynchronous network calls instead of synchronous",
-        "query": "Does the application/framework implement asynchronous network calls to minimize waiting times and improve performance?"
+    {
+      "type": "AI",
+      "practice": "Use sustainable regions for AI/ML training",
+      "query": "Does the application/framework take advantage of carbon-efficient cloud infrastructure for AI/ML training?",
+      "category": "Sustainable Practices"
     },
     {
-        "type": "Web",
-        "practice": "Use asynchronous network calls instead of synchronous",
-        "query": "Does the application/framework use async/await patterns to handle network requests more efficiently?"
+      "type": "AI",
+      "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
+      "query": "Does the application/framework use pre-trained models to reduce training times and energy consumption?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Use asynchronous network calls instead of synchronous",
-        "query": "Does the application/framework utilize non-blocking I/O operations for network communication?"
+      "type": "AI",
+      "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
+      "query": "Does the application/framework implement transfer learning techniques to build models more efficiently?",
+      "category": "Model Efficiency"
     },
-        {
-        "type": "Web",
-        "practice": "Use circuit breaker patterns",
-        "query": "Does the application/framework implement circuit breaker patterns to prevent cascading failures?"
+    {
+      "type": "AI",
+      "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
+      "query": "Does the application/framework utilize pre-trained models available in model zoos to save on training resources?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Use circuit breaker patterns",
-        "query": "Does the application/framework use circuit breakers to detect and recover from service failures gracefully?"
+      "type": "AI",
+      "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
+      "query": "Does the application/framework adopt fine-tuning of pre-trained models to adapt to specific tasks with less energy consumption?",
+      "category": "Model Efficiency"
     },
     {
-        "type": "Web",
-        "practice": "Use circuit breaker patterns",
-        "query": "Does the application/framework monitor circuit breaker status to adjust load and prevent overloads?"
+      "type": "AI",
+      "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
+      "query": "Does the application/framework take advantage of pre-trained models to quickly prototype and deploy AI solutions?",
+      "category": "Model Efficiency"
     },
-        {
-        "type": "Web",
-        "practice": "Use cloud native network security tools and controls",
-        "query": "Does the application/framework use cloud-native firewalls to enhance network security?"
+    {
+      "type": "AI",
+      "practice": "Select the right hardware/VM instance types for AI/ML training",
+      "query": "Does the application/framework use energy-efficient hardware for training AI models?",
+      "category": "Hardware Selection"
     },
     {
-        "type": "Web",
-        "practice": "Use cloud native network security tools and controls",
-        "query": "Does the application/framework implement cloud-native intrusion detection systems (IDS) for efficient security monitoring?"
+      "type": "AI",
+      "practice": "Select the right hardware/VM instance types for AI/ML training",
+      "query": "Does the application/framework leverage virtual machines that are optimized for energy efficiency during AI model training?",
+      "category": "Hardware Selection"
     },
     {
-        "type": "Web",
-        "practice": "Use cloud native network security tools and controls",
-        "query": "Does the application/framework leverage cloud-native access control mechanisms to secure network resources?"
+      "type": "AI",
+      "practice": "Select the right hardware/VM instance types for AI/ML training",
+      "query": "Does the application/framework utilize GPUs or TPUs that are designed to consume less power for AI model training?",
+      "category": "Hardware Selection"
     },
-         {
-        "type": "Web",
-        "practice": "Use DDoS protection",
-        "query": "Does the application/framework implement DDoS protection services to maintain service availability during attacks?"
+    {
+      "type": "AI",
+      "practice": "Select the right hardware/VM instance types for AI/ML training",
+      "query": "Does the application/framework select VM instances with lower power consumption metrics for AI/ML workloads?",
+      "category": "Hardware Selection"
     },
     {
-        "type": "Web",
-        "practice": "Use DDoS protection",
-        "query": "Does the application/framework use cloud-based DDoS mitigation tools to protect against large-scale attacks?"
+      "type": "AI",
+      "practice": "Select the right hardware/VM instance types for AI/ML training",
+      "query": "Does the application/framework employ hardware accelerators that are known for their energy efficiency in AI/ML training?",
+      "category": "Hardware Selection"
     },
     {
-        "type": "Web",
-        "practice": "Use DDoS protection",
-        "query": "Does the application/framework monitor network traffic patterns to detect and mitigate potential DDoS attacks?"
+      "type": "AI",
+      "practice": "Adopt serverless architecture for AI/ML workload processes",
+      "query": "Does the application/framework utilize serverless architectures to optimize resource usage for AI/ML workloads?",
+      "category": "Deployment Strategy"
     },
-         {
-        "type": "Web",
-        "practice": "Use serverless cloud services",
-        "query": "Does the application/framework use serverless functions to automatically scale based on demand and optimize resource usage?"
+    {
+      "type": "AI",
+      "practice": "Adopt serverless architecture for AI/ML workload processes",
+      "query": "Does the application/framework employ serverless computing to automatically scale AI/ML workload processes based on demand?",
+      "category": "Deployment Strategy"
     },
     {
-        "type": "Web",
-        "practice": "Use serverless cloud services",
-        "query": "Does the application/framework adopt serverless databases to handle data storage efficiently?"
+      "type": "AI",
+      "practice": "Adopt serverless architecture for AI/ML workload processes",
+      "query": "Does the application/framework leverage serverless functions to handle AI/ML tasks more efficiently?",
+      "category": "Deployment Strategy"
     },
     {
-        "type": "Web",
-        "practice": "Use serverless cloud services",
-        "query": "Does the application/framework leverage serverless architectures to reduce idle resource consumption?"
+      "type": "AI",
+      "practice": "Adopt serverless architecture for AI/ML workload processes",
+      "query": "Does the application/framework use serverless architectures to reduce idle resource consumption for AI/ML workloads?",
+      "category": "Deployment Strategy"
     },
-          {
-    "type": "AI",
-    "practice": "Optimize the size of AI/ML models",
-    "query": "Does the application/framework use model pruning to reduce the size of AI models and save storage space?"
-  },
-  {
-    "type": "AI",
-    "practice": "Optimize the size of AI/ML models",
-    "query": "Does the application/framework use quantization to reduce the size of AI models and save storage space?"
-  },
-  {
-    "type": "AI",
-    "practice": "Optimize the size of AI/ML models",
-    "query": "Does the application/framework use knowledge distillation to reduce the size of AI models and save storage space?"
-  },
-  {
-    "type": "AI",
-    "practice": "Optimize the size of AI/ML models",
-    "query": "Does the application/framework employ low-rank factorization techniques to reduce the size of AI models and save storage space?"
-  },
-  {
-    "type": "AI",
-    "practice": "Optimize the size of AI/ML models",
-    "query": "Does the application/framework use efficient neural network architectures (like MobileNet, SqueezeNet) to reduce the size of AI models and save storage space?"
-  },
-        {
-    "type": "AI",
-    "practice": "Use efficient file formats for AI/ML development",
-    "query": "Does the application/framework use Parquet file format for better data storage and retrieval?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use efficient file formats for AI/ML development",
-    "query": "Does the application/framework use ORC file format for better data storage and retrieval?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use efficient file formats for AI/ML development",
-    "query": "Does the application/framework use Avro file format for better data storage and retrieval?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use efficient file formats for AI/ML development",
-    "query": "Does the application/framework use Feather file format for better data storage and retrieval?"
-  },
-        {
-    "type": "AI",
-    "practice": "Run AI models at the edge",
-    "query": "Does the application/framework deploy AI models on edge devices to reduce energy consumption?"
-  },
-  {
-    "type": "AI",
-    "practice": "Run AI models at the edge",
-    "query": "Does the application/framework deploy AI models on edge devices to minimize data transfer?"
-  },
-  {
-    "type": "AI",
-    "practice": "Run AI models at the edge",
-    "query": "Does the application/framework use edge computing to perform AI inference locally on devices?"
-  },
-  {
-    "type": "AI",
-    "practice": "Run AI models at the edge",
-    "query": "Does the application/framework utilize AI accelerators (e.g., TPUs, NPUs) on edge devices to optimize performance and reduce energy consumption?"
-  },
-  {
-    "type": "AI",
-    "practice": "Run AI models at the edge",
-    "query": "Does the application/framework implement model optimization techniques for edge deployment to ensure efficient use of resources?"
-  },
-        {
-    "type": "AI",
-    "practice": "Select a more energy efficient AI/ML framework",
-    "query": "Does the application/framework use AI/ML frameworks built on energy-efficient programming languages like C or C++?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select a more energy efficient AI/ML framework",
-    "query": "Does the application/framework utilize TensorFlow Lite for its energy-efficient operations on edge devices?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select a more energy efficient AI/ML framework",
-    "query": "Does the application/framework leverage PyTorch with optimizations for lower power consumption?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select a more energy efficient AI/ML framework",
-    "query": "Does the application/framework employ MXNet, known for its efficient resource utilization?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select a more energy efficient AI/ML framework",
-    "query": "Does the application/framework make use of ONNX Runtime for executing models with optimized performance and energy efficiency?"
-  },
-          {
-    "type": "AI",
-    "practice": "Use energy efficient AI/ML models",
-    "query": "Does the application/framework use AI models specifically designed to consume less energy while maintaining performance?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use energy efficient AI/ML models",
-    "query": "Does the application/framework implement lightweight neural networks like MobileNet or EfficientNet for energy efficiency?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use energy efficient AI/ML models",
-    "query": "Does the application/framework employ energy-efficient RNN architectures such as LSTM or GRU?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use energy efficient AI/ML models",
-    "query": "Does the application/framework leverage model compression techniques to create more energy-efficient AI models?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use energy efficient AI/ML models",
-    "query": "Does the application/framework use transformer models optimized for energy efficiency, like DistilBERT?"
-  },
-        {
-    "type": "AI",
-    "practice": "Use sustainable regions for AI/ML training",
-    "query": "Does the application/framework train AI models in cloud regions with lower carbon intensity?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use sustainable regions for AI/ML training",
-    "query": "Does the application/framework utilize cloud regions that are powered by renewable energy sources for AI model training?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use sustainable regions for AI/ML training",
-    "query": "Does the application/framework consider the carbon footprint of cloud regions when selecting where to train AI models?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use sustainable regions for AI/ML training",
-    "query": "Does the application/framework migrate AI/ML workloads to cloud regions with a commitment to sustainability?"
-  },
-  {
-    "type": "AI",
-    "practice": "Use sustainable regions for AI/ML training",
-    "query": "Does the application/framework take advantage of carbon-efficient cloud infrastructure for AI/ML training?"
-  },
-       {
-    "type": "AI",
-    "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
-    "query": "Does the application/framework use pre-trained models to reduce training times and energy consumption?"
-  },
-  {
-    "type": "AI",
-    "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
-    "query": "Does the application/framework implement transfer learning techniques to build models more efficiently?"
-  },
-  {
-    "type": "AI",
-    "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
-    "query": "Does the application/framework utilize pre-trained models available in model zoos to save on training resources?"
-  },
-  {
-    "type": "AI",
-    "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
-    "query": "Does the application/framework adopt fine-tuning of pre-trained models to adapt to specific tasks with less energy consumption?"
-  },
-  {
-    "type": "AI",
-    "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
-    "query": "Does the application/framework take advantage of pre-trained models to quickly prototype and deploy AI solutions?"
-  },
-         {
-    "type": "AI",
-    "practice": "Select the right hardware/VM instance types for AI/ML training",
-    "query": "Does the application/framework use energy-efficient hardware for training AI models?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select the right hardware/VM instance types for AI/ML training",
-    "query": "Does the application/framework leverage virtual machines that are optimized for energy efficiency during AI model training?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select the right hardware/VM instance types for AI/ML training",
-    "query": "Does the application/framework utilize GPUs or TPUs that are designed to consume less power for AI model training?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select the right hardware/VM instance types for AI/ML training",
-    "query": "Does the application/framework select VM instances with lower power consumption metrics for AI/ML workloads?"
-  },
-  {
-    "type": "AI",
-    "practice": "Select the right hardware/VM instance types for AI/ML training",
-    "query": "Does the application/framework employ hardware accelerators that are known for their energy efficiency in AI/ML training?"
-  },
-          {
-    "type": "AI",
-    "practice": "Adopt serverless architecture for AI/ML workload processes",
-    "query": "Does the application/framework utilize serverless architectures to optimize resource usage for AI/ML workloads?"
-  },
-  {
-    "type": "AI",
-    "practice": "Adopt serverless architecture for AI/ML workload processes",
-    "query": "Does the application/framework employ serverless computing to automatically scale AI/ML workload processes based on demand?"
-  },
-  {
-    "type": "AI",
-    "practice": "Adopt serverless architecture for AI/ML workload processes",
-    "query": "Does the application/framework leverage serverless functions to handle AI/ML tasks more efficiently?"
-  },
-  {
-    "type": "AI",
-    "practice": "Adopt serverless architecture for AI/ML workload processes",
-    "query": "Does the application/framework use serverless architectures to reduce idle resource consumption for AI/ML workloads?"
-  },
-  {
-    "type": "AI",
-    "practice": "Adopt serverless architecture for AI/ML workload processes",
-    "query": "Does the application/framework implement event-driven serverless services to process AI/ML data as it is generated?"
-  }
-    ]
+    {
+      "type": "AI",
+      "practice": "Adopt serverless architecture for AI/ML workload processes",
+      "query": "Does the application/framework implement event-driven serverless services to process AI/ML data as it is generated?",
+      "category": "Deployment Strategy"
+    }
+  ]
 }
