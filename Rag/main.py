@@ -33,8 +33,8 @@ def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_do
     queries = data.get("queries", [])
     count = 0
     for query_obj in queries:
-        if count==1:
-            break
+        # if count==0:
+        #     break
         query_text = query_obj.get("query", "")
         print("query_text: ",query_text)
         query_rag(query_text, setup_database_time, emb_local, extract_local,logger_file_path,collection_name,prompt_template)
@@ -48,13 +48,15 @@ with open("Rag/prompts/prompt.json", 'r') as file:
 
 def main():
     
-    PROMPT_ID="P1"
+    PROMPT_ID="P2"
 
     prompt_template=prompts[PROMPT_ID]
 
     
     # for documents from text
-    documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+    # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+    documentsFromText=["Netflix","Instagram","Whatsapp","Uber"]
+
     for item in documentsFromText:
         doc_path="documentsFromText/"+item+"/content.txt"
         log_path="./Rag/logger/"+LLM_MODEL+"_"+PROMPT_ID+"_"+item+ ".csv"
