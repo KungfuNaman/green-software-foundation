@@ -1,0 +1,370 @@
+Designing Twitter – A System Design Interview Question
+Last Updated : 13 May, 2024
+Designing Twitter (or Facebook feed or Facebook search..) is a quite common question that interviewers ask candidates. A lot of candidates get afraid of this round more than the coding round because they don’t get an idea of what topics and tradeoffs they should cover within this limited timeframe.
+System-Design-Twitter-For-Interview
+
+Important Topics for Designing Twitter
+
+How Would You Design Twitter?
+Requirements for Twitter System Design
+Capacity Estimation for Twitter System Design
+Use Case Design for Twitter System Design
+Low Level Design for Twitter System Design
+High Level Design for Twitter System Design
+Data Model Design for Twitter System Design
+API Design for Twitter System Design
+Microservices Used for Twitter System Design
+Scalability for Twitter System Design
+1. How Would You Design Twitter?
+Don’t jump into the technical details immediately when you are asked this question in your interviews. Do not run in one direction, it will just create confusion between you and the interviewer. Most of the candidates make mistakes here and immediately they start listing out some bunch of tools or frameworks like MongoDB, Bootstrap, MapReduce, etc.
+
+Remember that your interviewer wants high-level ideas about how you will solve the problem. It doesn’t matter what tools you will use, but how you define the problem, how you design the solution, and how you analyze the issue step by step. You can put yourself in a situation where you’re working on real-life projects. Firstly, define the problem and clarify the problem statement.
+
+2. Requirements for Twitter System Design
+2.1 Functional Requirements:
+Should be able to post new tweets (can be text, image, video etc).
+Should be able to follow other users.
+Should have a newsfeed feature consisting of tweets from the people the user is following.
+Should be able to search tweets.
+2.2 Non Functional Requirements:
+High availability with minimal latency.
+Ths system should be scalable and efficient.
+2.3 Extended Requirements:
+Metrices and analytics
+Retweet functionality
+Favorite tweets
+3. Capacity Estimation for Twitter System Design
+To estimate the system’s capacity, we need to analyze the expected daily click rate.
+
+3.1 Traffic Estimation:
+Let us assume we have 1 billion total users with 200 million daily active users (DAU), and on average each user tweets 5 times a day. This give us 1 billion tweets per day.
+
+200 million * 5 tweets = 1 billion/day
+
+
+Tweets can also contains media such as images, or videos. We can assume that 10 percent of tweets are media files shared by users, which gives us additional 100 million files we would need to store.
+
+10 percent * 1 billion = 100 million/day
+
+For our System Request per Second (RPS) will be:
+
+1 billion requests per day translate into 12K requests per second.
+
+1 billion / (24 hrs * 3600 seconds) = 12K requests/second
+
+3.2 Storage Estimation:
+Lets assume each message on average is 100 bytes, we will require about 100 GB of database storage every day.
+
+
+1 billion * 100 bytes = 100 GB/day
+
+10 percent of our daily messages (100 million) are media files per our requirements. Let’s assume each file is 50KB on average, we will require 5 TB of storage everyday.
+
+100 million * 50 KB = 5TB/day
+
+For 10 years require 19 PB of storage.
+
+(5TB + 0.1 TB ) * 365 days * 10 years = 19 PB
+
+3.3 Bandwidth Estimation
+As our system is handling 5.1 TB of ingress everyday, we will require a minimum bandwidth of around 60 MB per second.
+
+5.1 TB / (24 hrs * 3600 seconds) = 60 MB/second
+
+4. Use Case Design for Twitter System Design
+Use-Case-Diagram-of-Twitter-
+
+In the above Diagram,
+
+User will click on Twitter Page they will get the main page inside main page, there will be Home Page, Search Page, Notification Page.
+Inside Home Page there will be new Tweet page as well as Post Image or Videos.
+In new Tweet there we will be like, dislike, comments as well as follow / unfollow button.
+Guest User will have only access to view any tweet.
+Registered use can view and post tweets. Can follow and unfollow other users.
+Registered User will able to create new tweets.
+5. Low Level Design for Twitter System Design
+A low-level design of Twitter dives into the details of individual components and functionalities. Here’s a breakdown of some key aspects:
+
+low-level-design2-copy
+
+5.1 Data storage:
+User accounts: Store user data like username, email, password (hashed), profile picture, bio, etc. in a relational database like MySQL.
+Tweets: Store tweets in a separate table within the same database, including tweet content, author ID, timestamp, hashtags, mentions, retweets, replies, etc.
+Follow relationships: Use a separate table to map followers and followees, allowing efficient retrieval of user feeds.
+Additional data: Store media assets like images or videos in a dedicated storage system like S3 and reference them in the tweet table.
+5.2 Core functionalities:
+Posting a tweet:
+User submits tweet content through the UI.
+Server-side validation checks tweet length, media size, and other constraints.
+Tweet data is stored in the database with relevant associations (hashtags, mentions, replies).
+Real-time notifications are sent to followers and mentioned users.
+Timeline generation:
+Retrieve a list of users and hashtags the current user follows.
+Fetch recent tweets from those users and matching hashtags from the database.
+Apply algorithms to rank tweets based on relevance, recency, engagement, etc.
+Cache frequently accessed timelines in Redis for faster delivery.
+Search:
+User enters keywords or hashtags.
+Server-side search analyzes tweet content, hashtags, and user metadata.
+Return relevant tweets based on a ranking algorithm.
+Follow/unfollow:
+Update the follow relationships table accordingly.
+Trigger relevant notifications and adjust user timelines dynamically.
+5.3 Additional considerations:
+low-level-design1-copy-(1)
+
+Caching: Use caching mechanisms like Redis to reduce database load for frequently accessed data like user timelines and trending topics.
+Load balancing: Distribute workload across multiple servers to handle high traffic and ensure scalability.
+Database replication: Ensure data redundancy and fault tolerance with database replication techniques.
+Messaging queues: Leverage asynchronous messaging queues for processing tasks like sending notifications or background indexing.
+API design: Develop well-defined APIs for internal communication between different components within the system.
+6. High Level Design for Twitter System Design
+We will discuss about high level design for twitter,
+
+High-Level-Design-of-Twitter-
+
+6.1 Architecture:
+For twitter we are using microservices architecture since it will make it easier to horizontally scale and decouple our services. Each service will have ownership of its own data model. We will divide our system into some cores services.
+
+6.2 User Services
+This service handles user related concern such as authentication and user information. Login Page, Sign Up page, Profile Page and Home page will be handle into User services.
+
+6.3 Newsfeed Service:
+This service will handle the generation and publishing of user newsfeed. We will discuss about newsfeed in more details. When it comes to the newsfeed, it seems easy enough to implement, but there are a lot of things that can make or break this features. So, let’s divide our problem into two parts:
+
+6.3.1 Generation:
+
+Let’s assume we want to generate the feed for user A, we will perform the following steps:
+
+Retrieve the ID’s of all the users and the enitities( hashtags, topics, etc.)
+Fetch the relevant algorithm to rank the tweets on paramaters such as relevance, time management, etc.
+Use a ranking algorithm to rank the tweets based on parameters such as relevance, time, engagement, etc.
+Return the ranked tweets data to the client in a paginated manner.
+Feed geneartion is an intensive process and can take quite a lot of time, especially for users following a lot of people. To imporve the performance, the feed can be pre-generated and stored in the cache, then we can have a mechanism to periodically update the feed and apply or ranking algorithm to the new tweets.
+
+
+6.3.2 Publishing
+
+Publishing is the step where the feed data us pushed according to each specify user. This can be a quite heavy operation, as a user may have million of friend or followers. To deal with this, we have three different approcahes:
+
+Pull Model ( or Fan-out on load)
+When a user creates a tweet, and a follower reloads their newsfeed, the feed is created and stored in memory.
+The most recent feed is only loaded when the user requests. This approcah reduces the number of write operation on our database.
+The downside of this approach is that the users will not be able to view recent feeds unless they “pull” the data from the server, which will increase the number of read operation on the server.
+Pull-Design-copy
+
+Push Model( or Fan-out on write)
+In this model, once a user creates a tweet, it is pushed to all the followers feed.
+This prevents the system from having to go through a user’s entire followers list to check for updates.
+However, the downside of this approach is that it would increase the number of write operation on the databases.
+Push-Design-copy-(1)
+
+Hybrid Model:
+A third approach is a hybrid model between the pull and push model.
+It combines the beneficial features of the above two models and tries to provide a balanced approach between the two.
+The hybrid model allows only users with a lesser number of followers to use the push model.
+For users with a higher number of followers such as celebrities, the pull model is used.
+6.4 Tweet service:
+The tweet service handle tweet-related use case such as posting a tweet, favorites, etc.
+
+6.5 Retweets :
+Retweets are one of our extended requirements. To implement this feature, we can simply create a new tweet with the user id of the user retweeting the original tweet and then modify the type enum and content property of the new tweet to link it with the original tweet.
+
+6.6 Search Service:
+This service is responsible for handling search related functionality. In search service we get the Top post, latest post etc. These things we get because of ranking.
+
+6.7 Media Service:
+This service will handle the media(images, videos, files etc.) uploads.
+
+6.8 Analytics Service:
+This service will be use for metrics and analytics use cases.
+
+6.9 Ranking Algorithm:
+We will need a ranking algorithm to rank each tweet according to its relevance to each specific user.
+
+
+Example: Facebook used to utilize an EdgeRank algorithm. Here, the rank of each feed item is described by:
+
+Rank = Affinity * Weight * Decay
+
+Where,
+
+Affinity: is the “closeness” of the user to the creator of the edge. If a user frequently likes, comments, or messages the edge creator, then the value of affinity will be higher, resulting in a higher rank for the post.
+Weight: is the value assigned according to each edge. A comment can have a higher weightage than likes, and thus a post with more comments is more likely to get a higher rank.
+Decay: is the measure of the creation of the edge. The older the edge, the lesser will be the value of decay and eventually the rank.
+Now a days, algorithms are much more complex and ranking is done using machine learning models which can take thousands of factors into consideration.
+
+6.10 Search Service
+Sometimes traditional DBMS are not performant enough, we need something which allows us to store, search, and analyze huge volumes of data quickly and in near real-time and give results within milliseconds. Elasticsearch can help us with this use case.
+Elasticsearch is a distributed, free and open search and analytics engine for all types of data, including textual, numerical, geospatial, structured, and unstructured. It is built on top of Apache Lucene.
+6.11 How do we identify trending topics?
+Trending functionality will be based on top of the search functionality.
+We can cache the most frequently searched queries, hashtags, and topics in the last N seconds and update them every M seconds using some sort of batch job mechanism.
+Our ranking algorithm can also be applied to the trending topics to give them more weight and personalize them for the user.
+6.12 Notifications Service:
+Push notifications are an integral part of any social media platform.
+We can use a message queue or a message broker such as Apache Kafka with the notification service to dispatch requests to Firebase Cloud Messaging (FCM) or Apple Push Notification Service (APNS) which will handle the delivery of the push notifications to user devices.
+7. Data Model Design for Twitter System Design
+This is the general Dara model which reflects our requirements.
+
+DataBase-design
+Database Design for Twitter
+
+
+
+In the diagram, we have following table:
+
+7.1 Users:
+In this table contain a user’s information such name, email, DOB, and other details where ID will be autofield and it will be unique.
+
+
+Users
+{
+ID: Autofield,
+Name: Varchar,
+Email: Varchar,
+DOB: Date,
+Created At: Date
+}
+7.2 Tweets:
+As the name suggests, this table will store tweets and their properties such as type (text, image, video, etc.) content etc. UserID will also store.
+
+
+Tweets
+{
+id: uuid,
+UserID: uuid,
+type: enum,
+content: varchar,
+createdAt: timestamp
+}
+7.3 Favorites:
+This table maps tweets with users for the favorite tweets functionality in our application.
+
+
+Favorites
+{
+ id: uuid,
+ UserID: uuid,
+ TweetID: uuid,
+ CreatedAt: timestamp
+7.4 Followers:
+This table maps the followers and followess (one who is followed) as users can folloe each other. The relation will be N:M relationship.
+
+
+Followers
+{
+  id: uuid,
+  followerID: uuid,
+  followeeID: uuid,
+}
+7.5 Feeds:
+This table stores feed properties with the corresponding userID.
+
+
+Feeds
+{
+  id: uuid,
+  userID,
+  UpdatedAt: Timestamp
+}
+7.6 Feeds_Tweets:
+This table maps tweets and feed. There relation will be (N:M relationship).
+
+
+feeds_tweets
+{
+  id: uuid,
+  tweetID: uuid,
+  feedID: uuid
+}
+7.7 What Kind of Database is used in Twitter?
+While our data model quite relational, we don’t necessarily need to store everything in a single database, as this can limit our scalability and quickly become a bottleneck.
+We will split the data between different services each having ownership over a particular table. The we can use a realtional database such as PostgreSQL or a distributed NoSQL database such as Apache Cassandra PostgreSQL for our usecase.
+8. API Design for Twitter System Design
+A basic API design for our services:
+
+8.1 Post a Tweets:
+This API will allow the user to post a tweet on the platform.
+
+
+{
+  userID: UUID, 
+  content: string,
+  mediaURL?: string
+}
+User ID (UUID): ID of the user.
+Content (string): Contents of the tweet.
+Media URL (string): URL of the attached media (optional).
+Result (boolean): Represents whether the operation was successful or not.
+8.2 Follow or unfollow a user
+This API will allow the user to follow or unfollow another user.
+
+
+{
+  followerID: UUID, 
+  followeeID: UUID
+}
+Parameters
+
+Follower ID (UUID): ID of the current user.
+Followee ID (UUID): ID of the user we want to follow or unfollow.
+Media URL (string): URL of the attached media (optional).
+Result (boolean): Represents whether the operation was successful or not.
+8.3 Get NewsFeed
+This API will return all the tweets to be shown within a given newsfeed.
+
+
+{
+  userID: UUID
+}
+Parameters
+
+User ID (UUID): ID of the user.
+Tweets (Tweet[]): All the tweets to be shown within a given newsfeed.
+9. Microservices Used for Twitter System Design
+9.1 Data Partitioning
+To scale out our databases we will need to partition our data. Horizontal partitioning (aka Sharding) can be a good first step. We can use partitions schemes such as:
+
+Hash-Based Partitioning
+List-Based Partitioning
+Range Based Partitioning
+Composite Partitioning
+The above approaches can still cause uneven data and load distribution, we can solve this using Consistent hashing.
+
+9.2 Mutual friends
+For mutual friends, we can build a social graph for every user. Each node in the graph will represent a user and a directional edge will represent followers and followees.
+After that, we can traverse the followers of a user to find and suggest a mutual friend. This would require a graph database such as Neo4j and ArangoDB.
+This is a pretty simple algorithm, to improve our suggestion accuracy, we will need to incorporate a recommendation model which uses machine learning as part of our algorithm.
+9.3 Metrics and Analytics
+Recording analytics and metrics is one of our extended requirements.
+As we will be using Apache Kafka to publish all sorts of events, we can process these events and run analytics on the data using Apache Spark which is an open-source unified analytics engine for large-scale data processing.
+9.4 Caching
+In a social media application, we have to be careful about using cache as our users expect the latest data. So, to prevent usage spikes from our resources we can cache the top 20% of the tweets.
+To further improve efficiency we can add pagination to our system APIs. This decision will be helpful for users with limited network bandwidth as they won’t have to retrieve old messages unless requested.
+9.5 Media access and storage
+As we know, most of our storage space will be used for storing media files such as images, videos, or other files. Our media service will be handling both access and storage of the user media files.
+But where can we store files at scale? Well, object storage is what we’re looking for. Object stores break data files up into pieces called objects.
+It then stores those objects in a single repository, which can be spread out across multiple networked systems. We can also use distributed file storage such as HDFS or GlusterFS.
+9.6 Content Delivery Network (CDN)
+Content Delivery Network (CDN) increases content availability and redundancy while reducing bandwidth costs.
+Generally, static files such as images, and videos are served from CDN. We can use services like Amazon CloudFront or Cloudflare CDN for this use case.
+10. Scalability for Twitter System Design
+Let us identify and resolve Scalability such as single points of failure in our design:
+
+“What if one of our services crashes?”
+“How will we distribute our traffic between our components?”
+“How can we reduce the load on our database?”
+“How to improve the availability of our cache?”
+“How can we make our notification system more robust?”
+“How can we reduce media storage costs”?
+To make our system more resilient we can do the following:
+
+Running multiple instances of each of our services.
+Introducing load balancers between clients, servers, databases, and cache servers.
+Using multiple read replicas for our databases.
+Multiple instances and replicas for our distributed cache.
+Exactly once delivery and message ordering is challenging in a distributed system, we can use a dedicated message broker such as Apache Kafka or NATS to make our notification system more robust.
+We can add media processing and compression capabilities to the media service to compress large files which will save a lot of storage space and reduce cost.
+11. Conclusion
+Twitter handles thousands of tweets per second so you can’t have just one big system or table to handle all the data so it should be handled through a distributed approach. Twitter uses the strategy of scatter and gather where it set up multiple servers or data centers that allow indexing. When Twitter gets a query (let’s say #geeksforgeeks) it sends the query to all the servers or data centers and it queries every Early Bird shard. All the early bird that matches with the query return the result. The results are returned, sorted, merged, and reranked. The ranking is done based on the number of retweets, replies, and the popularity of the tweets. 
