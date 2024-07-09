@@ -17,11 +17,17 @@ def add_parsed_results(logger_file_path,combined_path,PROMPT_ID):
     explanation_arr=[]
     result_arr=[]
     for item in records:
+        
         generated_response=item["response_text"]
-        explanation,final_answer,result=parse_generated_response(generated_response,PROMPT_ID)
-        explanation_arr.append(explanation)
-        conclusion_arr.append(final_answer)
-        result_arr.append(result)
+        if generated_response is str:
+            explanation,final_answer,result=parse_generated_response(generated_response,PROMPT_ID)
+            explanation_arr.append(explanation)
+            conclusion_arr.append(final_answer)
+            result_arr.append(result)
+        else:
+            explanation_arr.append("")
+            conclusion_arr.append("")
+            result_arr.append("")
     print("hello")
      # Add the new columns to the DataFrame
     df = pd.DataFrame(records)
@@ -40,6 +46,7 @@ def parse_generated_response(generated_response,PROMPT_ID):
         if "about scaling down applications during idle periods." in generated_response:
             print("hello")
         response_start = None
+
         if "Response:" in generated_response:
             response_start = generated_response.find("Response:") + len("Response:")
         elif "**Response**:" in generated_response:
