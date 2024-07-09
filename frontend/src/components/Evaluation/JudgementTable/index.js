@@ -22,7 +22,7 @@ function JudgementTable({ eval_results }) {
             <TableRow>
               <TableCell>Query</TableCell>
               <TableCell align="right">Human Judgment</TableCell>
-              <TableCell align="right">LLM Judgment</TableCell>
+              <TableCell align="right">EcoDoc Judgement</TableCell>
               <TableCell align="right">Human Explanation</TableCell>
               <TableCell align="right">LLM Explanation</TableCell>
 
