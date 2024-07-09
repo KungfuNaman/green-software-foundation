@@ -1,1 +1,1 @@
-FROM "path_to_model(gguf file)"
+FROM "D:\gsf\green-software-foundation\fineTunedModels\0709_3_trained_model.gguf"
