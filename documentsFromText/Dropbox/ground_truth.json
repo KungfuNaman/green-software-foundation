@@ -1,0 +1,324 @@
+[
+  {
+    "query": "Is there any mention of minimizing the total number of deployed environments to save resources?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss minimizing the number of deployed environments specifically for resource saving."
+    }
+  },
+  {
+    "query": "Is there any mention of optimizing storage utilization to reduce energy consumption?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention strategies for optimizing storage utilization to reduce energy consumption."
+    }
+  },
+  {
+    "query": "Is there any mention of optimizing average CPU utilization to ensure efficient use of resources?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss optimizing average CPU utilization."
+    }
+  },
+  {
+    "query": "Is there any mention of managing peak CPU utilization to avoid over-provisioning?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not cover the management of peak CPU utilization."
+    }
+  },
+  {
+    "query": "Is there any mention of removing unused assets to optimize performance?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of specifically removing unused assets to enhance performance."
+    }
+  },
+  {
+    "query": "Is there any mention of scaling down Kubernetes applications when not in use to reduce resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss scaling down Kubernetes applications when not in use."
+    }
+  },
+  {
+    "query": "Is there any mention of scaling down applications during idle periods to minimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of scaling down applications during idle periods."
+    }
+  },
+  {
+    "query": "Is there any mention of scaling infrastructure based on real-time user demand?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention scaling infrastructure dynamically based on user demand."
+    }
+  },
+  {
+    "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No discussion is found on using metrics to dynamically adjust Kubernetes workloads."
+    }
+  },
+  {
+    "query": "Is there any mention of allowing independent scaling of logical components?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not address independent scaling of logical components."
+    }
+  },
+  {
+    "query": "Is there any mention of adopting serverless cloud services to optimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the adoption of serverless cloud services."
+    }
+  },
+  {
+    "query": "Is there any mention of reducing transmitted data to save energy?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of strategies aimed at reducing transmitted data to save energy."
+    }
+  },
+  {
+    "query": "Is there any mention of setting storage retention policies to automatically clean up old data?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention setting storage retention policies."
+    }
+  },
+  {
+    "query": "Is there any mention of queuing non-urgent processing requests to reduce peak loads?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of queuing non-urgent processing requests to manage peak loads is found."
+    }
+  },
+  {
+    "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss prioritizing or shedding traffic based on priority for performance improvement."
+    }
+  },
+  {
+    "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No discussion on scheduling Kubernetes cron jobs during off-peak hours is found."
+    }
+  },
+  {
+    "query": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the use of asynchronous over synchronous network calls."
+    }
+  },
+  {
+    "query": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of implementing circuit breaker patterns in the document."
+    }
+  },
+  {
+    "query": "Is there any mention of regularly scanning for and fixing vulnerabilities to maintain efficiency?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention regularly scanning for vulnerabilities."
+    }
+  },
+  {
+    "query": "Is there any mention of adopting cloud-native network security tools and controls for efficient security?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of adopting cloud-native security tools and controls is found."
+    }
+  },
+  {
+    "query": "Is there any mention of using DDoS protection to maintain service availability?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the use of DDoS protection to ensure service availability."
+    }
+  },
+  {
+    "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not cover the impact of software design on end-user devices and equipment."
+    }
+  },
+  {
+    "query": "Is there any mention of choosing server regions that are closest to users to reduce latency and energy consumption?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss choosing server regions based on proximity to users."
+    }
+  },
+  {
+    "query": "Is there any mention of containerizing workloads to ensure efficient use of resources?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of containerizing workloads for resource efficiency is found."
+    }
+  },
+  {
+    "query": "Is there any mention of deleting unused storage resources to remove storage that is no longer needed?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the deletion of unused storage resources."
+    }
+  },
+  {
+    "query": "Is there any mention of evaluating other CPU architectures to consider more efficient options?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of evaluating different CPU architectures for efficiency."
+    }
+  },
+  {
+    "query": "Is there any mention of ensuring VMs are right-sized for their workloads to match utilization requirements?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No discussion on matching VM utilization requirements to their workloads is found."
+    }
+  },
+  {
+    "query": "Is there any mention of using pre-configured servers that match workload requirements to optimize utilization?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention using pre-configured servers to match workload requirements."
+    }
+  },
+  {
+    "query": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of leveraging cloud native processor VMs is found."
+    }
+  },
+  {
+    "query": "Is there any mention of caching static data to reduce the need to recompute or fetch it?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss caching static data."
+    }
+  },
+  {
+    "query": "Is there any mention of compressing stored data to reduce storage requirements?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of compressing stored data is found in the document."
+    }
+  },
+  {
+    "query": "Is there any mention of compressing data transmitted over networks to minimize transmission amounts?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss compressing transmitted data."
+    }
+  },
+  {
+    "query": "Is there any mention of encrypting only necessary data to save energy?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of selectively encrypting data to save energy."
+    }
+  },
+  {
+    "query": "Is there any mention of terminating TLS at the border gateway to reduce internal encryption overhead?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention terminating TLS at the border gateway."
+    }
+  },
+  {
+    "query": "Is there any mention of using a service mesh only if needed to avoid unnecessary overhead?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of using a service mesh only when necessary is found."
+    }
+  },
+  {
+    "query": "Is there any mention of implementing a stateless design to improve scalability?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss implementing a stateless design for scalability."
+    }
+  },
+  {
+    "query": "Is there any mention of matching service level objectives to business needs to align performance goals?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No discussion on aligning service level objectives with business needs is found."
+    }
+  },
+  {
+    "query": "Is there any mention of optimizing the size of AI/ML models to save storage space and reduce memory usage during inference?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss optimizing the size of AI/ML models."
+    }
+  },
+  {
+    "query": "Is there any mention of leveraging pre-trained models and transfer learning to reduce training times and energy consumption in AI/ML development?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of using pre-trained models and transfer learning in AI/ML development is found."
+    }
+  },
+  {
+    "query": "Is there any mention of using AI/ML models that consume less energy while maintaining performance?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss using energy-efficient AI/ML models."
+    }
+  },
+  {
+    "query": "Is there any mention of deploying AI models on edge devices to reduce energy consumption and minimize data transfer?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of deploying AI models on edge devices is found."
+    }
+  },
+  {
+    "query": "Is there any mention of adopting a serverless architecture for AI/ML workload processes to optimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention adopting a serverless architecture for AI/ML workloads."
+    }
+  },
+  {
+    "query": "Is there any mention of using efficient file formats like Parquet for better data storage and retrieval in AI/ML development?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of using efficient file formats in AI/ML development is found."
+    }
+  },
+  {
+    "query": "Is there any mention of selecting a more energy-efficient AI/ML framework, such as those built on programming languages like C/C++?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss selecting energy-efficient AI/ML frameworks."
+    }
+  },
+  {
+    "query": "Is there any mention of training AI models in cloud regions with lower carbon intensity?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of selecting cloud regions based on carbon intensity for AI model training is found."
+    }
+  },
+  {
+    "query": "Is there any mention of selecting the right hardware or VM instance types for energy-efficient AI/ML training?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss selecting specific hardware or VM types for energy-efficient AI/ML training."
+    }
+  }
+]

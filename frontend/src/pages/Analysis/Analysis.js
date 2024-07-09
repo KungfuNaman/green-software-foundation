@@ -25,11 +25,13 @@ const jsonFiles = {
   "SkyWalking_P2": import("./../../api_results/phi3_P2_SkyWalking_combined.json"),
   "Spark_P2": import("./../../api_results/phi3_P2_Spark_combined.json"),
   "Airflow_P2": import("./../../api_results/phi3_P2_Airflow_combined.json"),
-  "TrafficServer_P2": import("./../../api_results/phi3_P2_TrafficServer_combined.json")
+  "TrafficServer_P2": import("./../../api_results/phi3_P2_TrafficServer_combined.json"),
+  "Netflix_P2": import("./../../api_results/phi3_P2_QOld_Netflix_combined.json")
+
 };
 
 const Analysis = () => {
-  const [progressValue, setProgressValue] = useState(0);
+  const [progressValue, setProgressValue] = useState(100);
   const [totalQuestions, setTotalQuestions] = useState( 138);
   const [projectType, setProjectType] = useState(ProjectType["response"]);
   const [activeButton, setActiveButton] = useState(null);
@@ -103,7 +105,7 @@ const Analysis = () => {
   const changeProgressBar = (responseArr) => {
     const length = responseArr.length;
     const value = Math.round((length / totalQuestions) * 100);
-    setProgressValue(value);
+    // setProgressValue(value);
   };
 
   const changeBarChart = (responseArr) => {

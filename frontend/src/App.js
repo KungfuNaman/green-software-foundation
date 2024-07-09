@@ -7,6 +7,7 @@ import Header from "./components/common/Header/Header";
 import Footer from "./components/common/Footer/Footer";
 import Home from "./pages/Home/Home";
 import Analysis from "./pages/Analysis/Analysis";
+import Evaluation from "./pages/Evaluation/Evaluation";
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/analysis" element={<Analysis />} />
+            <Route path="/evaluation" element={<Evaluation />} />
+
           </Routes>
         </div>
         <Footer />

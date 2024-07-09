@@ -1,0 +1,436 @@
+{
+  "response": [
+    {
+      "query": "Is there any mention of minimizing the total number of deployed environments to save resources?",
+      "explanation": "The context provided does not discuss or imply anything about reducing the deployment of computing environments in order to conserve resources, so it's safe to conclude that this question is 'not applicable'.\n\nIn judgment,\n<Not Applicable>\n\nIn explanation,\nThe text doesn't address the topic of deploying fewer servers as a resource-saving measure.",
+      "result": "No",
+      "category": "Resource Optimization",
+      "practice": "Minimize the total number of deployed environments",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of optimizing storage utilization to reduce energy consumption?",
+      "explanation": "The context provided discusses load balancing, microservices architecture, event collection and processing in Big Data frameworks like Hadoop and Kafka, as well as database management with MySQL. However, there is no mention of specific storage optimizations to reduce energy consumption for green practices within the given text snippets from Netflix's design document.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Optimize storage utilization",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of optimizing average CPU utilization to ensure efficient use of resources",
+      "explanation": "The provided context does not discuss or mention anything about monitoring, managing, or optimizing CPU utilization in Netflix's system design for resource efficiency. It primarily focuses on load balancing, data ingestion using Kafka and Apache Chukwe, microservices architecture, user data management, content delivery during peak times, error logs, UI activities, performance events, video viewing activities, troubleshooting diagnostics, and the benefits of this system design in handling a large number of concurrent users. However, there's no explicit mention or indication about CPU utilization optimization practices within these details.",
+      "result": "No",
+      "category": "Resource Optimization",
+      "practice": "Optimize average CPU utilization",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of managing peak CPU utilization to avoid over-provisioning?",
+      "explanation": "The context provided does not discuss strategies or technologies related to managing CPU usage during peaks, such as load shedding techniques. Instead, it focuses on aspects like the microservice architecture, Elastic Load Balancer (ELB), and data handling systems of Netflix's software design.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Optimize peak CPU utilization",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of removing unused assets to optimize performance?",
+      "explanation": "The context provided does not discuss the optimization techniques for reducing bandwidth or memory usage, such as asset compression or lazy loading. It mainly focuses on architecture and load balancing aspects in Netflix's system design. As there is no mention of removing unused assets to optimize performance, I judged this part of the question Not Applicable based on my training data.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Remove unused assets",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of scaling down Kubernetes applications when not in use to reduce resource usage?",
+      "explanation": "The provided context does not discuss using techniques like autoscaling or horizontal pod auto-discovery and termination strategies which are typically used for such purposes. There is no explicit mention of scaling down Kubernetes applications when they're idle to reduce resource usage, thus making it inapplicable based on the given information.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Scale down Kubernetes applications when not in use",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of scaling down applications during idle periods to minimize resource usage?",
+      "explanation": "The context provided discusses how services in a microservice architecture are decoupled and scale up using load balancers, big data processing, real-time data streaming with Kafka. However, there is no mention of scaling down applications during idle periods to minimize resource usage.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Scale down applications when not in use",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of scaling infrastructure based on real-time user demand?",
+      "explanation": "The context mentions various tools and processes related to system monitoring, event collection, batch processing with Hadoop files stored as Parquet format in S3. However, it does not specifically discuss or indicate any real-time scaling of infrastructure based on live user demand.",
+      "result": "No",
+      "category": "Resource Optimization",
+      "practice": "Scale infrastructure with user load",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
+      "explanation": "The context provided focuses on how Netflix balances high traffic load and its architecture, including the use of Elastic Load Balancer (ELB), microservices with Apache Chukwe for data collection and processing. There is no mention or indication in this text snippet about using relevant metrics to dynamically adjust Kubernetes workloads.",
+      "result": "No",
+      "category": "Resource Optimization",
+      "practice": "Scale Kubernetes workloads based on relevant demand metrics",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of allowing independent scaling of logical components?",
+      "explanation": "The context provided discusses various aspects such as load balancing and batch processing but does not specifically address independent component scaling in a microservice architecture, which allows for scalable growth based on demand. Netflix's system details are focused more towards how services communicate rather than independently scaling components of the software.",
+      "result": "No",
+      "category": "Resource Optimization",
+      "practice": "Scale logical components independently",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of adopting serverless cloud services to optimize resource usage?",
+      "explanation": "The context provided does not discuss or indicate the use of serverless cloud services in relation to optimizing resource usage for Netflix's software architecture.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Use serverless cloud services",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of reducing transmitted data to save energy?",
+      "explanation": "The context provided discusses the technical architecture, load balancing mechanisms, microservices decoupling strategy for Netflix's system but does not specifically address strategies or practices aimed at reducing transmitted data to save energy.",
+      "result": "Not Applicable",
+      "category": "Data Efficiency",
+      "practice": "Reduce transmitted data",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of setting storage retention policies to automatically clean up old data?",
+      "explanation": "There is no specific information in the context regarding a policy or tool used by Netflix to set and manage storage retention policies, nor it mentions automatic clearing of outdated files. This could be important for large-scale applications where efficient use of space can significantly impact performance but this isn't mentioned herein.",
+      "result": "No",
+      "category": "Data Efficiency",
+      "practice": "Set storage retention policies",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of queuing non-urgent processing requests to reduce peak loads?",
+      "explanation": "The context provided does not discuss using a queue system or throttling techniques, which are typically employed in handling spikes and distributing load over time. It focuses mainly on how services communicate with each other during high traffic times without specifically mentioning queuing mechanisms for non-urgent tasks.",
+      "result": "No",
+      "category": "Performance Management",
+      "practice": "Queue non-urgent processing requests",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?",
+      "explanation": "The context provided does not discuss techniques related to managing different levels of service requests, such as prioritizing certain types of traffic over others. It primarily focuses on load balancing through the Elastic Load Balancer and database replication for high availability but lacks information about handling varying request criticalities in terms of performance optimization strategies like shunting lower priority traffic during peak loads.",
+      "result": "No",
+      "category": "Performance Management",
+      "practice": "Shed lower priority traffic",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?",
+      "explanation": "The context provided does not discuss or include information about using Kubernetes cron jobs for optimizing resource usage, especially in terms of scheduling these tasks during off-peak hours. All the details given focus on Netflix's load balancing techniques, their microservice architecture and database handling strategies without mentioning any specific practices related to green computing or energy optimization like this one.",
+      "result": "Not Applicable",
+      "category": "Performance Management",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?",
+      "explanation": "The context provided does not discuss the use or non-use of asynchronous versus synchronous network calls in relation to reducing wait times. It mainly focuses on aspects like load balancing, data ingestion systems (Apache Chukwe), and database configurations (MySQL/Cassandra).",
+      "result": "Not Applicable",
+      "category": "Performance Management",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?",
+      "explanation": "The context provided discusses various aspects of Netflix's microservice architecture, including load balancing with Elastic Load Balancer (ELB), data ingestion using Apache Kafka and Chukwa, monitoring tools like Prometheus, Grafana, Splunk, ELK stack, application-level telemetry provided by Telegraf. However, there is no specific mention of implementing circuit breaker patterns to handle service failures gracefully in the given context.",
+      "result": "Not Applicable",
+      "category": "Performance Management",
+      "practice": "Use circuit breaker patterns",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of regularly scanning for and fixing vulnerabilities to maintain efficiency?",
+      "explanation": "The context provided does not discuss regular security practices such as scanning for or fixing vulnerabilities in the software development process described, especially within Netflix's microservice architecture. Regular updates like these are typically mentioned explicitly and would likely be documented separately from load balancing schemes (ELB) and data ingestion processes using Kafka with Apache Chukwe.",
+      "result": "Not Applicable",
+      "category": "Security",
+      "practice": "Scan for vulnerabilities",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of adopting cloud-native network security tools and controls for efficient security?",
+      "explanation": "The context provided discusses Netflix's use of technologies like Elastic Load Balancer, Kafka, Apache Chukwe, Big Data processing with Hive in Parquet format written to S3. However, there is no mention or reference made towards adopting cloud-native network security tools and controls for efficient security within the given context.",
+      "result": "No",
+      "category": "Security",
+      "practice": "Use cloud native network security tools and controls",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using DDoS protection to maintain service availability?",
+      "explanation": "The context provided does not discuss DDoS protection measures in detail, nor is it specifically mentioned as part of the application's design for maintaining high traffic load or ensuring reliable streaming. While security concerns are typically a priority when developing services like Netflix that handle vast amounts of data and user interactions, no direct mention regarding this aspect was found within these excerpts from my document on software development principles applied in creating robust microservice architectures similar to those used by Netflix.",
+      "result": "Not Applicable",
+      "category": "Security",
+      "practice": "Use DDoS protection",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
+      "explanation": "The context does not discuss implementing designs specifically aimed at reducing power consumption, heat generation, resource usage, or other factors that could affect the hardware longevity of user devices. It focuses mainly on architecture for scalability and data processing efficiency.",
+      "result": "No",
+      "category": "User Impact",
+      "practice": "Optimize impact on customer devices and equipment",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of choosing server regions that are closest to users to reduce latency and energy consumption?",
+      "explanation": "The context provided does not discuss the selection of server regions based on user proximity for reducing latency and energy usage. It focuses more on load balancing, data ingestion using Apache Chukwe over Kafka in Hadoop's Map-reduce framework, microservice architecture with read queries redirected to replicas and writes directed at master nodes, as well as the use of Cassandra for heavy database operations related to user viewing history.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Choose the region that is closest to users",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of containerizing workloads to ensure efficient use of resources?",
+      "explanation": "The context provided focuses on microservices architecture, load balancing with Elastic Load Balancer (ELB), event monitoring and analysis tools like Chukwe, batch processing using S3 Hadoop files, traffic to Kafka for real-time data processing, user activity storage in AWS services, and personalized movie recommendations. There is no explicit mention of containerizing workloads or the use of containers within this context. Containerization may be part of implementing a microservices architecture but it's not specifically mentioned here as being used to ensure efficient resource utilization.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Containerize your workloads",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of deleting unused storage resources to remove storage that is no longer needed?",
+      "explanation": "The context provided does not discuss the process or techniques used for cleaning up and removing unnecessary, unused storage within Netflix's system. It instead focuses on various aspects of their architecture like microservices, load balancing with ELB, user data management in AWS including recommendations using machine learning models without explicit mention of resource deletion practices after usage or redundancy elimination efforts.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Delete unused storage resources",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of evaluating other CPU architectures to consider more efficient options?",
+      "explanation": "The context provided does not discuss or evaluate alternative CPU architectures for efficiency, focusing instead on the microservices architecture and database systems in use at Netflix.",
+      "result": "No",
+      "category": "Resource Optimization",
+      "practice": "Evaluate other CPU architectures",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of ensuring VMs are right-sized for their workloads to match utilization requirements?",
+      "explanation": "The context provided does not discuss the sizing or matching of Virtual Machines (VMs) with specific application load needs, which is a common practice in optimizing resource usage and reducing environmental impact. It instead focuses on aspects such as load balancing across zones and instances using Elastic Load Balancer (ELB), microservices architecture for decentralized service responsibilities within Netflix's systems, user data analysis with AWS services like Hadoop to power recommendations, monitoring tools, and real-time processing pipelines. The right-sizing of VMs is not mentioned or applicable in this context as it pertains more towards hardware optimization rather than a software development green practice specifically discussed herein.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Match utilization requirements of virtual machines (VMs)",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using pre-configured servers that match workload requirements to optimize utilization?",
+      "explanation": "The context provided does not discuss the use of dedicated or specialized hardware for performance optimization, but rather mentions load balancing and server roles in case of master node failure. It also talks about using Kafka and Apache Chukwe as data collection systems without any mention of pre-configured servers specifically optimized for workloads.",
+      "result": "Not Applicable",
+      "category": "Resource Optimization",
+      "practice": "Match utilization requirements with pre-configured servers",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?",
+      "explanation": "The context provided does not contain information about using cloud-native processors specifically; it mentions AWS user data but focuses on Kafka and Apache Chukwe, which are technologies for handling streaming events. Cloud-native processor VMs were neither mentioned nor implied in the given design excerpts of Netflix's software development approach to balance high traffic loads or streamline microservices architecture.",
+      "result": "No",
+      "category": "Resource Optimization",
+      "practice": "Use cloud native processor VMs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of adopting serverless cloud services to optimize resource usage?",
+      "explanation": "The provided context does not discuss the use of serverless cloud services or their adoption by the software development project for optimizing resource usage. All references are focused on microservice architecture and data handling using technologies like Kafka, Apache Chukwe, Elastic Load Balancer (ELB), MySQL, and Cassandra.",
+      "result": "No, in my judgment",
+      "category": "Resource Optimization",
+      "practice": "Use serverless cloud services",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of setting storage retention policies to automatically clean up old data?",
+      "explanation": "There is no specific discussion about implementing or using a system that manages and cleans up old streaming logs, user activities, event history, etc. Therefore, the context does not provide information on whether Netflix has set storage retention policies for cleaning up such data automatically.",
+      "result": "Not Applicable",
+      "category": "Data Efficiency",
+      "practice": "Set storage retention policies",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of caching static data to reduce the need to recompute or fetch it?",
+      "explanation": "The context does not contain explicit information about using cache strategies like Content Delivery Networks (CDNs) for minimizing the computation and refetching of static data; hence we conclude that such a green practice is not applicable or mentioned within this specific part of Netflix's design.\n\nNow, I will look at another input: \"A paragraph from my software development plan about energy efficiency.\"",
+      "result": "No, in my answer.",
+      "category": "Data Efficiency",
+      "practice": "Cache static data",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of compressing stored data to reduce storage requirements?",
+      "explanation": "The context provided does not explicitly discuss techniques for compressing or storing data more efficiently. It mainly focuses on Netflix's microservice architecture, load balancing methods with ELB (Elastic Load Balancer), and the handling of user events through Chukwe and Big Data processes involving event collection, monitoring/analysis tools, S3 storage in Hadoop files format for batch processing, as well as real-time data uploading to Kafka. Compression techniques are not mentioned or implied within these aspects.",
+      "result": "No",
+      "category": "Data Efficiency",
+      "practice": "Compress stored data",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of compressing data transmitted over networks to minimize transmission amounts?",
+      "explanation": "The context provided discusses Netflix's use of an Elastic Load Balancer, a microservices architecture, and machine learning models for improving user experience. However, it does not specifically mention the compression of data transmitted over networks to minimize transmission amounts as part of its practices or technology used.",
+      "result": "No",
+      "category": "Data Efficiency",
+      "practice": "Compress transmitted data",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of encrypting only necessary data to save energy?",
+      "explanation": "The context provided does not discuss or imply that the application uses encryption as a method for saving energy, particularly in terms of minimizing recomputation or fetching static data. All details mentioned relate more to load balancing, replication strategies, and handling large volumes of user-generated content rather than green computing practices like encrypting necessary data for efficiency.",
+      "result": "No",
+      "category": "Security",
+      "practice": "Encrypt what is necessary",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of terminating TLS at the border gateway to reduce internal encryption overhead?",
+      "explanation": "The context provided does not discuss network security measures like termination of Transport Layer Security (TLS) protocols within Netflix's infrastructure. Instead, it focuses on aspects such as load balancing and data collection for real-time analytics using Kafka and Apache Chukwe.",
+      "result": "No",
+      "category": "Security",
+      "practice": "Terminate TLS at border gateway",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of adopting cloud-native network security tools and controls for efficient security?",
+      "explanation": "The context provided discusses Netflix's load balancing, microservices architecture, event ingestion using Apache Chukwe, monitoring with dashboard capabilities, data processing in Big Data team through batch processors writing Hive in Parquet format and Kafka for real-time traffic. However, there is no mention of adopting cloud-native network security tools or controls within the provided context.",
+      "result": "Not Applicable",
+      "category": "Security",
+      "practice": "Use cloud native network security tools and controls",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using DDoS protection to maintain service availability?",
+      "explanation": "The provided context discusses various aspects of a microservice architecture, load balancing techniques used by Netflix, data ingestion through Apache Chukwe and Kafka, user activity tracking for recommendations, as well as video transcoding. However, there is no mention or discussion regarding DDoS protection measures to maintain service availability in the context given.",
+      "result": "No",
+      "category": "Security",
+      "practice": "Use DDoS protection",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using a service mesh only if needed to avoid unnecessary overhead?",
+      "explanation": "The context provided does not discuss or mention the use of a service mesh, nor is it relevant in relation to reducing unnecessary overhead within Netflix's architecture. Therefore, my response reflecting that this technique isn't applicable based on your question.",
+      "result": "Not Applicable",
+      "category": "Performance Management",
+      "practice": "Use a service mesh only if needed",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of implementing a stateless design to improve scalability?",
+      "explanation": "The provided context does not discuss or mention the implementation of a stateless design for improving scalability. Instead, it focuses on various architectural and data processing aspects like microservices architecture, Apache Chukwe, Elastic Load Balancer (ELB), etc.",
+      "result": "Not applicable",
+      "category": "Performance Management",
+      "practice": "Implement stateless design",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of matching service level objectives to business needs to align performance goals?",
+      "explanation": "The context provided does not discuss how the microservice architecture aligns with specific business or user experience requirements, nor are details given about setting and managing Service Level Objective (SLO) metrics. \u2705 No discussion on SLO in relation to performance goals can be found.",
+      "result": "Not Applicable",
+      "category": "Performance Management",
+      "practice": "Match your service level objectives to business needs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?",
+      "explanation": "The context provided discusses load balancing, microservices architecture, database replication with Amazon RDS for MySQL, the use of Cassandra as a scalable solution for data handling, streaming open connect servers based on best viewing experience and using user data to build movie recommendations. However, there is no mention or indication in the context about prioritizing critical traffic over lower priority one for performance improvement purposes.",
+      "result": "No",
+      "category": "Performance Management",
+      "practice": "Shed lower priority traffic",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?",
+      "explanation": "The context provided does not discuss the use of Kubernetes or its features, such as CronJobs for optimizing resource usage. All details focus on Netflix's architecture and technology choices without mentioning any scheduling strategies related to off-peak hours using Kubernetes.",
+      "result": "Not Applicable",
+      "category": "Performance Management",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?",
+      "explanation": "The context provided does not indicate the use of asynchronous network calls; it focuses on load balancing, database replication with MySQL and Cassandra, data ingestion through Kafka and Apache Chukwe, along with other technical aspects. There is no mention or discussion regarding reducing waiting times by using asynchronous networking methods.",
+      "result": "No",
+      "category": "Performance Management",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?",
+      "explanation": "The provided context discusses various aspects of Netflix's microservice architecture, including load balancing with ELB and event ingestion using Kafka and Apache Chukwe. However, there is no mention or indication of implementing circuit breaker patterns for service failures in the given text snippet.",
+      "result": "No",
+      "category": "Performance Management",
+      "practice": "Use circuit breaker patterns",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of optimizing the size of AI/ML models to save storage space and reduce memory usage during inference?",
+      "explanation": "The context provided does not discuss optimization techniques specifically aimed at reducing the size and memory footprint of machine learning (AI/ML) models for better performance. It mentions using user data stored in AWS, but this is related to improving movie recommendations rather than model efficiency or storage savings during inference times.",
+      "result": "No",
+      "category": "Model Efficiency",
+      "practice": "Optimize the size of AI/ML models",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of leveraging pre-trained models and transfer learning to reduce training times and energy consumption in AI/ML development?",
+      "explanation": "The context provided focuses on microservices architecture, load balancing with ELB using Kafka and Apache Spark for data processing. There is no mention of leveraging pre-trained models or transfer learning techniques to reduce AI/ML development training times and energy consumption.",
+      "result": "Not Applicable",
+      "category": "Model Efficiency",
+      "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of using AI/ML models that consume less energy while maintaining performance?",
+      "explanation": "The provided context discusses technologies like Elastic Load Balancer, microservices architecture, Kafka, Apache Chukwe, and their roles in traffic management, data ingestion, logging, UI activities, video viewing activities, and troubleshooting. However, there is no explicit mention of using AI/ML models for energy efficiency or performance optimization within this context.",
+      "result": "Not Applicable",
+      "category": "Model Efficiency",
+      "practice": "Use energy efficient AI/ML models",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of deploying AI models on edge devices to reduce energy consumption and minimize data transfer?",
+      "explanation": "The context provided discusses aspects related to microservice architecture, load balancing with Amazon's ELB service (Elastic Load Balancer), Apache Kafka for event ingestion in Netflix, database replication strategy using MySQL and Cassandra. There is no mention of deploying AI models on edge devices within the provided context.",
+      "result": "Not Applicable",
+      "category": "Deployment Strategy",
+      "practice": "Run AI models at the edge",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of adopting a serverless architecture for AI/ML workload processes to optimize resource usage?",
+      "explanation": "The context provided discusses the use of microservices, Elastic Load Balancer (ELB), Apache Chukwe, and Big Data processing tools in Netflix's software infrastructure. However, there is no mention of serverless architecture being adopted for AI/ML workload processes or any resource optimization techniques specific to that context within the provided text snippet.",
+      "result": "No",
+      "category": "Deployment Strategy",
+      "practice": "Adopt serverless architecture for AI/ML workload processes",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of using efficient file formats like Parquet for better data storage and retrieval in AI/ML development?",
+      "explanation": "The context mentions that Big Data team processes Hadoop files written by Chukwe, which are stored as S3 format. After processing with batch jobs (scanning the whole data), these processed results are further saved in Parquet format for efficient storage and retrieval, particularly beneficial in AI/ML development where fast access to refined datasets is crucial.",
+      "result": "Yes",
+      "category": "Data Management",
+      "practice": "Use efficient file formats for AI/ML development",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of selecting a more energy-efficient AI/ML framework, such as those built on programming languages like C/C++?",
+      "explanation": "The context provided does not mention or imply using an energy-efficient AI/ML framework specifically designed for C/C++, nor any focus on minimizing the environmental impact of computation. Netflix uses a microservices architecture and machine learning models, but there is no specific reference to selecting more energy-efficient frameworks based on programming languages like C/C++ in this context.",
+      "result": "No",
+      "category": "Framework Selection",
+      "practice": "Select a more energy efficient AI/ML framework",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of training AI models in cloud regions with lower carbon intensity?",
+      "explanation": "The provided context does not discuss environmental sustainability practices such as selecting cloud regions based on their energy sources for cost-effective and low carbon footprint computing. It mainly focuses on load balancing, microservices architecture, database management with MySQL and Cassandra, data handling in AWS storage, and AI model training without specifics about green IT initiatives or sustainable practices at the infrastructure level.",
+      "result": "Not Applicable",
+      "category": "Sustainable Practices",
+      "practice": "Use sustainable regions for AI/ML training",
+      "type": "AI"
+    },
+    {
+      "query": "Is there any mention of selecting the right hardware or VM instance types for energy-efficient AI/ML training?",
+      "explanation": "The context does not discuss choosing specific hardware or virtual machine instances optimized for energy efficiency in relation to artificial intelligence or machine learning. It focuses instead on data ingestion, microservice architecture and the overall system performance during peak times.",
+      "result": "No",
+      "category": "Hardware Selection",
+      "practice": "Select the right hardware/VM instance types for AI/ML training",
+      "type": "AI"
+    }
+  ]
+}
