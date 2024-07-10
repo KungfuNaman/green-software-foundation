@@ -19,7 +19,7 @@ def add_parsed_results(logger_file_path,combined_path,PROMPT_ID):
     for item in records:
         
         generated_response=item["response_text"]
-        if generated_response is str:
+        if isinstance(generated_response, str):
             explanation,final_answer,result=parse_generated_response(generated_response,PROMPT_ID)
             explanation_arr.append(explanation)
             conclusion_arr.append(final_answer)
@@ -84,7 +84,10 @@ def parse_generated_response(generated_response,PROMPT_ID):
         
         return response, conclusion, result
     elif PROMPT_ID=="P2" :  
-        start_keyword = "Judgement:"
+        if "Judgement:" in generated_response:
+            start_keyword = "Judgement:"
+        else:
+            start_keyword = "Response:"
         end_keyword = "Explanation:"
         
         start_index = generated_response.find(start_keyword) + len(start_keyword)
@@ -175,7 +178,7 @@ def addCategories():
             json.dump(result_arr, f)
     print("hello")
 
-# add_parsed_results(CSV_FILE_PATH)
+# add_parsed_results("/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/llama2_P2_Netflix.csv","/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/llama2_P2_Netflix_combined.csv","P2")
 
 # files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
 # for item in files:

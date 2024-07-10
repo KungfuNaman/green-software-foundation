@@ -193,7 +193,7 @@ export default function Evaluation() {
           <Typography variant="h3" component="h3">
             Precision Score
           </Typography>
-          <Typography variant="h2">{precision}</Typography>
+          <Typography variant="h2">{precision.toFixed(2)}</Typography>
         </div>
         <div>
           <Typography variant="h3" component="h3">
