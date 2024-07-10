@@ -10,12 +10,27 @@ import {
   Paper,
   Button,
 } from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+// Create a theme instance
+const theme = createTheme({
+  components: {
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem', // Set the font size for all TableCell components
+        }
+      }
+    }
+  }
+});
 function JudgementTable({ eval_results }) {
   console.log("EVU", eval_results);
   return (
     <div>
         <h2>Comparison Table(Human and EcoDoc judgments and explanations)</h2>
+        <ThemeProvider theme={theme}>
+
       <TableContainer component={Paper} style={{ maxHeight: 440,borderRadius:20 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -60,6 +75,7 @@ function JudgementTable({ eval_results }) {
           </TableBody>
         </Table>
       </TableContainer>
+      </ThemeProvider>
     </div>
   );
 }

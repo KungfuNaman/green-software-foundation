@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import os
 GROUND_TRUTH_PATH="documentsFromText/Netflix/ground_truth.json"
-COMBINED_RESULT_PATH="Rag/logger/phi3_P2_QOld_Netflix_combined.csv"
+COMBINED_RESULT_PATH="Rag/logger/phi3_P2_Netflix_combined.csv"
 EVAL_PATH="frontend/src/api_results/evaluation/results.json"
 def combine_groundTruth_result(ground_truth_path,combined_result_path):
 
@@ -29,9 +29,12 @@ def combine_groundTruth_result(ground_truth_path,combined_result_path):
             obj["llmExplanation"]=llm_response_item["explanation"]
             obj["category"]=ground_truth_item["category"]
             obj["practice"]=ground_truth_item["practice"]
+            obj["ecoDocContext"]=llm_response_item["context_text"]
 
 
             result_arr.append(obj)
+    df = pd.DataFrame(result_arr)
+    df.to_csv("./results.csv", index=False)
 
     return result_arr
 
@@ -66,6 +69,19 @@ def generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
     update_json_file(eval_path,key,result_arr)
 
 
+
+
+def modify_to_old_queries():
+    old_queries_json_path="Rag/prompts/old_queries.json"
+    with open(old_queries_json_path, "r", encoding="utf-8") as file:
+            old_queries_arr = json.load(file)["queries"]
+    with open(GROUND_TRUTH_PATH, "r", encoding="utf-8") as file:
+            ground_truth_arr = json.load(file)
+    for item in old_queries_arr:
+        for ground_item in ground_truth_arr:
+            if ground_item["category"] == item["category"] and ground_item["practice"] == item["practice"]:
+                ground_item["query"] =item["query"]
+
+    with open(GROUND_TRUTH_PATH, 'w') as file:
+            json.dump(ground_truth_arr, file, indent=4)
 generate_eval_for_frontend(GROUND_TRUTH_PATH,COMBINED_RESULT_PATH,EVAL_PATH)
-
-
