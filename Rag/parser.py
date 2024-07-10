@@ -92,7 +92,7 @@ def parse_generated_response(generated_response,PROMPT_ID):
         
         # Extract and strip any leading/trailing whitespace
         judgement = generated_response[start_index:end_index].strip()
-
+        judgement=categorize_text(judgement)
         start_keyword = "Explanation:"
         end_keyword = "Explanation:"
         
