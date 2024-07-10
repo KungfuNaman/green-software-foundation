@@ -29,9 +29,12 @@ def combine_groundTruth_result(ground_truth_path,combined_result_path):
             obj["llmExplanation"]=llm_response_item["explanation"]
             obj["category"]=ground_truth_item["category"]
             obj["practice"]=ground_truth_item["practice"]
+            obj["ecoDocContext"]=llm_response_item["context_text"]
 
 
             result_arr.append(obj)
+    df = pd.DataFrame(result_arr)
+    df.to_csv("./results.csv", index=False)
 
     return result_arr
 
