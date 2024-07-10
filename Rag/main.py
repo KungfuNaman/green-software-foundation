@@ -16,7 +16,7 @@ def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_do
     parts = document_path.split('/')
 
     # Get the last part
-    collection_name = parts[-2]
+    collection_name = parts[-2]+"_"+LLM_MODEL
 
     # set up database
     setup_database_start_time = time.time()
@@ -55,7 +55,7 @@ def main():
     
     # for documents from text
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-    documentsFromText=["Netflix","Instagram","Whatsapp","Uber"]
+    documentsFromText=["Netflix"]
 
     for item in documentsFromText:
         doc_path="documentsFromText/"+item+"/content.txt"
