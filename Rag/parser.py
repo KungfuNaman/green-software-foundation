@@ -178,7 +178,7 @@ def addCategories():
             json.dump(result_arr, f)
     print("hello")
 
-# add_parsed_results("/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/llama2_P2_Netflix.csv","/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/llama2_P2_Netflix_combined.csv","P2")
+add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
 
 # files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
 # for item in files:

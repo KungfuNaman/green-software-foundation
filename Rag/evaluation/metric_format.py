@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import os
 GROUND_TRUTH_PATH="documentsFromText/Netflix/ground_truth.json"
-COMBINED_RESULT_PATH="Rag/logger/llama2_P2_Netflix_combined.csv"
+COMBINED_RESULT_PATH="Rag/logger/phi3_P2_Netflix_combined.csv"
 EVAL_PATH="frontend/src/api_results/evaluation/results.json"
 def combine_groundTruth_result(ground_truth_path,combined_result_path):
 
