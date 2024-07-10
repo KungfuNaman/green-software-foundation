@@ -21,6 +21,8 @@ export default function Evaluation() {
   const [confusionMatrixData, setConfusionMatrixData] = useState({});
   const [agreementData, setAgreementData] = useState([]);
   const [precision, setPrecision] = useState(0);
+  const [recall, setRecall] = useState(0);
+
   const [accuracy, setAccuracy] = useState(0);
   useEffect(() => {
     console.log("eval list", setEvalList);
@@ -100,6 +102,7 @@ export default function Evaluation() {
     setPrecision(precision);
     setAccuracy(agreementRate);
     let recall = tp / (tp + fn);
+    setRecall(recall)
     let f1Score = (2 * (precision * recall)) / (precision + recall);
 
     setConfusionMatrixData({
@@ -201,6 +204,14 @@ export default function Evaluation() {
           </Typography>
           <Typography variant="h2" color="text.secondary">
             {`${Math.round(accuracy)}%`}
+          </Typography>
+        </div>
+        <div>
+          <Typography variant="h3" component="h3">
+            Recall
+          </Typography>
+          <Typography variant="h2" color="text.secondary">
+            {recall.toFixed(2)}
           </Typography>
         </div>
       </div>
