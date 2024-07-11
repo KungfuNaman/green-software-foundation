@@ -6,6 +6,10 @@ import os
 import requests
 from tenacity import retry, wait_fixed, stop_after_attempt
 
+from langchain_core.language_models.base import BaseLanguageModel
+from pydantic import BaseModel, Field
+from typing import List
+
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
 LLM_MODEL = os.getenv("LLM_MODEL")
@@ -80,6 +84,46 @@ class Extractor:
                 return response_text
             else:
                 raise ValueError("Query output format is incorrect: \n" + str(response))
+
+
+# class OllamaModel(BaseLanguageModel):
+#     def __init__(self, model, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.model = Ollama(model=LLM_MODEL)
+#
+#     def predict(self, text: str) -> str:
+#         return self.model.invoke(text)
+
+
+class OllamaModel(BaseLanguageModel, BaseModel):
+    model_name: str = Field(...)
+    model: Ollama = None
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.model = Ollama(model=self.model_name)
+
+    def predict(self, text: str) -> str:
+        return self.model.predict(text)
+
+    def predict_messages(self, messages: List[str]) -> List[str]:
+        return self.model.predict_messages(messages)
+
+    def generate_prompt(self, prompt: str) -> str:
+        return self.model.generate_prompt(prompt)
+
+    async def agenerate_prompt(self, prompt: str) -> str:
+        return await self.model.agenerate_prompt(prompt)
+
+    async def apredict(self, text: str) -> str:
+        return await self.model.apredict(text)
+
+    async def apredict_messages(self, messages: List[str]) -> List[str]:
+        return await self.model.apredict_messages(messages)
+
+    def invoke(self, command: str, *args, **kwargs) -> str:
+        return self.model.invoke(command, *args, **kwargs)
+
 
 
 if __name__ == "__main__":

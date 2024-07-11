@@ -24,5 +24,6 @@ tensorboard
 tensorflow
 
 pandas
+openpyxl
 pymongo
 trl

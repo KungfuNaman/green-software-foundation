@@ -6,6 +6,8 @@ import torch
 import pandas as pd
 from torch.utils.tensorboard import SummaryWriter
 from get_embedding_function import get_embedding_function
+from hf_model import Extractor, OllamaModel
+from langchain.retrievers.multi_query import MultiQueryRetriever
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 EMBEDDINGS_LOG_DIR = os.getenv(
@@ -23,6 +25,16 @@ def load_chroma_db(emb_locally: bool, collection_name,db_path=CHROMA_PATH):
         embedding_function=embedder,
     )
     return db
+
+
+def get_llm_retriever(vectordb):
+    o_model = OllamaModel(model_name='llama2')
+
+    retriever = MultiQueryRetriever.from_llm(
+        retriever=vectordb.as_retriever(),
+        llm=o_model
+    )
+    return retriever
 
 # def log_embeddings_to_tensorboard(emb_local: bool):
 #     # Load Chroma database and get embeddings and metadata

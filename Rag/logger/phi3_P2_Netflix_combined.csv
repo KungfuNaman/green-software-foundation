@@ -2382,3 +2382,159 @@ This will also redirect the write queries to this new primary master node.
 4.2. Cassandra
 Cassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.",2.4836621284484863," Judgement: Not Applicable
 Explanation: The context provided discusses microservices architecture, Elastic Load Balancer for traffic management, Apache Chukwe as a logging system, and the use of read replicas in MySQL. It also briefly mentions Netflix's transition to Cassandra due to increased data volumes but does not specify if CDNs are used for static data delivery or recomputation minimization strategies within this context.",5.197993516921997,0,"[(Document(page_content='microservice-architecture\n\nIn a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:7', 'source': 'documentsFromText/Netflix/content.txt'}), 1818.7248041475425), (Document(page_content='3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).', metadata={'id': 'documentsFromText/Netflix/content.txt:None:15', 'source': 'documentsFromText/Netflix/content.txt'}), 1868.676361282518), (Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 1922.800791294463), (Document(page_content='2.1. Microservices Architecture of Netflix \nNetflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:6', 'source': 'documentsFromText/Netflix/content.txt'}), 1933.7190605119654), (Document(page_content='mysql\n\nAll the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.\n\nIn the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.\nThis will also redirect the write queries to this new primary master node.  \n4.2. Cassandra\nCassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:34', 'source': 'documentsFromText/Netflix/content.txt'}), 1945.293964637135)]","The context provided discusses microservices architecture, Elastic Load Balancer for traffic management, Apache Chukwe as a logging system, and the use of read replicas in MySQL. It also briefly mentions Netflix's transition to Cassandra due to increased data volumes but does not specify if CDNs are used for static data delivery or recomputation minimization strategies within this context.",Not Applicable,Not Applicable
+Does the application/framework use content delivery networks (CDNs) to minimize recomputation or fetching of static data?,"microservice-architecture
+
+In a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.
+
+---
+
+3.2. How Netflix balance the high traffic load
+1. Elastic Load Balancer
+elastic-load-balancer
+
+ELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).
+
+---
+
+Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:
+
+Error logs
+UI activities
+Performance events
+Video viewing activities
+Troubleshooting and diagnostic events.
+Apache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.
+
+---
+
+2.1. Microservices Architecture of Netflix 
+Netflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.
+
+---
+
+mysql
+
+All the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.
+
+In the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.
+This will also redirect the write queries to this new primary master node.  
+4.2. Cassandra
+Cassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.",2.367114543914795," Response: Not Applicable
+Explanation: The context provided discusses microservice architecture, load balancing with Elastic Load Balancer and Apache Chukwe ingestion system, but it does not mention the use of content delivery networks (CDNs) for minimizing recomputation or fetching static data.",4.698734521865845,0,"[(Document(page_content='microservice-architecture\n\nIn a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:7', 'source': 'documentsFromText/Netflix/content.txt'}), 1818.7248041475425), (Document(page_content='3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).', metadata={'id': 'documentsFromText/Netflix/content.txt:None:15', 'source': 'documentsFromText/Netflix/content.txt'}), 1868.676361282518), (Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 1922.800791294463), (Document(page_content='2.1. Microservices Architecture of Netflix \nNetflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:6', 'source': 'documentsFromText/Netflix/content.txt'}), 1933.7190605119654), (Document(page_content='mysql\n\nAll the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.\n\nIn the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.\nThis will also redirect the write queries to this new primary master node.  \n4.2. Cassandra\nCassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:34', 'source': 'documentsFromText/Netflix/content.txt'}), 1945.293964637135)]","The context provided discusses microservice architecture, load balancing with Elastic Load Balancer and Apache Chukwe ingestion system, but it does not mention the use of content delivery networks (CDNs) for minimizing recomputation or fetching static data.",Not Applicable,Not Applicable
+Does the application/framework use content delivery networks (CDNs) to minimize recomputation or fetching of static data?,"microservice-architecture
+
+In a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.
+
+---
+
+3.2. How Netflix balance the high traffic load
+1. Elastic Load Balancer
+elastic-load-balancer
+
+ELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).
+
+---
+
+Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:
+
+Error logs
+UI activities
+Performance events
+Video viewing activities
+Troubleshooting and diagnostic events.
+Apache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.
+
+---
+
+2.1. Microservices Architecture of Netflix 
+Netflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.
+
+---
+
+mysql
+
+All the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.
+
+In the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.
+This will also redirect the write queries to this new primary master node.  
+4.2. Cassandra
+Cassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.",2.274592399597168," Response: Not Applicable
+Explanation: The context provided does not mention any specific techniques used for CDN in Netflix's software development, thus it cannot be concluded that the application uses content delivery networks (CDNs) to minimize recomputation or fetching of static data.",4.683198690414429,0,"[(Document(page_content='microservice-architecture\n\nIn a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:7', 'source': 'documentsFromText/Netflix/content.txt'}), 1818.7248041475425), (Document(page_content='3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).', metadata={'id': 'documentsFromText/Netflix/content.txt:None:15', 'source': 'documentsFromText/Netflix/content.txt'}), 1868.676361282518), (Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 1922.800791294463), (Document(page_content='2.1. Microservices Architecture of Netflix \nNetflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:6', 'source': 'documentsFromText/Netflix/content.txt'}), 1933.7190605119654), (Document(page_content='mysql\n\nAll the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.\n\nIn the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.\nThis will also redirect the write queries to this new primary master node.  \n4.2. Cassandra\nCassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:34', 'source': 'documentsFromText/Netflix/content.txt'}), 1945.293964637135)]","The context provided does not mention any specific techniques used for CDN in Netflix's software development, thus it cannot be concluded that the application uses content delivery networks (CDNs) to minimize recomputation or fetching of static data.",Not Applicable,Not Applicable
+Does the application/framework use content delivery networks (CDNs) to minimize recomputation or fetching of static data?,"microservice-architecture
+
+In a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.
+
+---
+
+3.2. How Netflix balance the high traffic load
+1. Elastic Load Balancer
+elastic-load-balancer
+
+ELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).
+
+---
+
+Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:
+
+Error logs
+UI activities
+Performance events
+Video viewing activities
+Troubleshooting and diagnostic events.
+Apache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.
+
+---
+
+2.1. Microservices Architecture of Netflix 
+Netflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.
+
+---
+
+mysql
+
+All the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.
+
+In the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.
+This will also redirect the write queries to this new primary master node.  
+4.2. Cassandra
+Cassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.",2.3491973876953125," Response: Not Applicable
+Explanation: The context provided does not mention anything about using CDNs for static data in Netflix's architecture. It talks mainly about the microservices, ELB, and different databases like MySQL and Cassandra used within Netflix infrastructure.",4.559441328048706,0,"[(Document(page_content='microservice-architecture\n\nIn a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:7', 'source': 'documentsFromText/Netflix/content.txt'}), 1818.7248041475425), (Document(page_content='3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).', metadata={'id': 'documentsFromText/Netflix/content.txt:None:15', 'source': 'documentsFromText/Netflix/content.txt'}), 1868.676361282518), (Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 1922.800791294463), (Document(page_content='2.1. Microservices Architecture of Netflix \nNetflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:6', 'source': 'documentsFromText/Netflix/content.txt'}), 1933.7190605119654), (Document(page_content='mysql\n\nAll the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.\n\nIn the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.\nThis will also redirect the write queries to this new primary master node.  \n4.2. Cassandra\nCassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:34', 'source': 'documentsFromText/Netflix/content.txt'}), 1945.293964637135)]","The context provided does not mention anything about using CDNs for static data in Netflix's architecture. It talks mainly about the microservices, ELB, and different databases like MySQL and Cassandra used within Netflix infrastructure.",Not Applicable,Not Applicable
+Does the application/framework use content delivery networks (CDNs) to minimize recomputation or fetching of static data?,"microservice-architecture
+
+In a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.
+
+---
+
+3.2. How Netflix balance the high traffic load
+1. Elastic Load Balancer
+elastic-load-balancer
+
+ELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).
+
+---
+
+Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:
+
+Error logs
+UI activities
+Performance events
+Video viewing activities
+Troubleshooting and diagnostic events.
+Apache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.
+
+---
+
+2.1. Microservices Architecture of Netflix 
+Netflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.
+
+---
+
+mysql
+
+All the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.
+
+In the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.
+This will also redirect the write queries to this new primary master node.  
+4.2. Cassandra
+Cassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.",2.2902724742889404," Response: Not Applicable
+Explanation: The context provided does not mention anything about CDN usage in Netflix's architecture; it discusses load balancing, microservices communication and database replication. Therefore, we cannot conclude that the application uses CDN to minimize recomputation or fetching of static data based on this specific excerpt from my design document for software development.",5.240201473236084,0,"[(Document(page_content='microservice-architecture\n\nIn a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:7', 'source': 'documentsFromText/Netflix/content.txt'}), 1818.7248041475425), (Document(page_content='3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier load-balancing scheme where the load is balanced over zones first and then instances (servers).', metadata={'id': 'documentsFromText/Netflix/content.txt:None:15', 'source': 'documentsFromText/Netflix/content.txt'}), 1868.676361282518), (Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 1922.800791294463), (Document(page_content='2.1. Microservices Architecture of Netflix \nNetflix’s architectural style is built as a collection of services. This is known as microservices architecture and this power all of the APIs needed for applications and Web apps. When the request arrives at the endpoint it calls the other microservices for required data and these microservices can also request the data from different microservices. After that, a complete response for the API request is sent back to the endpoint.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:6', 'source': 'documentsFromText/Netflix/content.txt'}), 1933.7190605119654), (Document(page_content='mysql\n\nAll the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.\n\nIn the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.\nThis will also redirect the write queries to this new primary master node.  \n4.2. Cassandra\nCassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:34', 'source': 'documentsFromText/Netflix/content.txt'}), 1945.293964637135)]","The context provided does not mention anything about CDN usage in Netflix's architecture; it discusses load balancing, microservices communication and database replication. Therefore, we cannot conclude that the application uses CDN to minimize recomputation or fetching of static data based on this specific excerpt from my design document for software development.",Not Applicable,Not Applicable
