@@ -40,9 +40,9 @@ def query_rag(
     # Prompt
     prompt_template = ChatPromptTemplate.from_template(prompt_template)
     prompt = prompt_template.format(context=context_text, question=query_text)
-    # print('*'*25, '  prompt  ', '*'*25)
-    # print(prompt)
-    # print('*'*25, '  prompt  ', '*'*25)
+    print('*'*25, '  prompt  ', '*'*25, flush=True)
+    print(prompt, flush=True)
+    print('*'*25, '  prompt  ', '*'*25, flush=True)
     print("prompt is created")
 
     # Get response from Extractor LLM
