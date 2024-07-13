@@ -4,12 +4,9 @@ from langchain_community.llms.ollama import Ollama
 import time
 from hf_model import Extractor
 from logger.get_track_llm_response import append_to_csv
-
-
 from rag_utils import load_chroma_db, get_llm_retriever
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
-
 
 
 def main(emd_local, ext_local):
@@ -86,7 +83,15 @@ def query_rag(
         similarity_results,
         logger_file_path
     )
-    return response_text, llm_retrieved_chunk, chroma_retrieved_chunk
+
+    retrieved_info = {
+            "question": query_text,
+            "prediction": response_text,
+            "llm_chunks": llm_retrieved_chunk,
+            "chroma_chunks": chroma_retrieved_chunk
+    }
+
+    return retrieved_info
 
 
 
