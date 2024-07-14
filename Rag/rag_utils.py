@@ -27,14 +27,15 @@ def load_chroma_db(emb_locally: bool, collection_name,db_path=CHROMA_PATH):
     return db
 
 
-def get_llm_retriever(vectordb):
+def get_llm_retriever(vectordb, retriever_type):
     o_model = OllamaModel(model_name='llama2')
 
-    retriever = MultiQueryRetriever.from_llm(
-        retriever=vectordb.as_retriever(),
-        llm=o_model
-    )
-    return retriever
+    if retriever_type == "mq":
+        retriever = MultiQueryRetriever.from_llm(
+            retriever=vectordb.as_retriever(),
+            llm=o_model
+        )
+        return retriever
 
 # def log_embeddings_to_tensorboard(emb_local: bool):
 #     # Load Chroma database and get embeddings and metadata

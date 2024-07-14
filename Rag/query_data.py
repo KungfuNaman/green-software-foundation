@@ -23,7 +23,8 @@ def query_rag(
     print("data added to db : ", setup_database_time, "s")
 
     # Prepare Retriever
-    retriever = get_llm_retriever(db)
+    retriever_type = "mq"
+    retriever = get_llm_retriever(db, retriever_type)
     retrieved_content = retriever.invoke(query_text)
     llm_retrieved_chunk = []
     print("LLM retrieved ", len(retrieved_content), " chunks in total")
@@ -85,6 +86,7 @@ def query_rag(
     )
 
     retrieved_info = {
+            "retriever_type": retriever_type,
             "question": query_text,
             "prediction": response_text,
             "llm_chunks": llm_retrieved_chunk,

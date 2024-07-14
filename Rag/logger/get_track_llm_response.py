@@ -124,10 +124,10 @@ def import_csv_to_mongo(csv_file_path):
         print("No data found in the CSV file.")
 
 
-def save_retrieved_to_logger(doc_name, question_name, record, extension_name=".xlsx"):
+def save_retrieved_to_logger(doc_name, ds_type, record, extension_name=".xlsx"):
     # create folder
     folder_path = "Rag/logger/retrieved/"
-    file_name = doc_name + "_" + question_name + extension_name
+    file_name = doc_name + "_" + ds_type + "_" + record[0]["retriever_type"] + extension_name
     os.makedirs(folder_path, exist_ok=True)
 
     # create file object
@@ -172,6 +172,7 @@ def save_retrieved_to_logger(doc_name, question_name, record, extension_name=".x
     # save file
     file_abs_path = os.path.dirname(os.path.abspath(__file__)) + "/retrieved/" + file_name
     wb.save(file_abs_path)
+    print("File '{}' saved".format(file_name))
 
 
 def move_forwards_same_items(lst1, lst2):

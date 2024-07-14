@@ -53,10 +53,6 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
 
     truth_length = len(ground_truth)
 
-    # # Get random 10 queries
-    # selected_queries = [random.randint(0, 137) for _ in range(5)]
-    # print("Selected queries: ", selected_queries)
-
     # Record retrieved data
     retrieve_rec = {}
     for q_idx in range(truth_length):
@@ -74,6 +70,7 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
         )
         retrieve_rec[q_idx] = retrieved_info
         retrieve_rec[q_idx]["truth"] = ground_truth[q_idx]["Response"]["Judgement"]
+        print("Recorded " + doc_name + " " + q_idx)
 
     # Save to logger folder
     save_retrieved_to_logger(
@@ -89,7 +86,7 @@ def main():
     
     # for documents from text
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-    documentsFromText=["Netflix"]
+    documentsFromText=["Netflix", "Uber", "Whatsapp"]
 
     for item in documentsFromText:
         doc_path = "documentsFromText/" + item + "/content.txt"
