@@ -13,7 +13,6 @@ CHROMA_PATH = os.getenv("CHROMA_PATH")
 
 def setup_database(document_path, reset: bool, emb_local: bool,create_doc: bool,collection_name:str):
     # Check if the database should be cleared (using the --clear flag).
-   
 
     if reset:
         clear_database(emb_local,collection_name)
@@ -41,6 +40,7 @@ def load_documents(document_path,create_doc):
         documents.append(document)
 
     return documents
+
 
 def create_own_doc(document_path):
     with open(document_path, 'r', encoding='utf-8') as file:

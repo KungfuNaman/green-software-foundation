@@ -2,21 +2,28 @@ import os
 from langchain.prompts import ChatPromptTemplate
 from langchain_community.llms.ollama import Ollama
 import time
+import json
 from hf_model import Extractor
 from logger.get_track_llm_response import append_to_csv
 from rag_utils import load_chroma_db, get_llm_retriever
 
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 
+with open("Rag/prompts/prompt.json", 'r') as file:
+    prompts = json.load(file)
+
 
 def main(emd_local, ext_local):
+    PROMPT_ID = "P2"
+    prompt_template = prompts[PROMPT_ID]
+
     query_rag(
-        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv","collection_name","template"
+        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv","collection_name","template", "mq"
     )
 
 
 def query_rag(
-    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name, prompt_template, retriever_type
+    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name, prompt_template, retriever_type, new_retriever
 ):
     # Prepare the DB.
     db = load_chroma_db(emb_local, collection_name)
@@ -44,10 +51,14 @@ def query_rag(
 
     search_end_time = time.time()
     search_time = search_end_time - search_start_time
-    context_text = "\n\n---\n\n".join(
-        [doc.page_content for doc, _score in similarity_results]
-    )
-    print("context is taken out : ", search_time, "s")
+    if new_retriever:
+        context_text = "\n---\n".join(llm_retrieved_chunk)
+        print("context is taken out : ", search_time, "s")
+    else:
+        context_text = "\n\n---\n\n".join(
+            [doc.page_content for doc, _score in similarity_results]
+        )
+        print("context is taken out : ", search_time, "s")
 
     # Prompt
     prompt_template = ChatPromptTemplate.from_template(prompt_template)
@@ -85,6 +96,7 @@ def query_rag(
     )
 
     retrieved_info = {
+            "new_prediction": new_retriever,
             "retriever_type": retriever_type,
             "question": query_text,
             "prediction": response_text,
@@ -93,9 +105,6 @@ def query_rag(
     }
 
     return retrieved_info
-
-
-
 
 
 if __name__ == "__main__":

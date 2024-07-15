@@ -12767,3 +12767,158 @@ So to implement this filtering it’s important to know the information describi
 Netflix uses two different databases i.e. MySQL(RDBMS) and Cassandra(NoSQL) for different purposes.",2.2124550342559814,"Response: Yes.
 
 Explanation: In the provided context, Netflix mentions using Apache Chukwe to ingest data, which is a distributed system and can potentially experience failures. To mitigate this, Netflix has built its own custom caching layer called EV cache, which is based on Memcached and provides a wrapper around it. This suggests that Netflix has implemented circuit breaker patterns in its system to handle failures and ensure reliability.",5.320891380310059,0,"[(Document(page_content='Treat Servers as Stateless:\nTo understand this concept think of your servers like a herd of cows and you care about how many gallons of milk you get every day.\nIf one day you notice that you’re getting less milk from a cow then you just need to replace that cow (producing less milk) with another cow.\nYou don’t need to be dependent on a specific cow to get the required amount of milk. We can relate the above example to our application.\nThe idea is to design the service in such a way that if one of the endpoints is giving the error or if it’s not serving the request in a timely fashion then you can switch to another server and get your work done.\n3. Low Level Design of Netflix System Design\n3.1. How Does Netflix Onboard a Movie/Video?', metadata={'id': 'documentsFromText/Netflix/content.txt:None:9', 'source': 'documentsFromText/Netflix/content.txt'}), 10559.882778906456), (Document(page_content='An outbound filter is used for zipping the content, calculating the metrics, or adding/removing custom headers. After that, the response is sent back to the Netty server and then it is received by the client.\nAdvantages of using ZUUL:', metadata={'id': 'documentsFromText/Netflix/content.txt:None:18', 'source': 'documentsFromText/Netflix/content.txt'}), 11487.122867753053), (Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 11517.365968311808), (Document(page_content='ev-cache\n\nTo solve this problem Netflix has built its own custom caching layer called EV cache. EV cache is based on Memcached and it is actually a wrapper around Memcached. \n\nNetflix has deployed a lot of clusters in a number of AWS EC2 instances and these clusters have so many nodes of Memcached and they also have cache clients.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:23', 'source': 'documentsFromText/Netflix/content.txt'}), 11750.033923528794), (Document(page_content='Now, there is a good chance that the other person will also have a similar pattern and he/she will do the same thing that the first person has done. \nContent-based filtering:\nThe idea is to filter those videos which are similar to the video a user has liked before.\nContent-based filtering is highly dependent on the information from the products such as movie title, release year, actors, the genre.\nSo to implement this filtering it’s important to know the information describing each item and some sort of user profile describing what the user likes is also desirable.  \n4. Database Design of Netflix System Design\nNetflix uses two different databases i.e. MySQL(RDBMS) and Cassandra(NoSQL) for different purposes.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:32', 'source': 'documentsFromText/Netflix/content.txt'}), 11884.785828875654)]"
+Is there any mention of minimizing the total number of deployed environments?,"These replicas require a lot of transcoding and preprocessing. Netflix breaks the original video into different smaller chunks and using parallel workers in AWS it converts these chunks into different formats (like mp4, 3gp, etc) across different resolutions (like 4k, 1080p, and more). After transcoding, once we have multiple copies of the files for the same movie, these files are transferred to each and every Open Connect server which is placed in different locations across the world. 
+
+Below is the step by step process of how Netflix ensures optimal streaming quality:
+---
+The First-tier consists of basic DNS-based Round Robin Balancing. When the request lands on the first load balancing ( see the figure), it is balanced across one of the zones (using round-robin) that your ELB is configured to use.
+The second tier is an array of load balancer instances, and it performs the Round Robin Balancing technique to distribute the request across the instances that are behind it in the same zone.
+2. ZUUL
+ZUUL is a gateway service that provides dynamic routing, monitoring, resiliency, and security. It provides easy routing based on query parameters, URL, and path. Let’s understand the working of its different parts:
+---
+Treat Servers as Stateless:
+To understand this concept think of your servers like a herd of cows and you care about how many gallons of milk you get every day.
+If one day you notice that you’re getting less milk from a cow then you just need to replace that cow (producing less milk) with another cow.
+You don’t need to be dependent on a specific cow to get the required amount of milk. We can relate the above example to our application.
+The idea is to design the service in such a way that if one of the endpoints is giving the error or if it’s not serving the request in a timely fashion then you can switch to another server and get your work done.
+3. Low Level Design of Netflix System Design
+3.1. How Does Netflix Onboard a Movie/Video?
+---
+For example:
+
+If a customer is unable to play the video then the customer care executive will resolve this issue using elastic search. The playback team goes to the elastic search and searches for the user to know why the video is not playing on the user’s device.
+
+They get to know all the information and events happening for that particular user. They get to know what caused the error in the video stream. Elastic search is also used by the admin to keep track of some information. It is also used to keep track of resource usage and to detect signup or login problems.  
+
+3.6. Apache Spark For Movie Recommendation
+Netflix uses Apache Spark and Machine learning for Movie recommendations. Let’s understand how it works with an example.
+---
+microservice-architecture
+
+In a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.
+---
+Kafka is responsible for moving data from fronting Kafka to various sinks: S3, Elasticsearch, and secondary Kafka.
+Routing of these messages is done using the Apache Samja framework.
+Traffic sent by the Chukwe can be full or filtered streams so sometimes you may have to apply further filtering on the Kafka streams.
+That is the reason we consider the router to take from one Kafka topic to a different Kafka topic.  
+3.5. Elastic Search
+In recent years we have seen massive growth in using Elasticsearch within Netflix. Netflix is running approximately 150 clusters of elastic search and 3, 500 hosts with instances. Netflix is using elastic search for data visualization, customer support, and for some error detection in the system.
+
+For example:
+---
+3. Hystrix
+In a complex distributed system a server may rely on the response of another server. Dependencies among these servers can create latency and the entire system may stop working if one of the servers will inevitably fail at some point. To solve this problem we can isolate the host application from these external failures.
+---
+1.2. Non-Functional Requirements
+Low latency and high responsiveness during content playback.
+Scalability to handle a large number of concurrent users.
+High availability with minimal downtime.
+Secure user authentication and authorization.
+Intuitive user interface for easy navigation.
+2. High-Level Design of Netflix System Design
+We all are familiar with Netflix services. It handles large categories of movies and television content and users pay the monthly rent to access these contents. Netflix has 180M+ subscribers in 200+ countries.
+---
+An outbound filter is used for zipping the content, calculating the metrics, or adding/removing custom headers. After that, the response is sent back to the Netty server and then it is received by the client.
+Advantages of using ZUUL:
+---
+Now, there is a good chance that the other person will also have a similar pattern and he/she will do the same thing that the first person has done. 
+Content-based filtering:
+The idea is to filter those videos which are similar to the video a user has liked before.
+Content-based filtering is highly dependent on the information from the products such as movie title, release year, actors, the genre.
+So to implement this filtering it’s important to know the information describing each item and some sort of user profile describing what the user likes is also desirable.  
+4. Database Design of Netflix System Design
+Netflix uses two different databases i.e. MySQL(RDBMS) and Cassandra(NoSQL) for different purposes.
+---
+How to make microservice architecture reliable? 
+Use Hystrix (Already explained above)
+Separate Critical Microservices:
+We can separate out some critical services (or endpoint or APIs) and make it less dependent or independent of other services.
+You can also make some critical services dependent only on other reliable services.
+While choosing the critical microservices you can include all the basic functionalities, like searching for a video, navigating to the videos, hitting and playing the video, etc.
+This way you can make the endpoints highly available and even in worst-case scenarios at least a user will be able to do the basic things.
+Treat Servers as Stateless:",2.288459062576294,"Response:
+Judgement: <Yes>
+Explanation: The context mentions the use of Elastic Search for data visualization, customer support, and error detection in the system. It also mentions the use of Kafka to move data from fronting Kafka to various sinks, including S3, Elasticsearch, and secondary Kafka. This suggests that Netflix is focused on minimizing the total number of deployed environments by using a centralized and integrated system for data processing and storage.",6.216078758239746,0,"[(Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 11606.291813664104), (Document(page_content='ev-cache\n\nTo solve this problem Netflix has built its own custom caching layer called EV cache. EV cache is based on Memcached and it is actually a wrapper around Memcached. \n\nNetflix has deployed a lot of clusters in a number of AWS EC2 instances and these clusters have so many nodes of Memcached and they also have cache clients.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:23', 'source': 'documentsFromText/Netflix/content.txt'}), 11788.569427165572), (Document(page_content='Treat Servers as Stateless:\nTo understand this concept think of your servers like a herd of cows and you care about how many gallons of milk you get every day.\nIf one day you notice that you’re getting less milk from a cow then you just need to replace that cow (producing less milk) with another cow.\nYou don’t need to be dependent on a specific cow to get the required amount of milk. We can relate the above example to our application.\nThe idea is to design the service in such a way that if one of the endpoints is giving the error or if it’s not serving the request in a timely fashion then you can switch to another server and get your work done.\n3. Low Level Design of Netflix System Design\n3.1. How Does Netflix Onboard a Movie/Video?', metadata={'id': 'documentsFromText/Netflix/content.txt:None:9', 'source': 'documentsFromText/Netflix/content.txt'}), 11934.360506447763), (Document(page_content='mysql\n\nAll the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.\n\nIn the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.\nThis will also redirect the write queries to this new primary master node.  \n4.2. Cassandra\nCassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:34', 'source': 'documentsFromText/Netflix/content.txt'}), 11936.833039273368), (Document(page_content='When you load the front page you see multiple rows of different kinds of movies. Netflix personalizes this data and decides what kind of rows or what kind of movies should be displayed to a specific user. This data is based on the user’s historical data and preferences.\n\nAlso, for that specific user, Netflix performs sorting of the movies and calculates the relevance ranking (for the recommendation) of these movies available on their platform. In Netflix, Apache Spark is used for content recommendations and personalization.\n\nA majority of the machine learning pipelines are run on these large spark clusters. These pipelines are then used to do row selection, sorting, title relevance ranking, and artwork personalization among others.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:29', 'source': 'documentsFromText/Netflix/content.txt'}), 12174.149554256339)]"
+Is there any mention of minimizing the total number of deployed environments?,"These replicas require a lot of transcoding and preprocessing. Netflix breaks the original video into different smaller chunks and using parallel workers in AWS it converts these chunks into different formats (like mp4, 3gp, etc) across different resolutions (like 4k, 1080p, and more). After transcoding, once we have multiple copies of the files for the same movie, these files are transferred to each and every Open Connect server which is placed in different locations across the world. 
+
+Below is the step by step process of how Netflix ensures optimal streaming quality:
+---
+The First-tier consists of basic DNS-based Round Robin Balancing. When the request lands on the first load balancing ( see the figure), it is balanced across one of the zones (using round-robin) that your ELB is configured to use.
+The second tier is an array of load balancer instances, and it performs the Round Robin Balancing technique to distribute the request across the instances that are behind it in the same zone.
+2. ZUUL
+ZUUL is a gateway service that provides dynamic routing, monitoring, resiliency, and security. It provides easy routing based on query parameters, URL, and path. Let’s understand the working of its different parts:
+---
+Treat Servers as Stateless:
+To understand this concept think of your servers like a herd of cows and you care about how many gallons of milk you get every day.
+If one day you notice that you’re getting less milk from a cow then you just need to replace that cow (producing less milk) with another cow.
+You don’t need to be dependent on a specific cow to get the required amount of milk. We can relate the above example to our application.
+The idea is to design the service in such a way that if one of the endpoints is giving the error or if it’s not serving the request in a timely fashion then you can switch to another server and get your work done.
+3. Low Level Design of Netflix System Design
+3.1. How Does Netflix Onboard a Movie/Video?
+---
+For example:
+
+If a customer is unable to play the video then the customer care executive will resolve this issue using elastic search. The playback team goes to the elastic search and searches for the user to know why the video is not playing on the user’s device.
+
+They get to know all the information and events happening for that particular user. They get to know what caused the error in the video stream. Elastic search is also used by the admin to keep track of some information. It is also used to keep track of resource usage and to detect signup or login problems.  
+
+3.6. Apache Spark For Movie Recommendation
+Netflix uses Apache Spark and Machine learning for Movie recommendations. Let’s understand how it works with an example.
+---
+microservice-architecture
+
+In a microservice architecture, services should be independent of each other. For example, The video storage service would be decoupled from the service responsible for transcoding videos.
+---
+Kafka is responsible for moving data from fronting Kafka to various sinks: S3, Elasticsearch, and secondary Kafka.
+Routing of these messages is done using the Apache Samja framework.
+Traffic sent by the Chukwe can be full or filtered streams so sometimes you may have to apply further filtering on the Kafka streams.
+That is the reason we consider the router to take from one Kafka topic to a different Kafka topic.  
+3.5. Elastic Search
+In recent years we have seen massive growth in using Elasticsearch within Netflix. Netflix is running approximately 150 clusters of elastic search and 3, 500 hosts with instances. Netflix is using elastic search for data visualization, customer support, and for some error detection in the system.
+
+For example:
+---
+3. Hystrix
+In a complex distributed system a server may rely on the response of another server. Dependencies among these servers can create latency and the entire system may stop working if one of the servers will inevitably fail at some point. To solve this problem we can isolate the host application from these external failures.
+---
+1.2. Non-Functional Requirements
+Low latency and high responsiveness during content playback.
+Scalability to handle a large number of concurrent users.
+High availability with minimal downtime.
+Secure user authentication and authorization.
+Intuitive user interface for easy navigation.
+2. High-Level Design of Netflix System Design
+We all are familiar with Netflix services. It handles large categories of movies and television content and users pay the monthly rent to access these contents. Netflix has 180M+ subscribers in 200+ countries.
+---
+Requirements of Netflix System Design
+High-Level Design of Netflix System Design
+Microservices Architecture of Netflix 
+Low Level Design of Netflix System Design
+How Does Netflix Onboard a Movie/Video?
+How Netflix balance the high traffic load
+EV Cache
+Data Processing in Netflix Using Kafka And Apache Chukwa
+Elastic Search
+Apache Spark For Movie Recommendation
+Database Design of Netflix System Design
+1. Requirements of Netflix System Design
+1.1. Functional Requirements
+Users should be able to create accounts, log in, and log out.
+Subscription management for users.
+Allow users to play videos and pause, play, rewind, and fast-forward functionalities.
+Ability to download content for offline viewing.
+Personalized content recommendations based on user preferences and viewing history.
+---
+An outbound filter is used for zipping the content, calculating the metrics, or adding/removing custom headers. After that, the response is sent back to the Netty server and then it is received by the client.
+Advantages of using ZUUL:
+---
+How to make microservice architecture reliable? 
+Use Hystrix (Already explained above)
+Separate Critical Microservices:
+We can separate out some critical services (or endpoint or APIs) and make it less dependent or independent of other services.
+You can also make some critical services dependent only on other reliable services.
+While choosing the critical microservices you can include all the basic functionalities, like searching for a video, navigating to the videos, hitting and playing the video, etc.
+This way you can make the endpoints highly available and even in worst-case scenarios at least a user will be able to do the basic things.
+Treat Servers as Stateless:",2.2863287925720215,"Response:
+Judgement: <Yes>
+Explanation: In the context of your question, Netflix does mention minimizing the total number of deployed environments. In the Low Level Design section, it is mentioned that Netflix uses a microservice architecture where services are decoupled from each other, and each service has its own environment. This allows Netflix to deploy multiple instances of each service in different environments, which helps to minimize the total number of deployed environments and improve scalability.",6.548523902893066,0,"[(Document(page_content='Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a different part of the system. Netflix provides almost 500B data events that consume 1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These events include information like:\n\nError logs\nUI activities\nPerformance events\nVideo viewing activities\nTroubleshooting and diagnostic events.\nApache Chukwe is an open-source data collection system for collecting logs or events from a distributed system. It is built on top of HDFS and Map-reduce framework. It comes with Hadoop’s scalability and robustness features.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:25', 'source': 'documentsFromText/Netflix/content.txt'}), 11606.291813664104), (Document(page_content='ev-cache\n\nTo solve this problem Netflix has built its own custom caching layer called EV cache. EV cache is based on Memcached and it is actually a wrapper around Memcached. \n\nNetflix has deployed a lot of clusters in a number of AWS EC2 instances and these clusters have so many nodes of Memcached and they also have cache clients.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:23', 'source': 'documentsFromText/Netflix/content.txt'}), 11788.569427165572), (Document(page_content='Treat Servers as Stateless:\nTo understand this concept think of your servers like a herd of cows and you care about how many gallons of milk you get every day.\nIf one day you notice that you’re getting less milk from a cow then you just need to replace that cow (producing less milk) with another cow.\nYou don’t need to be dependent on a specific cow to get the required amount of milk. We can relate the above example to our application.\nThe idea is to design the service in such a way that if one of the endpoints is giving the error or if it’s not serving the request in a timely fashion then you can switch to another server and get your work done.\n3. Low Level Design of Netflix System Design\n3.1. How Does Netflix Onboard a Movie/Video?', metadata={'id': 'documentsFromText/Netflix/content.txt:None:9', 'source': 'documentsFromText/Netflix/content.txt'}), 11934.360506447763), (Document(page_content='mysql\n\nAll the read queries are redirected to the read replicas and only the write queries are redirected to the master nodes.\n\nIn the case of a primary master MySQL failure, the secondary master node will take over the primary role, and the route53 (DNS configuration) entry for the database will be changed to this new primary node.\nThis will also redirect the write queries to this new primary master node.  \n4.2. Cassandra\nCassandra is a NoSQL database that can handle large amounts of data and it can also handle heavy writing and reading. When Netflix started acquiring more users, the viewing history data for each member also started increasing. This increases the total number of viewing history data and it becomes challenging for Netflix to handle this massive amount of data.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:34', 'source': 'documentsFromText/Netflix/content.txt'}), 11936.833039273368), (Document(page_content='When you load the front page you see multiple rows of different kinds of movies. Netflix personalizes this data and decides what kind of rows or what kind of movies should be displayed to a specific user. This data is based on the user’s historical data and preferences.\n\nAlso, for that specific user, Netflix performs sorting of the movies and calculates the relevance ranking (for the recommendation) of these movies available on their platform. In Netflix, Apache Spark is used for content recommendations and personalization.\n\nA majority of the machine learning pipelines are run on these large spark clusters. These pipelines are then used to do row selection, sorting, title relevance ranking, and artwork personalization among others.', metadata={'id': 'documentsFromText/Netflix/content.txt:None:29', 'source': 'documentsFromText/Netflix/content.txt'}), 12174.149554256339)]"
