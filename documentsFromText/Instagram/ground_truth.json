@@ -1,362 +1,483 @@
-{
-    "Responses": [
-      {
-        "Question": "Is there any mention of minimizing the total number of deployed environments to save resources?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document focuses on scalability and managing high workloads by adding more servers and databases, but does not specifically address minimizing the number of deployed environments."
-        }
-      },
-      {
-        "Question": "Is there any mention of optimizing storage utilization to reduce energy consumption?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document mentions the use of scalable storage solutions and databases for content and user data, but does not discuss optimizing storage utilization specifically to reduce energy consumption."
-        }
-      },
-      {
-        "Question": "Is there any mention of optimizing average CPU utilization to ensure efficient use of resources?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of specific strategies or technologies used to optimize average CPU utilization within the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of managing peak CPU utilization to avoid over-provisioning?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss managing or optimizing peak CPU utilization or strategies to avoid over-provisioning."
-        }
-      },
-      {
-        "Question": "Is there any mention of removing unused assets to optimize performance?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no information provided about removing unused assets as a strategy for optimizing performance in the system design."
-        }
-      },
-      {
-        "Question": "Is there any mention of scaling down Kubernetes applications when not in use to reduce resource usage?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention Kubernetes or any specific practices related to scaling down applications when not in use."
-        }
-      },
-      {
-        "Question": "Is there any mention of scaling down applications during idle periods to minimize resource usage?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "No specific mention of scaling down applications during idle periods is found in the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of scaling infrastructure based on real-time user demand?",
-        "Response": {
-          "Judgement": "Yes",
-          "Explanation": "The document discusses scalability and the ability to handle increased workloads, implying that the infrastructure may scale based on user demand."
-        }
-      },
-      {
-        "Question": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss Kubernetes or the use of metrics to adjust workloads dynamically."
-        }
-      },
-      {
-        "Question": "Is there any mention of allowing independent scaling of logical components?",
-        "Response": {
-          "Judgement": "Yes",
-          "Explanation": "The system design includes microservices architecture which inherently supports the independent scaling of logical components."
-        }
-      },
-      {
-        "Question": "Is there any mention of adopting serverless cloud services to optimize resource usage?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of adopting serverless technologies within the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of reducing transmitted data to save energy?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss strategies for reducing transmitted data as a means to save energy."
-        }
-      },
-      {
-        "Question": "Is there any mention of setting storage retention policies to automatically clean up old data?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of setting storage retention policies for data cleanup in the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of queuing non-urgent processing requests to reduce peak loads?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss queuing non-urgent processing requests to manage or reduce peak loads."
-        }
-      },
-      {
-        "Question": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no information on traffic prioritization or management strategies like shedding lower priority traffic in the system design."
-        }
-      },
-      {
-        "Question": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention Kubernetes or specific scheduling practices like cron jobs during off-peak hours."
-        }
-      },
-      {
-        "Question": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the use of asynchronous over synchronous network calls to reduce waiting times."
-        }
-      },
-      {
-        "Question": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "No mention of implementing circuit breaker patterns for handling service failures is found in the system design."
-        }
-      },
-      {
-        "Question": "Is there any mention of regularly scanning for and fixing vulnerabilities to maintain efficiency?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention regular vulnerability scans as part of maintaining system efficiency."
-        }
-      },
-      {
-        "Question": "Is there any mention of adopting cloud-native network security tools and controls for efficient security?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "While the document discusses robust security measures, it does not specify the adoption of cloud-native network security tools and controls."
-        }
-      },
-      {
-        "Question": "Is there any mention of using DDoS protection to maintain service availability?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not specifically mention the use of DDoS protection to maintain service availability."
-        }
-      },
-      {
-        "Question": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of designing software specifically to minimize the impact on end-user devices and equipment."
-        }
-      },
-      {
-        "Question": "Is there any mention of choosing server regions that are closest to users to reduce latency and energy consumption?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the strategy of selecting server regions closest to users for reducing latency and energy consumption."
-        }
-      },
-      {
-        "Question": "Is there any mention of containerizing workloads to ensure efficient use of resources?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "No specific mention of containerizing workloads is found in the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of deleting unused storage resources to remove storage that is no longer needed?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the deletion of unused storage resources as a means to optimize system performance."
-        }
-      },
-      {
-        "Question": "Is there any mention of evaluating other CPU architectures to consider more efficient options?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no discussion on evaluating different CPU architectures for efficiency within the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of ensuring VMs are right-sized for their workloads to match utilization requirements?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention the practice of right-sizing VMs to match workload requirements."
-        }
-      },
-      {
-        "Question": "Is there any mention of using pre-configured servers that match workload requirements to optimize utilization?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of using pre-configured servers to optimize resource utilization based on workload requirements."
-        }
-      },
-      {
-        "Question": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention the use of cloud native processor VMs specifically designed for cloud environments."
-        }
-      },
-      {
-        "Question": "Is there any mention of adopting serverless cloud services to optimize resource usage?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of adopting serverless technologies within the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of caching static data to reduce the need to recompute or fetch it?",
-        "Response": {
-          "Judgement": "Yes",
-          "Explanation": "The document discusses the use of cache to reduce latency and load on the servers, which includes caching static data to improve performance."
-        }
-      },
-      {
-        "Question": "Is there any mention of compressing stored data to reduce storage requirements?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no specific mention of data compression as a strategy for reducing storage requirements in the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of compressing data transmitted over networks to minimize transmission amounts?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss compressing transmitted data to minimize the amount of data transmitted over networks."
-        }
-      },
-      {
-        "Question": "Is there any mention of encrypting only necessary data to save energy?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no discussion on selective data encryption to conserve energy within the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of terminating TLS at the border gateway to reduce internal encryption overhead?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention the practice of terminating TLS at the border gateway to reduce encryption overhead."
-        }
-      },
-      {
-        "Question": "Is there any mention of using a service mesh only if needed to avoid unnecessary overhead?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the use of a service mesh or considerations for its deployment based on necessity."
-        }
-      },
-      {
-        "Question": "Is there any mention of implementing a stateless design to improve scalability?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of implementing a stateless design specifically aimed at improving scalability in the system design."
-        }
-      },
-      {
-        "Question": "Is there any mention of matching service level objectives to business needs to align performance goals?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention aligning service level objectives with business needs to tailor performance goals."
-        }
-      },
-      {
-        "Question": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no information on traffic prioritization or management strategies like shedding lower priority traffic in the system design."
-        }
-      },
-      {
-        "Question": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention Kubernetes or specific scheduling practices like cron jobs during off-peak hours."
-        }
-      },
-      {
-        "Question": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the use of asynchronous over synchronous network calls to reduce waiting times."
-        }
-      },
-      {
-        "Question": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "No mention of implementing circuit breaker patterns for handling service failures is found in the system design."
-        }
-      },
-      {
-        "Question": "Is there any mention of optimizing the size of AI/ML models to save storage space and reduce memory usage during inference?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention optimizing the size of AI/ML models or any considerations for efficiency in model deployment."
-        }
-      },
-      {
-        "Question": "Is there any mention of leveraging pre-trained models and transfer learning to reduce training times and energy consumption in AI/ML development?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no discussion on the use of pre-trained models or transfer learning to enhance efficiency in AI/ML development."
-        }
-      },
-      {
-        "Question": "Is there any mention of using AI/ML models that consume less energy while maintaining performance?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not address the use of energy-efficient AI/ML models or strategies for reducing energy consumption while maintaining performance."
-        }
-      },
-      {
-        "Question": "Is there any mention of deploying AI models on edge devices to reduce energy consumption and minimize data transfer?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the deployment of AI models on edge devices as a strategy for reducing energy consumption and data transfer."
-        }
-      },
-      {
-        "Question": "Is there any mention of adopting a serverless architecture for AI/ML workload processes to optimize resource usage?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of adopting serverless architectures specifically for AI/ML workloads in the document."
-        }
-      },
-      {
-        "Question": "Is there any mention of using efficient file formats like Parquet for better data storage and retrieval in AI/ML development?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not mention the use of efficient file formats like Parquet or any specific data management practices for AI/ML development."
-        }
-      },
-      {
-        "Question": "Is there any mention of selecting a more energy-efficient AI/ML framework, such as those built on programming languages like C/C++?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the selection of AI/ML frameworks based on energy efficiency or programming language considerations."
-        }
-      },
-      {
-        "Question": "Is there any mention of training AI models in cloud regions with lower carbon intensity?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "There is no mention of selecting cloud regions based on carbon intensity for the training of AI models."
-        }
-      },
-      {
-        "Question": "Is there any mention of selecting the right hardware or VM instance types for energy-efficient AI/ML training?",
-        "Response": {
-          "Judgement": "No",
-          "Explanation": "The document does not discuss the selection of specific hardware or VM types for energy-efficient AI/ML training."
-        }
-      }
-    ]
+[
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Minimize the total number of deployed environments",
+    "query": "Is there any mention of minimizing the total number of deployed environments to save resources?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document focuses on scalability and managing high workloads by adding more servers and databases, but does not specifically address minimizing the number of deployed environments."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Optimize storage utilization",
+    "query": "Is there any mention of optimizing storage utilization to reduce energy consumption?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document mentions the use of scalable storage solutions and databases for content and user data, but does not discuss optimizing storage utilization specifically to reduce energy consumption."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Optimize average CPU utilization",
+    "query": "Is there any mention of optimizing average CPU utilization to ensure efficient use of resources?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of specific strategies or technologies used to optimize average CPU utilization within the document."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Optimize peak CPU utilization",
+    "query": "Is there any mention of managing peak CPU utilization to avoid over-provisioning?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss managing or optimizing peak CPU utilization or strategies to avoid over-provisioning."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Remove unused assets",
+    "query": "Is there any mention of removing unused assets to optimize performance?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no information provided about removing unused assets as a strategy for optimizing performance in the system design."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Scale down Kubernetes applications when not in use",
+    "query": "Is there any mention of scaling down Kubernetes applications when not in use to reduce resource usage?",
+    "Response": {
+      "Judgement": "Not Applicable",
+      "Explanation": "The document does not mention Kubernetes or any specific practices related to scaling down applications when not in use."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Scale down applications when not in use",
+    "query": "Is there any mention of scaling down applications during idle periods to minimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No specific mention of scaling down applications during idle periods is found in the document."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Scale infrastructure with user load",
+    "query": "Is there any mention of scaling infrastructure based on real-time user demand?",
+    "Response": {
+      "Judgement": "Yes",
+      "Explanation": "The document discusses scalability and the ability to handle increased workloads, implying that the infrastructure may scale based on user demand."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Scale Kubernetes workloads based on relevant demand metrics",
+    "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
+    "Response": {
+      "Judgement": "Not Applicable",
+      "Explanation": "The document does not discuss Kubernetes or the use of metrics to adjust workloads dynamically."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Scale logical components independently",
+    "query": "Is there any mention of allowing independent scaling of logical components?",
+    "Response": {
+      "Judgement": "Yes",
+      "Explanation": "The system design includes microservices architecture which inherently supports the independent scaling of logical components."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Resource Optimization",
+    "practice": "Use serverless cloud services",
+    "query": "Is there any mention of adopting serverless cloud services to optimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of adopting serverless technologies within the document."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Data Efficiency",
+    "practice": "Reduce transmitted data",
+    "query": "Is there any mention of reducing transmitted data to save energy?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss strategies for reducing transmitted data as a means to save energy."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Data Efficiency",
+    "practice": "Set storage retention policies",
+    "query": "Is there any mention of setting storage retention policies to automatically clean up old data?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of setting storage retention policies for data cleanup in the document."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Performance Management",
+    "practice": "Queue non-urgent processing requests",
+    "query": "Is there any mention of queuing non-urgent processing requests to reduce peak loads?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss queuing non-urgent processing requests to manage or reduce peak loads."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Performance Management",
+    "practice": "Shed lower priority traffic",
+    "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no information on traffic prioritization or management strategies like shedding lower priority traffic in the system design."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Performance Management",
+    "practice": "Time-shift Kubernetes cron jobs",
+    "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours to optimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention Kubernetes or specific scheduling practices like cron jobs during off-peak hours."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Performance Management",
+    "practice": "Use asynchronous network calls instead of synchronous",
+    "query": "Is there any mention of using asynchronous network calls instead of synchronous ones to reduce waiting times?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the use of asynchronous over synchronous network calls to reduce waiting times."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Performance Management",
+    "practice": "Use circuit breaker patterns",
+    "query": "Is there any mention of implementing circuit breaker patterns to handle service failures gracefully?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No mention of implementing circuit breaker patterns for handling service failures is found in the system design."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Security",
+    "practice": "Scan for vulnerabilities",
+    "query": "Is there any mention of regularly scanning for and fixing vulnerabilities to maintain efficiency?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention regular vulnerability scans as part of maintaining system efficiency."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Security",
+    "practice": "Use cloud native network security tools and controls",
+    "query": "Is there any mention of adopting cloud-native network security tools and controls for efficient security?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "While the document discusses robust security measures, it does not specify the adoption of cloud-native network security tools and controls."
+    }
+  },
+  {
+    "type": "web",
+    "category": "Security",
+    "practice": "Use DDoS protection",
+    "query": "Is there any mention of using DDoS protection to maintain service availability?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not specifically mention the use of DDoS protection to maintain service availability."
+    }
+  },
+  {
+    "type": "web",
+    "category": "User Impact",
+    "practice": "Optimize impact on customer devices and equipment",
+    "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of designing software specifically to minimize the impact on end-user devices and equipment."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Choose the region that is closest to users",
+    "query": "Is there any mention of choosing server regions that are closest to users to reduce latency and energy consumption?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the strategy of selecting server regions closest to users for reducing latency and energy consumption."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Containerize your workloads",
+    "query": "Is there any mention of containerizing workloads to ensure efficient use of resources?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "No specific mention of containerizing workloads is found in the document."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Delete unused storage resources",
+    "query": "Is there any mention of deleting unused storage resources to remove storage that is no longer needed?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the deletion of unused storage resources as a means to optimize system performance."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Evaluate other CPU architectures",
+    "query": "Is there any mention of evaluating other CPU architectures to consider more efficient options?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no discussion on evaluating different CPU architectures for efficiency within the document."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Match utilization requirements of virtual machines (VMs)",
+    "query": "Is there any mention of ensuring VMs are right-sized for their workloads to match utilization requirements?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention the practice of right-sizing VMs to match workload requirements."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Match utilization requirements with pre-configured servers",
+    "query": "Is there any mention of using pre-configured servers that match workload requirements to optimize utilization?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of using pre-configured servers to optimize resource utilization based on workload requirements."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Use cloud native processor VMs",
+    "query": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention the use of cloud native processor VMs specifically designed for cloud environments."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Resource Optimization",
+    "practice": "Use serverless cloud services",
+    "query": "Is there any mention of adopting serverless cloud services to optimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of adopting serverless technologies within the document."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Data Efficiency",
+    "practice": "Cache static data",
+    "query": "Is there any mention of caching static data to reduce the need to recompute or fetch it?",
+    "Response": {
+      "Judgement": "Yes",
+      "Explanation": "The document discusses the use of cache to reduce latency and load on the servers, which includes caching static data to improve performance."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Data Efficiency",
+    "practice": "Compress stored data",
+    "query": "Is there any mention of compressing stored data to reduce storage requirements?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no specific mention of data compression as a strategy for reducing storage requirements in the document."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Data Efficiency",
+    "practice": "Compress transmitted data",
+    "query": "Is there any mention of compressing data transmitted over networks to minimize transmission amounts?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss compressing transmitted data to minimize the amount of data transmitted over networks."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Security",
+    "practice": "Encrypt what is necessary",
+    "query": "Is there any mention of encrypting only necessary data to save energy?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no discussion on selective data encryption to conserve energy within the document."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Security",
+    "practice": "Terminate TLS at border gateway",
+    "query": "Is there any mention of terminating TLS at the border gateway to reduce internal encryption overhead?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention the practice of terminating TLS at the border gateway to reduce encryption overhead."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Performance Management",
+    "practice": "Use a service mesh only if needed",
+    "query": "Is there any mention of using a service mesh only if needed to avoid unnecessary overhead?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the use of a service mesh or considerations for its deployment based on necessity."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Performance Management",
+    "practice": "Implement stateless design",
+    "query": "Is there any mention of implementing a stateless design to improve scalability?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of implementing a stateless design specifically aimed at improving scalability in the system design."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Performance Management",
+    "practice": "Match your service level objectives to business needs",
+    "query": "Is there any mention of matching service level objectives to business needs to align performance goals?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention aligning service level objectives with business needs to tailor performance goals."
+    }
+  },
+  {
+    "type": "cloud",
+    "category": "Performance Management",
+    "practice": "Shed lower priority traffic",
+    "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic to improve performance?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no information on traffic prioritization or management strategies like shedding lower priority traffic in the system design."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Model Efficiency",
+    "practice": "Optimize the size of AI/ML models",
+    "query": "Is there any mention of optimizing the size of AI/ML models to save storage space and reduce memory usage during inference?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention optimizing the size of AI/ML models or any considerations for efficiency in model deployment."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Model Efficiency",
+    "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
+    "query": "Is there any mention of leveraging pre-trained models and transfer learning to reduce training times and energy consumption in AI/ML development?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no discussion on the use of pre-trained models or transfer learning to enhance efficiency in AI/ML development."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Model Efficiency",
+    "practice": "Use energy efficient AI/ML models",
+    "query": "Is there any mention of using AI/ML models that consume less energy while maintaining performance?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not address the use of energy-efficient AI/ML models or strategies for reducing energy consumption while maintaining performance."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Deployment Strategy",
+    "practice": "Run AI models at the edge",
+    "query": "Is there any mention of deploying AI models on edge devices to reduce energy consumption and minimize data transfer?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the deployment of AI models on edge devices as a strategy for reducing energy consumption and data transfer."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Deployment Strategy",
+    "practice": "Adopt serverless architecture for AI/ML workload processes",
+    "query": "Is there any mention of adopting a serverless architecture for AI/ML workload processes to optimize resource usage?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of adopting serverless architectures specifically for AI/ML workloads in the document."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Data Management",
+    "practice": "Use efficient file formats for AI/ML development",
+    "query": "Is there any mention of using efficient file formats like Parquet for better data storage and retrieval in AI/ML development?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not mention the use of efficient file formats like Parquet or any specific data management practices for AI/ML development."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Framework Selection",
+    "practice": "Select a more energy efficient AI/ML framework",
+    "query": "Is there any mention of selecting a more energy-efficient AI/ML framework, such as those built on programming languages like C/C++?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the selection of AI/ML frameworks based on energy efficiency or programming language considerations."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Sustainable Practices",
+    "practice": "Use sustainable regions for AI/ML training",
+    "query": "Is there any mention of training AI models in cloud regions with lower carbon intensity?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "There is no mention of selecting cloud regions based on carbon intensity for the training of AI models."
+    }
+  },
+  {
+    "type": "AI",
+    "category": "Hardware Selection",
+    "practice": "Select the right hardware/VM instance types for AI/ML training",
+    "query": "Is there any mention of selecting the right hardware or VM instance types for energy-efficient AI/ML training?",
+    "Response": {
+      "Judgement": "No",
+      "Explanation": "The document does not discuss the selection of specific hardware or VM types for energy-efficient AI/ML training."
+    }
   }
+]
   
