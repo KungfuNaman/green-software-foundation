@@ -75,8 +75,7 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
             logger_file_path,
             collection_name,
             prompt_template,
-            retriever_type,
-            True
+            retriever_type
         )
         retrieve_rec[q_idx] = retrieved_info
         retrieve_rec[q_idx]["truth"] = ground_truth[q_idx]["Response"]["Judgement"]

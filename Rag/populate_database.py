@@ -108,7 +108,7 @@ def create_ensemble_retriever(chunks: list[Document]):
     bm25_retriever.k = 2
     
     #embedding = HuggingFaceInferenceAPIEmbeddings(api_key="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", model_name="sentence-transformers/all-MiniLM-l6-v2")
-    embedding = get_embedding_function("collection_name", True)
+    embedding, collection_name = get_embedding_function("collection_name", True)
 
 
     faiss_vectorstore = FAISS.from_texts(
