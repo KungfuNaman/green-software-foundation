@@ -16,14 +16,13 @@ def main(emd_local, ext_local):
 
 
 def query_rag(
-    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name,prompt_template
+    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name, prompt_template, retriever_type
 ):
     # Prepare the DB.
     db = load_chroma_db(emb_local, collection_name)
     print("data added to db : ", setup_database_time, "s")
 
     # Prepare Retriever
-    retriever_type = "mq"
     retriever = get_llm_retriever(db, retriever_type)
     retrieved_content = retriever.invoke(query_text)
     llm_retrieved_chunk = []

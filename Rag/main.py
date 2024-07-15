@@ -19,6 +19,7 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
     emb_local = True
     extract_local = True
     parts = document_path.split('/')
+    retriever_type = "mq"
 
     # Get the last part
     collection_name = parts[-2]+"_"+LLM_MODEL
@@ -66,7 +67,8 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
             extract_local,
             logger_file_path,
             collection_name,
-            prompt_template
+            prompt_template,
+            retriever_type
         )
         retrieve_rec[q_idx] = retrieved_info
         retrieve_rec[q_idx]["truth"] = ground_truth[q_idx]["Response"]["Judgement"]
