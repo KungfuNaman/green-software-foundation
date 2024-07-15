@@ -57,8 +57,8 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
     # Record retrieved data
     retrieve_rec = {}
     for q_idx in range(truth_length):
-        if q_idx > 0:
-            break
+        # if q_idx > 0:
+        #     break
         q_question = ground_truth[q_idx].get("query", "")
         retrieved_info = query_rag(
             q_question,
@@ -89,8 +89,7 @@ def main():
     
     # for documents from text
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-    documentsFromText = ["Netflix", "Uber", "Whatsapp"]
-    documentsFromText = ["Netflix"]
+    documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
 
     for item in documentsFromText:
         doc_path = "documentsFromText/" + item + "/content.txt"
