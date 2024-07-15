@@ -10,6 +10,7 @@ from query_data import query_rag
 from logger.get_track_llm_response import save_retrieved_to_logger
 
 LLM_MODEL = os.getenv("LLM_MODEL")
+USE_ENSEMBLE = True
 with open("Rag/prompts/prompt.json", 'r') as file:
     prompts = json.load(file)
 
@@ -26,7 +27,11 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
 
     # set up database
     setup_database_start_time = time.time()
-    is_document_embedded = setup_database(document_path, False, emb_local,create_doc,collection_name)
+    ensemble_retriever = None
+    if USE_ENSEMBLE:
+        is_document_embedded, ensemble_retriever = setup_database(USE_ENSEMBLE,document_path, False, emb_local,create_doc,collection_name)
+    else:
+        is_document_embedded = setup_database(USE_ENSEMBLE,document_path, False, emb_local,create_doc,collection_name)
     setup_database_end_time = time.time()
     setup_database_time = setup_database_end_time - setup_database_start_time if is_document_embedded else "0"
 
@@ -61,6 +66,8 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
         #     break
         q_question = ground_truth[q_idx].get("query", "")
         retrieved_info = query_rag(
+            USE_ENSEMBLE,
+            ensemble_retriever,
             q_question,
             setup_database_time,
             emb_local,

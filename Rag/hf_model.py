@@ -32,7 +32,7 @@ class Embedder:
         self.api_url = f"https://api-inference.huggingface.co/pipeline/feature-extraction/{self.model}"
         self.headers = {"Authorization": f"Bearer {HF_TOKEN}"}
         self.wait = False
-
+    
     def embed(self, texts):
         """
         Get embedding from HTTP POST query to hugging face inference api
