@@ -55,7 +55,18 @@ class Extractor:
         self.run_local = run_local
         self.wait = False
         if self.run_local:
-            self.model = Ollama(model=LLM_MODEL)
+            self.model = Ollama(
+                model=LLM_MODEL,
+                mirostat_tau=3,         # Default = 5.0
+                num_ctx=3072,           # Default = 2048
+                repeat_last_n=128,      # Default = 64, 0 = disabled, -1 = num_ctx
+                repeat_penalty=1.5,     # Default = 1.1
+                temperature=0.4,        # Default = 0.8
+                template="",
+                top_k=10,               # Default = 40
+                top_p=0.5,              # Default = 0.9
+                verbose=False
+            )
         else:
             self.model = EXT_MODEL_ID
             self.api_url = f"https://api-inference.huggingface.co/models/{self.model}"
@@ -84,15 +95,6 @@ class Extractor:
                 return response_text
             else:
                 raise ValueError("Query output format is incorrect: \n" + str(response))
-
-
-# class OllamaModel(BaseLanguageModel):
-#     def __init__(self, model, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.model = Ollama(model=LLM_MODEL)
-#
-#     def predict(self, text: str) -> str:
-#         return self.model.invoke(text)
 
 
 class OllamaModel(BaseLanguageModel, BaseModel):

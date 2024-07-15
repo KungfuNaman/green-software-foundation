@@ -31,8 +31,6 @@ def load_chroma_db(emb_locally: bool, collection_name, db_path=CHROMA_PATH):
     return db
 
 
-
-
 def get_llm_retriever(vectordb, retriever_type):
     o_model = OllamaModel(model_name='llama2')
 

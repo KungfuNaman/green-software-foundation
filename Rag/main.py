@@ -78,14 +78,14 @@ def evaluate_docs_in_bulk(doc_name,document_path,logger_file_path,combined_path,
     # Save to logger folder
     save_retrieved_to_logger(
         doc_name,
-        "practices_test",
+        "practices",
         retrieve_rec
     )
 
 
 def main():
-    PROMPT_ID="P2"
-    prompt_template=prompts[PROMPT_ID]
+    PROMPT_ID = "P2"
+    prompt_template = prompts[PROMPT_ID]
     
     # for documents from text
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
