@@ -128,7 +128,7 @@ def save_retrieved_to_logger(doc_name, ds_type, record, extension_name=".xlsx"):
     # create folder
     folder_path = "Rag/logger/retrieved/"
     if record[0]["new_prediction"]:
-        file_name = doc_name + "_" + ds_type + "_" + record[0]["retriever_type"] + "_NR" + extension_name
+        file_name = doc_name + "_" + ds_type + "_" + record[0]["retriever_type"] + "_NC" + extension_name
     else:
         file_name = doc_name + "_" + ds_type + "_" + record[0]["retriever_type"] + extension_name
     os.makedirs(folder_path, exist_ok=True)

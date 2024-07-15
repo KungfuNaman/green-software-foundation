@@ -1,18 +1,31 @@
 import os
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
+from langchain_community.retrievers import BM25Retriever
+from langchain.retrievers import EnsembleRetriever
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from get_embedding_function import get_embedding_function
 import pymupdf4llm
 from dotenv import load_dotenv
 
 from rag_utils import load_chroma_db
 # from rag_utils import log_embeddings_to_tensorboard
 
-
+os.environ["KMP_DUPLICATE_LIB_OK"] = 'True'
 load_dotenv()
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 
-def setup_database(document_path, reset: bool, emb_local: bool,create_doc: bool,collection_name:str):
+
+def setup_database(ensemble: bool, document_path, reset: bool, emb_local: bool,create_doc: bool,collection_name:str):
     # Check if the database should be cleared (using the --clear flag).
+   
+    if ensemble:
+        documents = load_documents(document_path,create_doc)
+        chunks = split_documents(documents)
+        ensemble_retriever = create_ensemble_retriever(chunks)
+        success = True
+        return success, ensemble_retriever
 
     if reset:
         clear_database(emb_local,collection_name)
@@ -86,7 +99,30 @@ def add_to_chroma(chunks: list[Document], emb_local: bool,collection_name):
     else:
         print("✅ No new documents to add")
         return False
+    
+def create_ensemble_retriever(chunks: list[Document]):
+    bm25_retriever = BM25Retriever.from_texts(
+        [chunk.page_content for chunk in chunks], 
+        metadatas=[chunk.metadata for chunk in chunks]
+    )
+    bm25_retriever.k = 2
+    
+    #embedding = HuggingFaceInferenceAPIEmbeddings(api_key="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", model_name="sentence-transformers/all-MiniLM-l6-v2")
+    embedding, collection_name = get_embedding_function("collection_name", True)
 
+
+    faiss_vectorstore = FAISS.from_texts(
+        [chunk.page_content for chunk in chunks], 
+        embedding, 
+        metadatas=[chunk.metadata for chunk in chunks]
+    )
+
+    faiss_retriever = faiss_vectorstore.as_retriever(search_kwargs={"k": 2})
+
+    ensemble_retriever = EnsembleRetriever(
+        retrievers=[bm25_retriever, faiss_retriever], weights=[0.5, 0.5]
+    )
+    return ensemble_retriever
 
 def calculate_chunk_ids(chunks):
 
@@ -130,8 +166,9 @@ def clear_database(emb_local,collection_name):
     #     shutil.rmtree(CHROMA_PATH)
 
 if __name__ == "__main__":
-    path=["documentsFromText/Cassandra/content.txt","documentsFromText/Cloudfare/content.txt"]
-    for item in path:
-        setup_database(item, True, True,True,"collection_name")
+    # path=["documentsFromText/Cassandra/content.txt","documentsFromText/Cloudfare/content.txt"]
+    # for item in path:
+    #     setup_database(item, True, True,True,"collection_name")
+    setup_database(True,"documentsFromText/Cassandra/content.txt", True,True,True,"collection_name")
     
 
