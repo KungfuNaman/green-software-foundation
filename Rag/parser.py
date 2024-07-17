@@ -106,6 +106,31 @@ def parse_generated_response(generated_response,PROMPT_ID):
         judgement=judgement.replace(":","").strip()
         return explanation,judgement,judgement
     
+    elif PROMPT_ID=="P3":
+        if "Judgement" in generated_response:
+            start_index = generated_response.find("Judgement") + len("Judgement:")
+        elif "Judgment" in generated_response:
+            start_index = generated_response.find("Judgment") + len("Judgment:")
+        elif "judgment" in generated_response:
+            start_index = generated_response.find("judgment") + len("judgment:")
+        elif "Response" in generated_response:
+            start_index = generated_response.find("Response") + len("Response:")
+        elif "Answer" in generated_response:
+            start_index = generated_response.find("Answer") + len("Answer:")
+        if "Explan" in generated_response or "Explan_ment:" in generated_response or "Explan_ation:" in generated_response:
+            end_index = generated_response.find("Explan") + len("Explanation:")
+        elif "explan" in generated_response:
+            end_index = generated_response.find("explan") + len("explanation:")
+
+        # Extract and strip any leading/trailing whitespace
+        judgement = generated_response[start_index:end_index].strip()
+        judgement=categorize_text(judgement)
+
+        explanation = generated_response[end_index:].strip()
+
+        judgement=judgement.replace(":","").strip()
+        return explanation,judgement,judgement
+    
     return "","",""   
 
 def categorize_text(text):
@@ -178,7 +203,7 @@ def addCategories():
             json.dump(result_arr, f)
     print("hello")
 
-add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
+#add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
 
 # files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
 # for item in files:
@@ -187,3 +212,4 @@ add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_
 
 
 
+add_parsed_results("./Rag/logger/phi-3-7.0-10epoch_P3_Netflix.csv","./Rag/logger/phi-3-7.0-10epoch_P3_Netflix_combined.csv","P3")
