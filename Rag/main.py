@@ -48,7 +48,7 @@ with open("Rag/prompts/prompt.json", 'r') as file:
 
 def main():
     
-    PROMPT_ID="P2"
+    PROMPT_ID="P3"
 
     prompt_template=prompts[PROMPT_ID]
 
