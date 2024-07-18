@@ -1,7 +1,8 @@
 import pandas as pd
 import json
-CSV_FILE_PATH="/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/parsedResults.csv"
-COMBINED_RESULTS_PATH="/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/COMBINED_RESULTS.csv"
+CSV_FILE_PATH = "/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/parsedResults.csv"
+COMBINED_RESULTS_PATH = "/Users/naman/Documents/groupProject/green-software-foundation/Rag/logger/COMBINED_RESULTS.csv"
+
 
 def read_ecoDoc_results(csv_file_path):
     # Read the CSV file into a DataFrame
