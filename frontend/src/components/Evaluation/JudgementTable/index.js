@@ -36,6 +36,7 @@ function JudgementTable({ eval_results }) {
           <TableHead>
             <TableRow>
               <TableCell>Query</TableCell>
+              <TableCell align="right">Issue</TableCell>
               <TableCell align="right">Human Judgment</TableCell>
               <TableCell align="right">EcoDoc Judgement</TableCell>
               <TableCell align="right">Human Explanation</TableCell>
@@ -57,6 +58,9 @@ function JudgementTable({ eval_results }) {
               >
                 <TableCell component="th" scope="row">
                   {eval_results[key].query}
+                </TableCell>
+                <TableCell align="right">
+                  {eval_results[key].issue}
                 </TableCell>
                 <TableCell align="right">
                   {eval_results[key].humanJudgement}
