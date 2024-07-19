@@ -1,52 +1,66 @@
-import csv
 import os
 import pymongo
 import pandas as pd
 
-from dotenv import load_dotenv
+EMBEDDINGS_LOG_DIR = os.getenv("EMBEDDINGS_LOG_DIR")
 
-load_dotenv()
+# def log_embeddings_to_tensorboard(emb_local: bool):
+#     # Load Chroma database and get embeddings and metadata
+#     db = load_chroma_db(emb_local, db_path=CHROMA_PATH)
+#
+#     embeddings = db.get(include=["embeddings", "metadatas"])
+#     vectors = embeddings["embeddings"]
+#     metadata = embeddings["metadatas"]
+#
+#     # Convert metadata to a pandas DataFrame for easier handling
+#     metadata_df = pd.DataFrame(metadata)
+#
+#     # Select specific metadata columns for TensorBoard
+#     columns = ["id", "source"]
+#     selected_meta = metadata_df[columns]
+#     selected_meta_list = selected_meta.to_numpy().tolist()
+#
+#     # Prepare TensorBoard writer
+#     writer = SummaryWriter(EMBEDDINGS_LOG_DIR)
+#
+#     # Convert vectors to tensor
+#     vectors_tensor = torch.tensor(vectors)
+#
+#     # Set global step and tag
+#     global_step = 1
+#     tag = "model1"
+#
+#     # Define projector config path
+#     pbconfig = os.path.join(EMBEDDINGS_LOG_DIR, "projector_config.pbtxt")
+#
+#     # Read existing projector config entries
+#     def read_pbconfig(path):
+#         if os.path.exists(path):
+#             with open(path, "r") as f:
+#                 entries = f.read()
+#                 return entries
+#         return ""
+#
+#     old_entries = read_pbconfig(pbconfig)
+#
+#     # Add embeddings to TensorBoard
+#     writer.add_embedding(
+#         vectors_tensor,
+#         metadata=selected_meta_list,
+#         global_step=global_step,
+#         metadata_header=columns,
+#         tag=tag,
+#     )
+#
+#     writer.close()
+#
+#     # Write new projector config entries
+#     new_entry = read_pbconfig(pbconfig)
+#     with open(pbconfig, "w") as f:
+#         f.write(old_entries + "\n" + new_entry)
+#
+#     print(f"Embeddings have been logged to TensorBoard at {EMBEDDINGS_LOG_DIR}")
 
-# Add the parent directory to the Python path
-
-print("hello")
-def append_to_csv(
-    query, context, search_time, response, response_time, db_time, similarity_results,logger_file_path
-):
-    """add data to local csv and mongo cloud"""
-    header = [
-        "query",
-        "context_text",
-        "context_time_ms",
-        "response_text",
-        "response_time_ms",
-        "db_time_ms",
-        "similarity_results",
-    ]
-    row = [
-        query,
-        context,
-        search_time,
-        response,
-        response_time,
-        db_time,
-        similarity_results,
-    ]
-
-    try:
-        # Ensure the directory exists
-        os.makedirs(os.path.dirname(logger_file_path), exist_ok=True)
-
-        file_exists = os.path.isfile(logger_file_path)
-
-        with open(logger_file_path, mode="a", newline="", encoding="utf-8") as file:
-            writer = csv.writer(file)
-            if not file_exists:  # If file does not exist, write the header
-                writer.writerow(header)
-            writer.writerow(row)
-    except IOError as e:
-        print(f"An error occurred while writing to the CSV file: {e}")
-        # add_to_mongo(query,context,search_time,response,response_time,db_time,similarity_results)
 
 def add_to_mongo(query,context,search_time,response,response_time,db_time,similarity_results):
     try:
@@ -117,7 +131,3 @@ def import_csv_to_mongo(csv_file_path):
         print(f"Inserted {len(data)} documents into the collection.")
     else:
         print("No data found in the CSV file.")
-
-
-# import_csv_to_mongo("Rag/logger/llmResponse.csv")
-# convert_data_to_csv()

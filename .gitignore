@@ -5,6 +5,7 @@ venv
 
 chroma
 
+
 **/__pycache__/
 Rag/logger/embeddings/
 Rag/logger/__pycache__/

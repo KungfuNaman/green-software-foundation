@@ -383,7 +383,7 @@
         "type": "cloud",
         "category": "Performance Management",
         "practice": "Use a service mesh only if needed",
-        "query": "Is there any mention of using a service mesh only if needed ?",
+        "query": "Is there any mention of using a service mesh only if needed?",
         "Response": {
             "Judgement": "No",
             "Explanation": "There is no mention of using a service mesh only if needed."

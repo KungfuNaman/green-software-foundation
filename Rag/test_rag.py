@@ -1,6 +1,6 @@
 from query_data import query_rag
 from langchain_community.llms.ollama import Ollama
-from hf_model import Extractor
+from hf_model import Generator
 
 
 EVAL_PROMPT = """
@@ -31,7 +31,7 @@ def query_and_validate(question: str, expected_response: str):
         expected_response=expected_response, actual_response=response_text
     )
 
-    extractor = Extractor(False)
+    extractor = Generator(False)
     response = extractor.generate_answer(prompt)
     evaluation_results_str_cleaned = response[0]['generated_text'].strip().lower()
 
