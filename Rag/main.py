@@ -34,7 +34,34 @@ def evaluate_docs_in_bulk(doc_name):
 
     # ============================================    PIPELINE    ================================================
 
-    # Initialize Embedder
+    # Initialize Retriever and Embedder
+    retriever,setup_db_time=initilise_embedder_retriver(retriever_type,embedder_name,document_path,db_collection_name,fi_helper)
+
+    # Initialize Generator
+    generator = Generator(run_local=True, model_name=generator_name)
+
+    # Load Query File
+    query_file_path = "./documentsFromText/" + doc_name + "/ground_truth.json"
+    ground_truth = fi_helper.load_json_file(query_file_path)
+    truth_length = len(ground_truth)
+
+    # Iterative Querying
+    retrieve_rec = {}
+    for q_idx in range(truth_length):
+        if q_idx > 0:
+            break
+        q_question = ground_truth[q_idx].get("query", "")
+        prompt,response_info = query_rag(retriever, prompt_template, q_question)
+        response_text, response_info =generate_answer(generator,prompt, response_info)
+        response_info["query"] = q_question
+        response_info["setup_db_time"] = setup_db_time
+        response_info["logger_file_path"] = logger_file_path
+        fo_helper.append_to_csv(response_info)
+        # TODO: ↓ Should Not Use Missing Log In Parser
+        # add_parsed_results(logger_file_path, combined_path, prompt_id)
+
+def initilise_embedder_retriver(retriever_type,embedder_name,document_path,db_collection_name,fi_helper):
+     # Initialize Embedder
     embedder_obj = Embedder(run_local=True, model_name=embedder_name)
     embedder = embedder_obj.get_embedder()
 
@@ -62,29 +89,31 @@ def evaluate_docs_in_bulk(doc_name):
         retriever_obj = Retriever(retriever_type=retriever_type, ebr1=r1, ebr2=r2)
         retriever_obj.set_ensemble_weights(0.4, 0.6)
         retriever = retriever_obj.get_retriever()
+    return retriever,setup_db_time
 
-    # Initialize Generator
-    generator = Generator(run_local=True, model_name=generator_name)
+def generate_answer(generator,prompt,response_info):
+    # Get response from Extractor LLM
+    response_start_time = time.time()
+    response_text = generator.generate_answer(prompt)
+    response_end_time = time.time()
+    response_time = response_end_time - response_start_time
+    print("*" * 25, "  response  ", "*" * 25)
+    print(response_text)
+    print("*" * 25, "  response  ", "*" * 25)
+    print("response is generated: ", response_time, "s")
 
-    # Load Query File
-    query_file_path = "./documentsFromText/" + doc_name + "/ground_truth.json"
-    ground_truth = fi_helper.load_json_file(query_file_path)
-    truth_length = len(ground_truth)
+    response_info["response_text"]=response_text
+    response_info["response_time"]=response_time
+    # retrieved_info = {
+    #     "new_prediction": new_retriever,
+    #     "retriever_type": retriever_type,
+    #     "question": query_text,
+    #     "prediction": response_text,
+    #     "chroma_chunks": chroma_retrieved_chunk,
+    #     "llm_chunks": ensemble_retrieved_chunk
+    # }
 
-    # Iterative Querying
-    retrieve_rec = {}
-    for q_idx in range(truth_length):
-        if q_idx > 0:
-            break
-        q_question = ground_truth[q_idx].get("query", "")
-        response_info = query_rag(retriever, generator, prompt_template, q_question)
-        response_info["query"] = q_question
-        response_info["setup_db_time"] = setup_db_time
-        response_info["logger_file_path"] = logger_file_path
-        fo_helper.append_to_csv(response_info)
-        # TODO: ↓ Should Not Use Missing Log In Parser
-        # add_parsed_results(logger_file_path, combined_path, prompt_id)
-
+    return response_text,response_info
 
 def get_paths(doc_name, pid, gen_model, ground_true=True):
     doc_path = "documentsFromText/" + doc_name + "/content.txt" if ground_true else "./documents/" + doc_name + ".pdf"
@@ -96,7 +125,7 @@ def get_paths(doc_name, pid, gen_model, ground_true=True):
 
 def main():
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-    documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
+    documentsFromText = ["Netflix"]
 
     for doc_name in documentsFromText:
         evaluate_docs_in_bulk(doc_name)
