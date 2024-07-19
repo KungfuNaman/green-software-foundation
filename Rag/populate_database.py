@@ -58,9 +58,6 @@ def add_to_chroma(db, chunks: list[Document]):
         return False
 
 
-
-
-
 def clear_database(embedder, collection_name):
     db_obj = VectorStore(db_type="chroma", collection_name=collection_name, embedder=embedder)
     db = db_obj.load_vectordb()
@@ -70,7 +67,7 @@ def clear_database(embedder, collection_name):
 
 
 if __name__ == "__main__":
-    doc_path = "documentsFromText/Cassandra/content.txt"
+    doc_path = "documentsFromText/Netflix/content.txt"
     embedder_obj = Embedder(run_local=True, model_name="llama2")
     embedder1 = embedder_obj.get_embedder()
     fi_helper1 = FileInputHelper(create_doc=True)

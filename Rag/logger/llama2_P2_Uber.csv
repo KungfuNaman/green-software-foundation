@@ -7627,3 +7627,160 @@ Supply sends the request to the specific server based on the GPS location data. 
 After that, the list of the cab is sent to the ETA to calculate the distance between the rider and the cab, not geographically but by the road system.
 The sorted ETA is then sent back to the supply system to offer to a driver.
 If we need to handle the traffic for the newly added city then we can increase the number of servers and allocate the responsibilities of newly added cities’ cell IDs to these servers.",2.2003583908081055,"Response: Yes. In explanation, this is because Ringpop uses a scalable and fault-tolerant architecture that can handle increasing loads by adding more nodes to the cluster when needed (3.7). Additionally, Uber defines map regions based on road systems rather than geography for efficient ETA calculation (3.5), which also contributes to energy efficiency through optimized routes.",11.414177656173706,68.36088967323303,"[(Document(page_content='It maintains consistent hashing to assign the work across the workers. It helps in sharding the application in a way that’s scalable and fault-tolerant.\nRingpop uses RPC (Remote Procedure Call) protocol to make calls from one server to another server.\nRingpop also uses a SWIM membership protocol/gossip protocol that allows independent workers to discover each other’s responsibilities. This way each server/node knows the responsibility and the work of other nodes.\nRingpop detects the newly added nodes to the cluster and the node which is removed from the cluster. It distributes the loads evenly when a node is added or removed. \n3.7 How Does Uber Defines a Map Region?', metadata={'id': 'documentsFromText/Uber/content.txt:None:11', 'source': 'documentsFromText/Uber/content.txt'}), 10664.677184757189), (Document(page_content='ETA is calculated based on the road system (not geographically) and there are a lot of factors involved in computing the ETA (like heavy traffic or road construction).\nWhen a rider requests a cab from a location the app not only identifies the free/idle cabs but also includes the cabs which are about to finish a ride.\nIt may be possible that one of the cabs which are about to finish the ride is closer to the demand than the cab which is far away from the user. So many Uber cars on the road send GPS locations every 4 seconds, so to predict traffic we can use the driver’s app’s GPS location data.', metadata={'id': 'documentsFromText/Uber/content.txt:None:17', 'source': 'documentsFromText/Uber/content.txt'}), 12289.979393617768), (Document(page_content='3.3 Supply Service And How it Works?\nIn our case, cabs are the supply services and they will be tracked by geolocation (latitude and longitude).\nAll the active cabs keep on sending the location to the server once every 4 seconds through a web application firewall and load balancer.\nThe accurate GPS location is sent to the data center through Kafka’s Rest APIs once it passes through the load balancer. Here we use Apache Kafka as the data hub.\nOnce the latest location is updated by Kafka it slowly passes through the respective worker notes’ main memory.\nAlso, a copy of the location (state machine/latest location of cabs) will be sent to the database and to the dispatch optimization to keep the latest location updated.', metadata={'id': 'documentsFromText/Uber/content.txt:None:6', 'source': 'documentsFromText/Uber/content.txt'}), 12363.540830750335), (Document(page_content='We also need to track a few more things such as the number of seats, the presence of a car seat for children, the type of vehicle, can a wheelchair be fit, and allocation ( for example, a cab may have four seats but two of those are occupied.) \n3.4 Demand Service And How it Works?\nDemand service receives the request of the cab through a web socket and it tracks the GPS location of the user. It also receives different kinds of requirements such as the number of seats, type of car, or pool car.\nDemand gives the location (cell ID) and user requirement to supply and make requests for the cabs. \n3.5 How Dispatch System Match the Riders to Drivers?', metadata={'id': 'documentsFromText/Uber/content.txt:None:7', 'source': 'documentsFromText/Uber/content.txt'}), 12428.506653631666), (Document(page_content='Supply sends the request to the specific server based on the GPS location data. After that, the system draws the circle and filters out all the nearby cabs which meet the rider’s requirements.\nAfter that, the list of the cab is sent to the ETA to calculate the distance between the rider and the cab, not geographically but by the road system.\nThe sorted ETA is then sent back to the supply system to offer to a driver.\nIf we need to handle the traffic for the newly added city then we can increase the number of servers and allocate the responsibilities of newly added cities’ cell IDs to these servers.', metadata={'id': 'documentsFromText/Uber/content.txt:None:9', 'source': 'documentsFromText/Uber/content.txt'}), 12595.091964188474)]"
+Is there any mention of minimizing the total number of deployed environments to save resources?,"3.6 How To Scale Dispatch System?
+The dispatch system (including supply, demand, and web socket) is built on NodeJS. NodeJS is the asynchronous and event-based framework that allows you to send and receive messages through WebSockets whenever you want.
+
+Uber uses an open-source ringpop to make the application cooperative and scalable for heavy traffic. Ring pop has mainly three parts and it performs the below operation to scale the dispatch system.
+
+---
+
+We also need to track a few more things such as the number of seats, the presence of a car seat for children, the type of vehicle, can a wheelchair be fit, and allocation ( for example, a cab may have four seats but two of those are occupied.) 
+3.4 Demand Service And How it Works?
+Demand service receives the request of the cab through a web socket and it tracks the GPS location of the user. It also receives different kinds of requirements such as the number of seats, type of car, or pool car.
+Demand gives the location (cell ID) and user requirement to supply and make requests for the cabs. 
+3.5 How Dispatch System Match the Riders to Drivers?
+
+---
+
+4. High-Level Design of Uber App
+HLD-uber-app
+
+4.1 Data model design
+Data-model-design-2
+
+4.2 Databases
+Uber had to consider some of the requirements for the database for a better customer experience. These requirements are…
+
+---
+
+3.3 Supply Service And How it Works?
+In our case, cabs are the supply services and they will be tracked by geolocation (latitude and longitude).
+All the active cabs keep on sending the location to the server once every 4 seconds through a web application firewall and load balancer.
+The accurate GPS location is sent to the data center through Kafka’s Rest APIs once it passes through the load balancer. Here we use Apache Kafka as the data hub.
+Once the latest location is updated by Kafka it slowly passes through the respective worker notes’ main memory.
+Also, a copy of the location (state machine/latest location of cabs) will be sent to the database and to the dispatch optimization to keep the latest location updated.
+
+---
+
+Then how does Uber tackle the data center failure?? 
+
+It actually uses driver phones as a source of trip data to tackle the problem of data center failure. 
+When The driver’s phone app communicates with the dispatch system or the API call is happening between them, the dispatch system sends the encrypted state digest (to keep track of the latest information/data) to the driver’s phone app.
+Every time this state digest will be received by the driver’s phone app. In case of a data center failure, the backup data center (backup DISCO) doesn’t know anything about the trip so it will ask for the state digest from the driver’s phone app and it will update itself with the state digest information received by the driver’s phone app. Untitled Diagram
+
+---
+
+2. Preferred access (pick-up) point accuracy
+We get the pickup point in our application when we book the cab in Uber. Pick-up points are a really important metric in Uber, especially for large venues such as airports, college campuses, stadiums, factories, or companies. We calculate the distance between the actual location and all the pickup and drop-off points used by drivers.
+
+---
+
+3.7 How Does Uber Defines a Map Region?
+Before launching a new operation in a new area, Uber onboarded the new region to the map technology stack. In this map region, we define various subregions labeled with grades A, B, AB, and C.
+
+---
+
+Supply Service (for cabs)
+Demand Service (for riders)
+Uber has a Dispatch system (Dispatch optimization/DISCO) in its architecture to match supply with demand. This dispatch system uses mobile phones and it takes the responsibility to match the drivers with riders (supply to demand). 
+
+3.2 How Dispatch System Work?
+DISCO must have these goals…  
+
+Reduce extra driving.
+Minimum waiting time
+Minimum overall ETA
+The dispatch system completely works on maps and location data/GPS, so the first thing which is important is to model our maps and location data.
+
+---
+
+It maintains consistent hashing to assign the work across the workers. It helps in sharding the application in a way that’s scalable and fault-tolerant.
+Ringpop uses RPC (Remote Procedure Call) protocol to make calls from one server to another server.
+Ringpop also uses a SWIM membership protocol/gossip protocol that allows independent workers to discover each other’s responsibilities. This way each server/node knows the responsibility and the work of other nodes.
+Ringpop detects the newly added nodes to the cluster and the node which is removed from the cluster. It distributes the loads evenly when a node is added or removed. 
+3.7 How Does Uber Defines a Map Region?
+
+---
+
+ETA is calculated based on the road system (not geographically) and there are a lot of factors involved in computing the ETA (like heavy traffic or road construction).
+When a rider requests a cab from a location the app not only identifies the free/idle cabs but also includes the cabs which are about to finish a ride.
+It may be possible that one of the cabs which are about to finish the ride is closer to the demand than the cab which is far away from the user. So many Uber cars on the road send GPS locations every 4 seconds, so to predict traffic we can use the driver’s app’s GPS location data.
+
+---
+
+Earlier Uber was built on the “monolithic” software architecture model.
+They had a backend service, a frontend service, and a single database.
+They used Python and its frameworks and SQLAlchemy as the ORM layer to the database.
+This architecture was fine for a small number of trips in a few cities but when the service started expanding in other cities Uber team started facing the issue with the application.
+After the year 2014 Uber team decided to switch to the “service-oriented architecture” and now Uber also handles food delivery and cargo. 
+Uber-System-Design-High-Level-Architecture
+
+3.1 Talk About the Challenges
+One of the main tasks of Uber service is to match the rider with cabs which means we need two different services in our architecture i.e.
+
+---
+
+Preferred access (pick-up) point accuracy - system design uber app
+Image Source: https://eng.uber.com/maps-metrics-computation/
+
+The shortest distance (closest pickup point) is then calculated and we set the pin to that location as a preferred access point on the map.
+When a rider requests the location indicated by the map pin, the map guides the driver to the preferred access point.
+The calculation continues with the latest actual pick-up and drop-off locations to ensure the freshness and accuracy of the suggested preferred access points.
+Uber uses machine learning and different algorithms to figure out the preferred access point. 
+3.9 How ETAs Are Calculated?
+ETA is an extremely important metric in Uber because it directly impacts ride-matching and earnings.
+
+---
+
+The database should be horizontally scalable. You can linearly add capacity by adding more servers.
+It should be able to handle a lot of reads and writes because once every 4-second cabs will be sending the GPS location and that location will be updated in the database.
+The system should never give downtime for any operation. It should be highly available no matter what operation you perform (expanding storage, backup, when new nodes are added, etc).
+Earlier Uber was using the RDBMS PostgreSQL database but due to scalability issues uber switched to various databases. Uber uses a NoSQL database (schemaless) built on top of the MySQL database.",29.513720512390137," Judgement Response for this question is Not Applicable as per my knowledge from provided context, which does not discuss about deploying or saving resource by reducing environment count in Uber's system. ✅ The explanation here indicates that while they are scaling horizontally and ensuring high availability of their services across multiple nodes/servers (as mentioned under the 'Supply Service'), there is no specific mention regarding minimizing total number deployed environments to save resources within this context snippet provided for Uber'in system design.",11.273203372955322,0,"[Document(page_content='3.6 How To Scale Dispatch System?\nThe dispatch system (including supply, demand, and web socket) is built on NodeJS. NodeJS is the asynchronous and event-based framework that allows you to send and receive messages through WebSockets whenever you want.\n\nUber uses an open-source ringpop to make the application cooperative and scalable for heavy traffic. Ring pop has mainly three parts and it performs the below operation to scale the dispatch system.', metadata={'id': 'documentsFromText/Uber/content.txt:None:10', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='We also need to track a few more things such as the number of seats, the presence of a car seat for children, the type of vehicle, can a wheelchair be fit, and allocation ( for example, a cab may have four seats but two of those are occupied.) \n3.4 Demand Service And How it Works?\nDemand service receives the request of the cab through a web socket and it tracks the GPS location of the user. It also receives different kinds of requirements such as the number of seats, type of car, or pool car.\nDemand gives the location (cell ID) and user requirement to supply and make requests for the cabs. \n3.5 How Dispatch System Match the Riders to Drivers?', metadata={'id': 'documentsFromText/Uber/content.txt:None:7', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='4. High-Level Design of Uber App\nHLD-uber-app\n\n4.1 Data model design\nData-model-design-2\n\n4.2 Databases\nUber had to consider some of the requirements for the database for a better customer experience. These requirements are…', metadata={'id': 'documentsFromText/Uber/content.txt:None:19', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='3.3 Supply Service And How it Works?\nIn our case, cabs are the supply services and they will be tracked by geolocation (latitude and longitude).\nAll the active cabs keep on sending the location to the server once every 4 seconds through a web application firewall and load balancer.\nThe accurate GPS location is sent to the data center through Kafka’s Rest APIs once it passes through the load balancer. Here we use Apache Kafka as the data hub.\nOnce the latest location is updated by Kafka it slowly passes through the respective worker notes’ main memory.\nAlso, a copy of the location (state machine/latest location of cabs) will be sent to the database and to the dispatch optimization to keep the latest location updated.', metadata={'id': 'documentsFromText/Uber/content.txt:None:6', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='Then how does Uber tackle the data center failure?? \n\nIt actually uses driver phones as a source of trip data to tackle the problem of data center failure. \nWhen The driver’s phone app communicates with the dispatch system or the API call is happening between them, the dispatch system sends the encrypted state digest (to keep track of the latest information/data) to the driver’s phone app.\nEvery time this state digest will be received by the driver’s phone app. In case of a data center failure, the backup data center (backup DISCO) doesn’t know anything about the trip so it will ask for the state digest from the driver’s phone app and it will update itself with the state digest information received by the driver’s phone app. Untitled Diagram', metadata={'id': 'documentsFromText/Uber/content.txt:None:25', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='2. Preferred access (pick-up) point accuracy\nWe get the pickup point in our application when we book the cab in Uber. Pick-up points are a really important metric in Uber, especially for large venues such as airports, college campuses, stadiums, factories, or companies. We calculate the distance between the actual location and all the pickup and drop-off points used by drivers.', metadata={'id': 'documentsFromText/Uber/content.txt:None:15', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='3.7 How Does Uber Defines a Map Region?\nBefore launching a new operation in a new area, Uber onboarded the new region to the map technology stack. In this map region, we define various subregions labeled with grades A, B, AB, and C.', metadata={'id': 'documentsFromText/Uber/content.txt:None:12', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='Supply Service (for cabs)\nDemand Service (for riders)\nUber has a Dispatch system (Dispatch optimization/DISCO) in its architecture to match supply with demand. This dispatch system uses mobile phones and it takes the responsibility to match the drivers with riders (supply to demand). \n\n3.2 How Dispatch System Work?\nDISCO must have these goals…  \n\nReduce extra driving.\nMinimum waiting time\nMinimum overall ETA\nThe dispatch system completely works on maps and location data/GPS, so the first thing which is important is to model our maps and location data.', metadata={'id': 'documentsFromText/Uber/content.txt:None:4', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='It maintains consistent hashing to assign the work across the workers. It helps in sharding the application in a way that’s scalable and fault-tolerant.\nRingpop uses RPC (Remote Procedure Call) protocol to make calls from one server to another server.\nRingpop also uses a SWIM membership protocol/gossip protocol that allows independent workers to discover each other’s responsibilities. This way each server/node knows the responsibility and the work of other nodes.\nRingpop detects the newly added nodes to the cluster and the node which is removed from the cluster. It distributes the loads evenly when a node is added or removed. \n3.7 How Does Uber Defines a Map Region?', metadata={'id': 'documentsFromText/Uber/content.txt:None:11', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='ETA is calculated based on the road system (not geographically) and there are a lot of factors involved in computing the ETA (like heavy traffic or road construction).\nWhen a rider requests a cab from a location the app not only identifies the free/idle cabs but also includes the cabs which are about to finish a ride.\nIt may be possible that one of the cabs which are about to finish the ride is closer to the demand than the cab which is far away from the user. So many Uber cars on the road send GPS locations every 4 seconds, so to predict traffic we can use the driver’s app’s GPS location data.', metadata={'id': 'documentsFromText/Uber/content.txt:None:17', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='Earlier Uber was built on the “monolithic” software architecture model.\nThey had a backend service, a frontend service, and a single database.\nThey used Python and its frameworks and SQLAlchemy as the ORM layer to the database.\nThis architecture was fine for a small number of trips in a few cities but when the service started expanding in other cities Uber team started facing the issue with the application.\nAfter the year 2014 Uber team decided to switch to the “service-oriented architecture” and now Uber also handles food delivery and cargo. \nUber-System-Design-High-Level-Architecture\n\n3.1 Talk About the Challenges\nOne of the main tasks of Uber service is to match the rider with cabs which means we need two different services in our architecture i.e.', metadata={'id': 'documentsFromText/Uber/content.txt:None:3', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='Preferred access (pick-up) point accuracy - system design uber app\nImage Source: https://eng.uber.com/maps-metrics-computation/\n\nThe shortest distance (closest pickup point) is then calculated and we set the pin to that location as a preferred access point on the map.\nWhen a rider requests the location indicated by the map pin, the map guides the driver to the preferred access point.\nThe calculation continues with the latest actual pick-up and drop-off locations to ensure the freshness and accuracy of the suggested preferred access points.\nUber uses machine learning and different algorithms to figure out the preferred access point. \n3.9 How ETAs Are Calculated?\nETA is an extremely important metric in Uber because it directly impacts ride-matching and earnings.', metadata={'id': 'documentsFromText/Uber/content.txt:None:16', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='The database should be horizontally scalable. You can linearly add capacity by adding more servers.\nIt should be able to handle a lot of reads and writes because once every 4-second cabs will be sending the GPS location and that location will be updated in the database.\nThe system should never give downtime for any operation. It should be highly available no matter what operation you perform (expanding storage, backup, when new nodes are added, etc).\nEarlier Uber was using the RDBMS PostgreSQL database but due to scalability issues uber switched to various databases. Uber uses a NoSQL database (schemaless) built on top of the MySQL database.', metadata={'id': 'documentsFromText/Uber/content.txt:None:20', 'source': 'documentsFromText/Uber/content.txt'})]"
+Is there any mention of minimizing the total number of deployed environments to save resources?,"It maintains consistent hashing to assign the work across the workers. It helps in sharding the application in a way that’s scalable and fault-tolerant.
+Ringpop uses RPC (Remote Procedure Call) protocol to make calls from one server to another server.
+Ringpop also uses a SWIM membership protocol/gossip protocol that allows independent workers to discover each other’s responsibilities. This way each server/node knows the responsibility and the work of other nodes.
+Ringpop detects the newly added nodes to the cluster and the node which is removed from the cluster. It distributes the loads evenly when a node is added or removed. 
+3.7 How Does Uber Defines a Map Region?
+
+---
+
+Supply sends the request to the specific server based on the GPS location data. After that, the system draws the circle and filters out all the nearby cabs which meet the rider’s requirements.
+After that, the list of the cab is sent to the ETA to calculate the distance between the rider and the cab, not geographically but by the road system.
+The sorted ETA is then sent back to the supply system to offer to a driver.
+If we need to handle the traffic for the newly added city then we can increase the number of servers and allocate the responsibilities of newly added cities’ cell IDs to these servers.
+
+---
+
+Kafka takes historical data along with real-time data. Data is archived into Hadoop before it expires from Kafka. The data is also indexed into an Elastic search stack for searching and visualizations. Elastic search does some log analysis using Kibana/Graphana. Some of the analyses performed by Uber using different tools and frameworks are…
+
+---
+
+1. Trace coverage
+Trace coverage spot the missing road segments or incorrect road geometry.
+Trace coverage calculation is based on two inputs: map data under testing and historic GPS traces of all Uber rides taken over a certain period of time.
+It covers those GPS traces onto the map, comparing and matching them with road segments.
+If we find missing road segments (no road is shown) on GPS traces then we take some steps to fix the deficiency. 
+2. Preferred access (pick-up) point accuracy
+
+---
+
+Important Topics for the System Design of Uber App
+
+Requirements
+Capacity Estimation
+Uber App Low-Level Design
+High-Level Design of Uber App
+1. Requirements
+1.1 Functional requirements
+Users should be able to see all the cabs available with minimum price and ETA
+Users should be able to book a cab for their destination
+Users should be able to see the location of the driver
+Users should be able to cancel their ride whenever they want
+1.2 Non-Functional requirements
+High Availability
+High Reliability
+Highly Scalable
+Low Latency
+2. Capacity Estimation
+Lets assume we have 5 million active users on our application with 200,000 drivers and on an average there are 1 million rides daily. If a user performs 5 actions on an average then we need to handle 5 million requests daily",8.64540696144104," Judgement No, because in my context it is not mentioned about reducing or optimising deployments for resource saving. The design document focuses on scalability and fault tolerance through consistent hashing sharding with RPC protocols like Ringpop' s system but doesn’t discuss minimizing the number of deployed environments specifically to save resources, which would be more related towards a DevOps perspective rather than software architecture or development practices.
+Explanation: The design document provided does not contain any specific strategies for reducing deployments in orderto conserve resource usage; instead it emphasizes on scalability and fault tolerance through consistent hashing sharding with RPC protocols like Ringpop' s system, but doesn’t discuss minimizing the number of deployed environments specifically to save resources.",12.290984630584717,0,"[Document(page_content='It maintains consistent hashing to assign the work across the workers. It helps in sharding the application in a way that’s scalable and fault-tolerant.\nRingpop uses RPC (Remote Procedure Call) protocol to make calls from one server to another server.\nRingpop also uses a SWIM membership protocol/gossip protocol that allows independent workers to discover each other’s responsibilities. This way each server/node knows the responsibility and the work of other nodes.\nRingpop detects the newly added nodes to the cluster and the node which is removed from the cluster. It distributes the loads evenly when a node is added or removed. \n3.7 How Does Uber Defines a Map Region?', metadata={'id': 'documentsFromText/Uber/content.txt:None:11', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='Supply sends the request to the specific server based on the GPS location data. After that, the system draws the circle and filters out all the nearby cabs which meet the rider’s requirements.\nAfter that, the list of the cab is sent to the ETA to calculate the distance between the rider and the cab, not geographically but by the road system.\nThe sorted ETA is then sent back to the supply system to offer to a driver.\nIf we need to handle the traffic for the newly added city then we can increase the number of servers and allocate the responsibilities of newly added cities’ cell IDs to these servers.', metadata={'id': 'documentsFromText/Uber/content.txt:None:9', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='Kafka takes historical data along with real-time data. Data is archived into Hadoop before it expires from Kafka. The data is also indexed into an Elastic search stack for searching and visualizations. Elastic search does some log analysis using Kibana/Graphana. Some of the analyses performed by Uber using different tools and frameworks are…', metadata={'id': 'documentsFromText/Uber/content.txt:None:23', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='1. Trace coverage\nTrace coverage spot the missing road segments or incorrect road geometry.\nTrace coverage calculation is based on two inputs: map data under testing and historic GPS traces of all Uber rides taken over a certain period of time.\nIt covers those GPS traces onto the map, comparing and matching them with road segments.\nIf we find missing road segments (no road is shown) on GPS traces then we take some steps to fix the deficiency. \n2. Preferred access (pick-up) point accuracy', metadata={'id': 'documentsFromText/Uber/content.txt:None:14', 'source': 'documentsFromText/Uber/content.txt'}), Document(page_content='Important Topics for the System Design of Uber App\n\nRequirements\nCapacity Estimation\nUber App Low-Level Design\nHigh-Level Design of Uber App\n1. Requirements\n1.1 Functional requirements\nUsers should be able to see all the cabs available with minimum price and ETA\nUsers should be able to book a cab for their destination\nUsers should be able to see the location of the driver\nUsers should be able to cancel their ride whenever they want\n1.2 Non-Functional requirements\nHigh Availability\nHigh Reliability\nHighly Scalable\nLow Latency\n2. Capacity Estimation\nLets assume we have 5 million active users on our application with 200,000 drivers and on an average there are 1 million rides daily. If a user performs 5 actions on an average then we need to handle 5 million requests daily', metadata={'id': 'documentsFromText/Uber/content.txt:None:1', 'source': 'documentsFromText/Uber/content.txt'})]"

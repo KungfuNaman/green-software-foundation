@@ -1,7 +1,6 @@
 from langchain.retrievers import EnsembleRetriever, MultiQueryRetriever
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
-
 from langchain_community.llms.ollama import Ollama
 from langchain_core.language_models.base import BaseLanguageModel
 from pydantic import BaseModel, Field
@@ -93,7 +92,7 @@ class Retriever:
         else:
             raise ValueError("This retriever is not faiss")
 
-    def set_ensemble_weights(self, w1: int, w2: int):
+    def set_ensemble_weights(self, w1: float, w2: float):
         if self.retriever_type == "ensemble":
             self.retriever.weights = [w1, w2]
         else:

@@ -1,0 +1,101 @@
+query,context_text,context_time_ms,response_text,response_time_ms,db_time_ms,similarity_results
+Is there any mention of minimizing the total number of deployed environments to save resources?,"You just need to save the chunk which is updated (this will take less memory and time). It will be easier to keep the different versions of the files in various chunks.
+We have considered one file which is divided into various chunks. If there are multiple files then we need to know which chunks belong to which file.
+To keep this information we will create one more file named a metadata file. This file contains the indexes of the chunks (chunk names and order information).
+You need to mention the hash of the chunks (or some reference) in this metadata file and you need to sync this file into the cloud. We can download the metadata file from the cloud whenever we want and we can recreate the file using various chunks.
+
+---
+
+The total number of users = 500 million.
+Total number of daily active users = 100 million
+The average number of files stored by each user = 200
+The average size of each file = 100 KB
+Total number of active connections per minute = 1 million
+
+Storage Estimations:
+
+Total number of files = 500 million * 200 = 100 billion
+Total storage required = 100 billion * 100 KB = 10 PB
+
+
+3. High-Level Design(HLD) of Dropbox System Design
+HighLevelDesignOfdropBoxdrawio-(2)
+
+3.1. User Uploading:
+Users interact with the client application or web interface to initiate file uploads. The client application communicates with the Upload Service on the server side. Large files may be broken into smaller chunks for efficient transfer.
+
+---
+
+Request Queue:
+This will be a global request queue shared among all the clients.
+Whenever a client receives any update or changes in the files/folder it sends the request through the request queue.
+This request is received by the synchronization service to update the metadata database.
+Response Queue:
+There will be an individual response queue corresponding to the individual clients.
+The synchronization service broadcast the update through this response queue and this response queue will deliver the updated messages to each client and then these clients will update their respective files accordingly.
+The message will never be lost even if the client will be disconnected from the internet (the benefit of using the messaging queue service).
+
+---
+
+design-dropbox-2
+
+Let’s assume we have a client installed on our computer (an app installed on your computer) and this client has 4 basic components. These basic components are Watcher, Chunker, Indexer, and Internal DB. We have considered only one client but there can be multiple clients belonging to the same user with the same basic components.
+
+---
+
+Non Functional Requirements:
+Availability: Availability means what percentage of the time the system is available to take a user’s request. We generally mention availability as 5 Nine’s, 4 Nine’s, etc. 5 Nine’s means 99.999% availability, 4 Nine means 99.99% availability, and so on.
+Durability: Durability means the data uploaded by the user should be permanently stored in the database even in case of database failure. Our System should ensure the files uploaded by the user should be permanently stored on the drive without any data loss.
+Reliability: Reliability means how many times the system gives the expected output for the same input.
+Scalability: With the growing number of users our system should be capable enough to handle the increasing traffic.
+
+---
+
+Request
+
+GET /api/v1/objects?local_object_id=<Max object_id present locally>&device_id=<Unique Device Id>
+X-API-Key: api_key
+Authorization: auth_token
+Response
+
+200 OK
+{
+  new_objects: [
+    {
+      object_id:
+      object_type:
+      name:
+      chunk_ids: [
+        chunk1,
+        chunk2,
+        chunk3
+      ]
+    }
+  ]
+}
+Meta Service will check the database and return an array of objects containing name of object, object id, object type and an array of chunk_ids. Client calls the Download Chunk API with these chunk_ids to download the chunks and reconstruct the file.
+
+---
+
+We are creating n number of response queues for n number of clients because the message will be deleted from the queue once it will be received by the client and we need to share the updated message with the various subscribed clients.
+4.4. Synchronization Service
+The client communicates with the synchronization services either to receive the latest update from the cloud storage or to send the latest request/updates to the Cloud Storage.
+
+---
+
+3.8. Downloading Services:
+Clients initiate file download requests through the client application. The Download Service queries the Metadata Database for file details. The server’s Download Service retrieves metadata from the Metadata Database. Metadata includes information such as file name, size, owner, and access permissions.
+
+4. Low-Level Design(LLD) of Dropbox System Design
+A lot of people assume designing a Dropbox is that all they just need to do is to use some cloud services, upload the file, and download the file whenever they want but that’s not how it works. The core problem is “Where and how to save the files? “. Suppose you want to share a file that can be of any size (small or big) and you upload it into the cloud.
+
+---
+
+It gives a notification to the indexer and chunker if any action is performed in the files or folders.
+Chunker breaks the files into multiple small pieces called chunks and uploads them to the cloud storage with a unique id or hash of these chunks.
+To recreate the files these chunks can be joined together. For any changes in the files, the chunking algorithm detects the specific chunk which is modified and only saves that specific part/chunk to the cloud storage.
+It reduces bandwidth usage, synchronization time, and storage space in the cloud.
+Indexer is responsible for updating the internal database when it receives the notification from the watcher (for any action performed in folders/files).",2.3291592597961426," Judgement No ✅  📝 Explanation The context discusses optimizations for file handling and storage, including chunking files into smaller parts before upload. This approach inherently reduces bandwidth usage as only modified chunks are saved rather than the entirety of a potentially large or frequently updated document:
+- By storing small pieces (chucks) instead one big blob per change minimizes data transfer over networks; thus, it indirectly suggests reducing total number and size. ✅  📝 Explanation The context does not explicitly mention deploying fewer environments to save resources but discusses optimizing the way files are handled in terms of chunk uploads which can lead into a more resource-efficient system design:
+    - By minimally storing only changed chunks, we reduce unnecessary data transfer and storage use. This implies that less infrastructure might be needed overall as there'd likely not need to scale up for handling large amounts or frequent changes in files – hence fewer deployments could suffice ✅  📝 Explanin
+",14.880122900009155,0,"[Document(page_content='You just need to save the chunk which is updated (this will take less memory and time). It will be easier to keep the different versions of the files in various chunks.\nWe have considered one file which is divided into various chunks. If there are multiple files then we need to know which chunks belong to which file.\nTo keep this information we will create one more file named a metadata file. This file contains the indexes of the chunks (chunk names and order information).\nYou need to mention the hash of the chunks (or some reference) in this metadata file and you need to sync this file into the cloud. We can download the metadata file from the cloud whenever we want and we can recreate the file using various chunks.', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:12'}), Document(page_content='The total number of users = 500 million.\nTotal number of daily active users = 100 million\nThe average number of files stored by each user = 200\nThe average size of each file = 100 KB\nTotal number of active connections per minute = 1 million\n\nStorage Estimations:\n\nTotal number of files = 500 million * 200 = 100 billion\nTotal storage required = 100 billion * 100 KB = 10 PB\n\n\n3. High-Level Design(HLD) of Dropbox System Design\nHighLevelDesignOfdropBoxdrawio-(2)\n\n3.1. User Uploading:\nUsers interact with the client application or web interface to initiate file uploads. The client application communicates with the Upload Service on the server side. Large files may be broken into smaller chunks for efficient transfer.', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:4'}), Document(page_content='Request Queue:\nThis will be a global request queue shared among all the clients.\nWhenever a client receives any update or changes in the files/folder it sends the request through the request queue.\nThis request is received by the synchronization service to update the metadata database.\nResponse Queue:\nThere will be an individual response queue corresponding to the individual clients.\nThe synchronization service broadcast the update through this response queue and this response queue will deliver the updated messages to each client and then these clients will update their respective files accordingly.\nThe message will never be lost even if the client will be disconnected from the internet (the benefit of using the messaging queue service).', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:25'}), Document(page_content='design-dropbox-2\n\nLet’s assume we have a client installed on our computer (an app installed on your computer) and this client has 4 basic components. These basic components are Watcher, Chunker, Indexer, and Internal DB. We have considered only one client but there can be multiple clients belonging to the same user with the same basic components.', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:14'}), Document(page_content='Non Functional Requirements:\nAvailability: Availability means what percentage of the time the system is available to take a user’s request. We generally mention availability as 5 Nine’s, 4 Nine’s, etc. 5 Nine’s means 99.999% availability, 4 Nine means 99.99% availability, and so on.\nDurability: Durability means the data uploaded by the user should be permanently stored in the database even in case of database failure. Our System should ensure the files uploaded by the user should be permanently stored on the drive without any data loss.\nReliability: Reliability means how many times the system gives the expected output for the same input.\nScalability: With the growing number of users our system should be capable enough to handle the increasing traffic.', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:2'}), Document(page_content='Request\n\nGET /api/v1/objects?local_object_id=<Max object_id present locally>&device_id=<Unique Device Id>\nX-API-Key: api_key\nAuthorization: auth_token\nResponse\n\n200 OK\n{\n  new_objects: [\n    {\n      object_id:\n      object_type:\n      name:\n      chunk_ids: [\n        chunk1,\n        chunk2,\n        chunk3\n      ]\n    }\n  ]\n}\nMeta Service will check the database and return an array of objects containing name of object, object id, object type and an array of chunk_ids. Client calls the Download Chunk API with these chunk_ids to download the chunks and reconstruct the file.', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:32'}), Document(page_content='We are creating n number of response queues for n number of clients because the message will be deleted from the queue once it will be received by the client and we need to share the updated message with the various subscribed clients.\n4.4. Synchronization Service\nThe client communicates with the synchronization services either to receive the latest update from the cloud storage or to send the latest request/updates to the Cloud Storage.', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:26'}), Document(page_content='3.8. Downloading Services:\nClients initiate file download requests through the client application. The Download Service queries the Metadata Database for file details. The server’s Download Service retrieves metadata from the Metadata Database. Metadata includes information such as file name, size, owner, and access permissions.\n\n4. Low-Level Design(LLD) of Dropbox System Design\nA lot of people assume designing a Dropbox is that all they just need to do is to use some cloud services, upload the file, and download the file whenever they want but that’s not how it works. The core problem is “Where and how to save the files? “. Suppose you want to share a file that can be of any size (small or big) and you upload it into the cloud.', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:8'}), Document(page_content='It gives a notification to the indexer and chunker if any action is performed in the files or folders.\nChunker breaks the files into multiple small pieces called chunks and uploads them to the cloud storage with a unique id or hash of these chunks.\nTo recreate the files these chunks can be joined together. For any changes in the files, the chunking algorithm detects the specific chunk which is modified and only saves that specific part/chunk to the cloud storage.\nIt reduces bandwidth usage, synchronization time, and storage space in the cloud.\nIndexer is responsible for updating the internal database when it receives the notification from the watcher (for any action performed in folders/files).', metadata={'source': 'documentsFromText/Dropbox/content.txt', 'id': 'documentsFromText/Dropbox/content.txt:None:16'})]"

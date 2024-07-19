@@ -1,6 +1,6 @@
 import os
-from langchain_community.vectorstores import Chroma
 import chromadb
+from langchain_community.vectorstores import Chroma
 
 
 class VectorStore:

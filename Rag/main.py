@@ -18,7 +18,7 @@ with open("Rag/prompts/prompt.json", 'r') as file:
     prompts_file = json.load(file)
 
 
-def evaluate_docs_in_bulk(doc_name, prompt_id, document_path, logger_file_path, combined_path):
+def evaluate_docs_in_bulk(doc_name, prompt_id):
     """Function to execute the whole Rag Pipeline"""
 
     # ============================================    CONFIG    ============================================
@@ -27,12 +27,15 @@ def evaluate_docs_in_bulk(doc_name, prompt_id, document_path, logger_file_path, 
     prompt_template = prompts_file[prompt_id]
     embedder_name, generator_name = "llama2", "phi3"
     db_collection_name = doc_name + "_" + embedder_name
-    retriever_type = "multiquery"    # Choose From: chroma, multiquery, bm25, faiss, ensemble
+    retriever_type = "chroma"    # Choose From: chroma, multiquery, ensemble
+
+    document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
 
     # ============================================    PIPELINE    ================================================
 
     # Initialize Embedder
-    embedder = Embedder(run_local=True, model_name=embedder_name)
+    embedder_obj = Embedder(run_local=True, model_name=embedder_name)
+    embedder = embedder_obj.get_embedder()
 
     # Load Database, Input Document Chunks
     setup_database_start_time = time.time()
@@ -56,6 +59,7 @@ def evaluate_docs_in_bulk(doc_name, prompt_id, document_path, logger_file_path, 
         r2_obj = Retriever(retriever_type="faiss", doc_chunks=doc_chunks, embedder=embedder)
         r2 = r2_obj.get_retriever()
         retriever_obj = Retriever(retriever_type=retriever_type, ebr1=r1, ebr2=r2)
+        retriever_obj.set_ensemble_weights(0.4, 0.6)
         retriever = retriever_obj.get_retriever()
 
     # Initialize Generator
@@ -69,8 +73,8 @@ def evaluate_docs_in_bulk(doc_name, prompt_id, document_path, logger_file_path, 
     # Iterative Querying
     retrieve_rec = {}
     for q_idx in range(truth_length):
-        # if q_idx > 0:
-        #     break
+        if q_idx > 0:
+            break
         q_question = ground_truth[q_idx].get("query", "")
         response_info = query_rag(retriever, generator, prompt_template, q_question)
         response_info["query"] = q_question
@@ -80,26 +84,26 @@ def evaluate_docs_in_bulk(doc_name, prompt_id, document_path, logger_file_path, 
         add_parsed_results(logger_file_path, combined_path, prompt_id)
 
 
+def get_paths(doc_name, pid, gen_model, ground_true=True):
+    doc_path = "documentsFromText/" + doc_name + "/content.txt" if ground_true else "./documents/" + doc_name + ".pdf"
+    log_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + ".csv"
+    combined_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + "_combined.csv"
+
+    return doc_path, log_path, combined_path
+
+
 def main():
     PROMPT_ID = "P2"  # Choose From: P1, P2, P3, GROUND_TRUTH_PROMPT
 
-    # for documents from text
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
     documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
 
     for doc_name in documentsFromText:
-        doc_path = "documentsFromText/" + doc_name + "/content.txt"
-        log_path = "./Rag/logger/" + LLM_MODEL + "_" + PROMPT_ID+"_" + doc_name + ".csv"
-        combined_path = "./Rag/logger/" + LLM_MODEL + "_" + PROMPT_ID+"_" + doc_name + "_combined.csv"
-        evaluate_docs_in_bulk(doc_name, PROMPT_ID, doc_path, log_path, combined_path)
+        evaluate_docs_in_bulk(doc_name, PROMPT_ID)
 
-    # # for documents from pdf
-    # documents = ["3"]
+    # documents=["3"]
     # for doc_name in documents:
-    #     doc_path = "./documents/" + doc_name + ".pdf"
-    #     log_path = "./Rag/logger/" + LLM_MODEL + "_" + PROMPT_ID + "_" + doc_name + ".csv"
-    #     combined_path = "./Rag/logger/" + LLM_MODEL + "_" + PROMPT_ID + "_" + doc_name + "_combined.csv"
-    #     evaluate_docs_in_bulk(doc_name, PROMPT_ID, doc_path, log_path, combined_path)
+    #   evaluate_docs_in_bulk(doc_name, PROMPT_ID)
 
 
 if __name__ == "__main__":

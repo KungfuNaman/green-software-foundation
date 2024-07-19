@@ -1,7 +1,7 @@
 import os
-from langchain.prompts import ChatPromptTemplate
 import time
 import json
+from langchain.prompts import ChatPromptTemplate
 
 from components.Embedder import Embedder
 from components.Retriever import Retriever
@@ -41,7 +41,6 @@ def query_rag(retriever, generator, prompt_template, query_text: str):
     # Format the response
     sources = [doc.metadata.get("id", None) for doc in retrieved_items]
     formatted_response = f"Response: {response_text}\nSources: {sources}"
-    print(formatted_response)
 
     response_info = {
         "context_text": context_text,
@@ -95,12 +94,12 @@ if __name__ == "__main__":
     pt = prompts_file["P2"]
     qt = "Is there any mention of implementing a stateless design?"
 
-    response_info = query_rag(retriever1, generator1, pt, qt)
-    response_info["query"] = qt
-    response_info["setup_db_time"] = "0"
-    response_info["logger_file_path"] = None
+    response_info1 = query_rag(retriever1, generator1, pt, qt)
+    response_info1["query"] = qt
+    response_info1["setup_db_time"] = "0"
+    response_info1["logger_file_path"] = None
 
     fo_helper = FileOutputHelper()
-    fo_helper.append_to_csv(response_info)
+    fo_helper.append_to_csv(response_info1)
 
 
