@@ -13,32 +13,63 @@ class Generator:
 
         if self.run_local:
             self.model_name = model_name
-            self.init_local_generator(self.model_name)
+            self.template, self.instruction = self.get_template(), self.get_instruction()
+            self.init_local_generator(self.model_name, self.template, self.instruction)
         else:
             self.model_hf_id, self.api_url, self.headers, self.wait = None, None, None, None
             self.init_remote_generator()
 
-    def init_local_generator(self, model_name):
+    def init_local_generator(self, model_name, template, instruction):
         self.model = Ollama(
             model=model_name,
             mirostat_tau=3,             # Default = 5.0
             num_ctx=3072,               # Default = 2048
             repeat_last_n=128,          # Default = 64, 0 = disabled, -1 = num_ctx
             repeat_penalty=1.5,         # Default = 1.1
-            temperature=0.4,            # Default = 0.8
-            template="",
+            temperature=0.8,            # Default = 0.8
             top_k=10,                   # Default = 40
             top_p=0.5,                  # Default = 0.9
-            verbose=False
+            verbose=False,
+            template=template,
+            system=instruction
         )
 
-    def set_template(self, template):
-        """ TODO: Add customized template here"""
-        pass
+    @staticmethod
+    def get_instruction():
+        instruction = """
+        Act as a professional assistant in the field of software development, you need to give precise and short answers 
+        to respond to the question that I gave.\n 
+        I will take the corresponding text snippet from the design file of the software development, and you need to use 
+        a certain format and \"yes/no/not applicable\" to answer the question.
+        \n\n My Input would be:\n\"\"\n
+        Answer the question based only on the following context:
+        \n<context>\n\nQuestion:\n<question>\n\"\"\n\n
+        For My Input:\n
+        <context>: Five paragraphs excerpted from my design document for software development.\n
+        <question>: I'll ask you if this uses a certain technology to support a certain green practice. 
+        \n\n Your Answer must adhere to this format:\n\"\"\n
+        Response:\nJudgement: Print <Yes> / <No> / <Not Applicable> only.\n
+        Explanation: <The description of the reason for the judgement above>\n\"\"\n\n
+        For Your Answer:\n
+        In judgement,\n
+        <Yes> means that in the context of my question, there exists a technology or green practice that is relevant to the question.\n
+        <No> means that in the context of my question, there is no technology or green practice that is relevant to the question.\n
+        <Not Applicable> means that in the context of my question, this application is not applicable to this technique or to the green practice, e.g., applications that need to focus on real-time feedback, such as online games, are not applicable to the green practice of \"cache static data\".\n\n
+        In Explanation, you need to explain the judgment you made above in less than 3 sentences.\n\n
+        """
+        return instruction
 
-    def set_any_other_param(self):
-        """ TODO: Add any other param setting here"""
-        pass
+    @staticmethod
+    def get_template():
+        template = """
+        {{ if .System }}<|system|>
+        {{ .System }}<|end|>
+        {{ end }}{{ if .Prompt }}<|user|>
+        {{ .Prompt }}<|end|>
+        {{ end }}<|assistant|>
+        {{ .Response }}<|end|>
+        """
+        return template
 
     def init_remote_generator(self):
         self.model_hf_id = "meta-llama/Llama-2-7b-chat-hf"

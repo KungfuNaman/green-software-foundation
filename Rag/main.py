@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from populate_database import setup_database, setup_database_after_clearance
 from query_data import query_rag
-from parser import add_parsed_results
+# from parser import add_parsed_results
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Embedder import Embedder
@@ -18,17 +18,18 @@ with open("Rag/prompts/prompt.json", 'r') as file:
     prompts_file = json.load(file)
 
 
-def evaluate_docs_in_bulk(doc_name, prompt_id):
+def evaluate_docs_in_bulk(doc_name):
     """Function to execute the whole Rag Pipeline"""
 
     # ============================================    CONFIG    ============================================
 
-    fi_helper, fo_helper = FileInputHelper(create_doc=True), FileOutputHelper()
+    prompt_id = "P3"  # Choose From: P1, P2, P3, GROUND_TRUTH_PROMPT
     prompt_template = prompts_file[prompt_id]
     embedder_name, generator_name = "llama2", "phi3"
     db_collection_name = doc_name + "_" + embedder_name
-    retriever_type = "chroma"    # Choose From: chroma, multiquery, ensemble
+    retriever_type = "chroma"   # Choose From: chroma, multiquery, ensemble
 
+    fi_helper, fo_helper = FileInputHelper(create_doc=True), FileOutputHelper()
     document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
 
     # ============================================    PIPELINE    ================================================
@@ -81,7 +82,8 @@ def evaluate_docs_in_bulk(doc_name, prompt_id):
         response_info["setup_db_time"] = setup_db_time
         response_info["logger_file_path"] = logger_file_path
         fo_helper.append_to_csv(response_info)
-        add_parsed_results(logger_file_path, combined_path, prompt_id)
+        # TODO: ↓ Should Not Use Missing Log In Parser
+        # add_parsed_results(logger_file_path, combined_path, prompt_id)
 
 
 def get_paths(doc_name, pid, gen_model, ground_true=True):
@@ -93,17 +95,15 @@ def get_paths(doc_name, pid, gen_model, ground_true=True):
 
 
 def main():
-    PROMPT_ID = "P2"  # Choose From: P1, P2, P3, GROUND_TRUTH_PROMPT
-
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
     documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
 
     for doc_name in documentsFromText:
-        evaluate_docs_in_bulk(doc_name, PROMPT_ID)
+        evaluate_docs_in_bulk(doc_name)
 
     # documents=["3"]
     # for doc_name in documents:
-    #   evaluate_docs_in_bulk(doc_name, PROMPT_ID)
+    #   evaluate_docs_in_bulk(doc_name)
 
 
 if __name__ == "__main__":
