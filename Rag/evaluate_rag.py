@@ -6,9 +6,10 @@ import csv
 from query_data import query_rag
 from langchain_community.llms.ollama import Ollama
 
-#TODO: Replace with custom datasets
+# TODO: Replace with custom datasets
 eval_dataset = datasets.load_dataset("m-ric/huggingface_doc_qa_eval", split="train")
 CSV_FILE_PATH = "Rag/logger/rag_eval.csv"
+
 
 def append_to_csv(question, answer, true_answer, eval_score, eval_feedback):
     """add data to local csv and mongo cloud"""

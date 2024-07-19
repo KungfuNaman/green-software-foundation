@@ -1,54 +1,36 @@
 import os
-from langchain.prompts import ChatPromptTemplate
-from langchain_community.llms.ollama import Ollama
 import time
-from hf_model import Extractor
-from logger.get_track_llm_response import append_to_csv
+import json
+from langchain.prompts import ChatPromptTemplate
 
-from rag_utils import load_chroma_db
-
-CHROMA_PATH = os.getenv("CHROMA_PATH")
-
-
-
-def main(emd_local, ext_local):
-    query_rag(
-        "can you tell me the databases details getting used?", "", emd_local, ext_local,"logger.csv","collection_name","template"
-    )
+from components.Embedder import Embedder
+from components.Retriever import Retriever
+from components.FileOutputHelper import FileOutputHelper
+from components.Generator import Generator
+from populate_database import setup_database
 
 
-def query_rag(
-    query_text: str, setup_database_time: str, emb_local: bool, ext_local: bool, logger_file_path: str,collection_name,prompt_template
-):
-    # Prepare the DB.
-    db = load_chroma_db(emb_local,collection_name)
+def query_rag(retriever, generator, prompt_template, query_text: str):
 
-    print("data added to db : ", setup_database_time, "s")
-
-    # Search context in DB.
+    # Context
     search_start_time = time.time()
-    similarity_results = db.similarity_search_with_score(
-        query_text, k=5
-    )  # [(Document(), sort_of_sim_rate)]
+    retrieved_items = get_retrieved_chunks(retriever, query_text)
+    context_text = get_context(retrieved_items)
     search_end_time = time.time()
     search_time = search_end_time - search_start_time
-    context_text = "\n\n---\n\n".join(
-        [doc.page_content for doc, _score in similarity_results]
-    )
     print("context is taken out : ", search_time, "s")
 
     # Prompt
     prompt_template = ChatPromptTemplate.from_template(prompt_template)
     prompt = prompt_template.format(context=context_text, question=query_text)
-    # print('*'*25, '  prompt  ', '*'*25)
-    # print(prompt)
-    # print('*'*25, '  prompt  ', '*'*25)
+    # print('*'*25, '  prompt  ', '*'*25, flush=True)
+    # print(prompt, flush=True)
+    # print('*'*25, '  prompt  ', '*'*25, flush=True)
     print("prompt is created")
 
     # Get response from Extractor LLM
     response_start_time = time.time()
-    extractor = Extractor(ext_local)
-    response_text = extractor.generate_answer(prompt)
+    response_text = generator.generate_answer(prompt)
     response_end_time = time.time()
     response_time = response_end_time - response_start_time
     print("*" * 25, "  response  ", "*" * 25)
@@ -57,22 +39,67 @@ def query_rag(
     print("response is generated: ", response_time, "s")
 
     # Format the response
-    sources = [doc.metadata.get("id", None) for doc, _score in similarity_results]
+    sources = [doc.metadata.get("id", None) for doc in retrieved_items]
     formatted_response = f"Response: {response_text}\nSources: {sources}"
-    # print(formatted_response)
 
-    append_to_csv(
-        query_text,
-        context_text,
-        search_time,
-        response_text,
-        response_time,
-        setup_database_time,
-        similarity_results,
-        logger_file_path
-    )
-    return response_text
+    response_info = {
+        "context_text": context_text,
+        "search_time": search_time,
+        "response_text": response_text,
+        "response_time": response_time,
+        # No longer have Similarity Score as retriever interaction changed
+        "retrieved_items": retrieved_items
+    }
+
+    # retrieved_info = {
+    #     "new_prediction": new_retriever,
+    #     "retriever_type": retriever_type,
+    #     "question": query_text,
+    #     "prediction": response_text,
+    #     "chroma_chunks": chroma_retrieved_chunk,
+    #     "llm_chunks": ensemble_retrieved_chunk
+    # }
+
+    return response_info
+
+
+def get_context(retrieved_items, seperator="\n\n---\n\n"):
+    retrieved_content = []
+    for i in retrieved_items:
+        retrieved_content.append(i.page_content)
+    context_text = seperator.join([doc for doc in retrieved_content])
+    return context_text
+
+
+def get_retrieved_chunks(retriever, query_text):
+    retrieved = retriever.invoke(query_text)
+    print("Retrieved ", len(retrieved), " chunks in total")
+    return retrieved
 
 
 if __name__ == "__main__":
-    main(True, True)
+    embedder_obj = Embedder(run_local=True, model_name="llama2")
+    embedder = embedder_obj.get_embedder()
+
+    doc_path = "documentsFromText/" + "Netflix" + "/content.txt"
+    coll = "test_collection"
+    _, vecdb, doc_chunks = setup_database(embedder=embedder, document_path=doc_path, collection_name=coll, create_doc=True)
+
+    retriever_obj = Retriever(retriever_type="chroma", vectordb=vecdb)
+    retriever1 = retriever_obj.get_retriever()
+    generator1 = Generator(run_local=True, model_name="phi3")
+
+    with open("Rag/prompts/prompt.json", 'r') as file:
+        prompts_file = json.load(file)
+    pt = prompts_file["P2"]
+    qt = "Is there any mention of implementing a stateless design?"
+
+    response_info1 = query_rag(retriever1, generator1, pt, qt)
+    response_info1["query"] = qt
+    response_info1["setup_db_time"] = "0"
+    response_info1["logger_file_path"] = None
+
+    fo_helper = FileOutputHelper()
+    fo_helper.append_to_csv(response_info1)
+
+

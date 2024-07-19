@@ -1,7 +1,13 @@
 import json
 import pandas as pd
 import os
+<<<<<<< HEAD
+GROUND_TRUTH_PATH="documentsFromText/Whatsapp/ground_truth.json"
+COMBINED_RESULT_PATH="Rag/logger/phi3_P2_Whatsapp_combined.csv"
+EVAL_PATH="frontend/src/api_results/evaluation/results.json"
+=======
 
+>>>>>>> 7ca723b94c428936c7c2c8141b285b77997f0fcf
 def combine_groundTruth_result(ground_truth_path,combined_result_path):
 
     with open(ground_truth_path, "r", encoding="utf-8") as file:

@@ -1,29 +1,35 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.docstore.document import Document
-from langchain_community.llms.ollama import Ollama
-from populate_database import setup_database
-from rag_utils import load_chroma_db
 import json
 import os
 import re
 import csv
 import pandas as pd
 from IPython.display import display
-pd.set_option("display.max_colwidth", None)
+from langchain_community.llms.ollama import Ollama
 
+from Rag.components.Retriever import Retriever
+from populate_database import setup_database
+from components.Embedder import Embedder
+
+pd.set_option("display.max_colwidth", None)
 DOCUMENT_PATH="documentsFromText/hadoop/content.txt"
+CSV_FILE_PATH = "Rag/logger/QA_generated.csv"
 CREATE_DOC = False
 emb_local = True
-CSV_FILE_PATH = "Rag/logger/QA_generated.csv"
 
-setup_database(DOCUMENT_PATH, reset=False, emb_local=True,create_doc=CREATE_DOC)
+embedder_obj = Embedder(run_local=True, model_name="llama2")
+embedder = embedder_obj.get_embedder()
 
+doc_path = "documentsFromText/" + "Netflix" + "/content.txt"
+coll = "test_collection"
+_, db, doc_chunks = setup_database(embedder=embedder, document_path=doc_path, collection_name=coll, create_doc=True)
 
 model = Ollama(model="mistral")
+
 
 def generate_answer(prompt):
     response_text = model.invoke(prompt)
     return response_text
+
 
 def append_to_csv(context, question, answer):
     """add data to local csv and mongo cloud"""
@@ -76,8 +82,6 @@ N_GENERATIONS = 10  # We intentionally generate only 10 QA couples here for cost
 
 print(f"Generating {N_GENERATIONS} QA couples...")
 
-db = load_chroma_db(emb_local)
-
 outputs = []
 with open("./Rag/prompts/queries.json", "r", encoding="utf-8") as file:
         data = json.load(file)
@@ -93,8 +97,10 @@ for query_obj in queries:
     count=count+1
     if count > 10:
         break
-    similarity_results = db.similarity_search_with_score(query_text, k=5)  # [(Document(), sort_of_sim_rate)]
-    context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in similarity_results])
+    retriever_obj = Retriever(retriever_type="chroma", vectordb=db)
+    retriever1 = retriever_obj.get_retriever()
+    similarity_results = retriever1.invoke(query_text)
+    context_text = "\n\n---\n\n".join([doc.page_content for doc in similarity_results])
     contexts.append(context_text)
 
 
@@ -116,7 +122,6 @@ for sampled_context in contexts:
         )
     except:
         continue
-
 
 
 # Setup critique agents
