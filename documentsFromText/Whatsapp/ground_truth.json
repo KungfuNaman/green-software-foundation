@@ -155,7 +155,7 @@
         "practice": "Time-shift Kubernetes cron jobs",
         "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "The text does not discuss scheduling Kubernetes cron jobs during off-peak hours for resource optimization."
         }
     },
