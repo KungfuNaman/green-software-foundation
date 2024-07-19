@@ -5383,3 +5383,175 @@ Gathers data on views, likes, comments, shares, and clicks.
 Provides insights to improve user experience, optimize content recommendations, and target advertising.
 Why we need caching for storing the data?
 Cache the data to handle millions of reads. It improves the user experience by making the fetching process fast. We’ll also opt for lazy loading, which minimizes the client’s waiting time.",2.339566707611084,"The answer to this question is no, there is no mention of selecting the right hardware or VM instance types for energy-efficient AI/ML training in the provided text. The focus of the text is on designing a scalable and available Instagram system using microservices architecture, caching, and notification services. While it does touch upon some aspects of performance optimization, such as reducing latency and improving user experience through lazy loading, there is no explicit discussion on selecting hardware or instance types for energy efficiency.",5.446397304534912,0,"[(Document(page_content='Microservices – also known as the microservice architecture – is an architectural style that structures an application as a collection of services that are:\n\nIndependently deployable\nLoosely coupled\nOrganized around business capabilities\nOwned by a small team\nThe microservice architecture enables an organization to deliver large, complex applications rapidly, frequently, reliably and sustainably – a necessity for competing and winning in today’s world.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:24', 'source': 'documentsFromText/Instagram/content.txt'}), 12283.279943047737), (Document(page_content='API Endpoints:\n\nGET /posts/{post_id}: Retrieves details of a post, including the number of likes/dislikes.\nPOST /posts/{post_id}/like: Registers a like for the post by the authenticated user.\nPOST /posts/{post_id}/dislike: Registers a dislike for the post by the authenticated user.\nDELETE /posts/{post_id}/like: Removes the like for the post by the authenticated user (if previously done).\nDELETE /posts/{post_id}/dislike: Removes the dislike for the post by the authenticated user (if previously done).', metadata={'id': 'documentsFromText/Instagram/content.txt:None:19', 'source': 'documentsFromText/Instagram/content.txt'}), 12664.065021591861), (Document(page_content='url = ""https://photoslibrary.googleapis.com/v1/mediaItems:search""\nheaders = {\n    ""Authorization"": ""Bearer YOUR_ACCESS_TOKEN""  # Replace with your access token\n}\ndata = {\n    ""filters"": {\n        ""mediaTypes"": [""PHOTO"", ""VIDEO""]  # Search for both photos and videos\n    }\n}\nresponse = requests.post(url, headers=headers, json=data)\n \nif response.status_code == 200:\n    results = response.json()\n    # Process the search results\nelse:\n    print(""Error:"", response.status_code, response.text)\n8. Database Design for Instagram Database Design\nWe need the following tables to store our data:', metadata={'id': 'documentsFromText/Instagram/content.txt:None:21', 'source': 'documentsFromText/Instagram/content.txt'}), 14757.515139195968), (Document(page_content='Notification Service:\nInforms users about relevant events like likes, comments, mentions, and follows.\nPushes notifications to mobile devices through platforms like Firebase Cloud Messaging or Amazon SNS.\nLeverages a queueing system for asynchronous notification delivery.\nAnalytics Service:\nTracks user engagement, post performance, and overall platform usage.\nGathers data on views, likes, comments, shares, and clicks.\nProvides insights to improve user experience, optimize content recommendations, and target advertising.\nWhy we need caching for storing the data?\nCache the data to handle millions of reads. It improves the user experience by making the fetching process fast. We’ll also opt for lazy loading, which minimizes the client’s waiting time.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:9', 'source': 'documentsFromText/Instagram/content.txt'}), 14835.137435999679), (Document(page_content='Feed Generation adjusts based on changed relationships.\nUser monitors activity:\nClient checks notifications feed.\nNotifications provide updates on relevant events.\nKey Design Considerations:', metadata={'id': 'documentsFromText/Instagram/content.txt:None:14', 'source': 'documentsFromText/Instagram/content.txt'}), 15122.010223446543)]"
+Is there any mention of minimizing the total number of deployed environments to save resources?,"Feed Generation adjusts based on changed relationships.
+User monitors activity:
+Client checks notifications feed.
+Notifications provide updates on relevant events.
+Key Design Considerations:
+
+---
+
+url = ""https://photoslibrary.googleapis.com/v1/mediaItems:search""
+headers = {
+    ""Authorization"": ""Bearer YOUR_ACCESS_TOKEN""  # Replace with your access token
+}
+data = {
+    ""filters"": {
+        ""mediaTypes"": [""PHOTO"", ""VIDEO""]  # Search for both photos and videos
+    }
+}
+response = requests.post(url, headers=headers, json=data)
+ 
+if response.status_code == 200:
+    results = response.json()
+    # Process the search results
+else:
+    print(""Error:"", response.status_code, response.text)
+8. Database Design for Instagram Database Design
+We need the following tables to store our data:
+
+---
+
+3.1 Storage Per Day
+Photos: 60 million photos/day * 3 MB = 180 TeraBytes / day
+Videos: 35 million videos/day * 150 MB = 5250 TB / day
+Total content size = 180 + 5250 = 5430 TB
+The Total Space required for a Year:
+5430 TB/day * 365 (days a year) = 1981950 TB = 1981.95 PetaBytes
+
+3.2 Bandwidth Estimation
+5430 TB/(24 * 60* 60) = 5430 TB/86400 sec ~= 62.84 GB/s ~= 502.8 Gbps
+Incoming bandwidth ~= 502.8 Gbps
+Let’s say the ratio of readers to writers is 100:1.
+Required outgoing bandwidth ~= 100 * 502.8 Gbps ~= 50.28 Tbps
+
+4. Use Case Diagram for Instagram System Design
+uml
+Use Case Diagram Instagram
+
+In the above Diagram we have discussed about the use case diagram of Instagram:
+
+---
+
+If the user is new, they will register firstly it will be store in database, they will verifiy the profile.
+If user is already signup, they will provide the email-Id and Password.
+On the home page they will get the photos and videos, as well as the story page.
+The post which is posted now, it will come at the top. User can follow or unfollow the person. User can get live. It’s all depend on them.
+There will be setting, in which user can see there past story or the post which has been archive. User can unblock the person they can get verified account, after paying.
+5. Low-Level Design(LLD) for Instagram System Design
+design-instagram-lld
+
+Here’s a breakdown of the key components and interactions for Instagram’s low-level design:
+
+---
+
+{
+userId: string[Hashkey]
+uploadId: string
+creationDateInUtc: long[RangeKey]
+}
+8.5 Which Database we should select for Data storing?
+It is essential to choose the right kind of database for our Instagram system, but which is the right choice — SQL or NoSQL? Our data is inherently relational, and we need an order for the data (posts should appear in chronological order) and no data loss even in case of failures (data durability). Moreover, in our case, we would benefit from relational queries like fetching the followers or images based on a user ID. Hence, SQL-based databases fulfill these requirements.
+
+Image and Feed generation service used as microservice architecture.
+
+9. Microservices for Instagram System Design
+Image and Feed generation service used as microservice architecture.
+
+---
+
+It allows us to load the content when the user scrolls and therefore save the bandwidth and focus on loading the content the user is currently viewing. It improves the latency to view or search a particular photo or video on Instagram.
+6. High-Level Design(HLD) for Instagram System Design
+Our system should allow us to upload, view, and search images and videos at a high level. To upload images and videos, we need to store them, and upon fetching, we need to retrieve the data from the storage. Moreover, the users should also be allowed to follow each other.
+
+---
+
+2. Requirements for Instagram System Design
+2.1 Functional Requirements for Instagram System Design
+In functional Requirements, we will not discuss the login or signup page of Instagram. Login and Signup architecture is the same for everyone. We will look for further like posting photos, etc.
+
+---
+
+10. Scalability for Instagram System Design
+Scalability refers to the ability of an organization (or a system, such as a computer network) to perform well under an increased or expanding workload. A system that scales well will be able to maintain or increase its level of performance even as it is tested by larger and larger operational demands.
+
+We can add more servers to application service layers to make the scalability better and handle numerous requests from the clients. We can also increase the number of databases to store the growing users’ data.
+
+---
+
+Microservices – also known as the microservice architecture – is an architectural style that structures an application as a collection of services that are:
+
+Independently deployable
+Loosely coupled
+Organized around business capabilities
+Owned by a small team
+The microservice architecture enables an organization to deliver large, complex applications rapidly, frequently, reliably and sustainably – a necessity for competing and winning in today’s world.
+
+---
+
+Notification Service:
+Informs users about relevant events like likes, comments, mentions, and follows.
+Pushes notifications to mobile devices through platforms like Firebase Cloud Messaging or Amazon SNS.
+Leverages a queueing system for asynchronous notification delivery.
+Analytics Service:
+Tracks user engagement, post performance, and overall platform usage.
+Gathers data on views, likes, comments, shares, and clicks.
+Provides insights to improve user experience, optimize content recommendations, and target advertising.
+Why we need caching for storing the data?
+Cache the data to handle millions of reads. It improves the user experience by making the fetching process fast. We’ll also opt for lazy loading, which minimizes the client’s waiting time.
+
+---
+
+API Endpoints:
+
+GET /posts/{post_id}: Retrieves details of a post, including the number of likes/dislikes.
+POST /posts/{post_id}/like: Registers a like for the post by the authenticated user.
+POST /posts/{post_id}/dislike: Registers a dislike for the post by the authenticated user.
+DELETE /posts/{post_id}/like: Removes the like for the post by the authenticated user (if previously done).
+DELETE /posts/{post_id}/dislike: Removes the dislike for the post by the authenticated user (if previously done).",23.977168321609497," Judgement No. 1 - Yes, because it discuss about adding more servers and increasing databases which implies scaling up or out but not explicitly mentioned on reducing deployments for resource saving in context provided above that's why my answer is 'No'.
+Explanation: The given text does mention scalability by suggesting the addition of extra resources to handle increased demands. However, it doesn’t specifically address minimizing deployed environments as a strategy or goal within this particular excerpt from your design document for software development regarding Instagram's system architecture and scaling practices in context provided above that is why my answer here would be 'No'.",12.133665084838867,0,"[Document(page_content='Feed Generation adjusts based on changed relationships.\nUser monitors activity:\nClient checks notifications feed.\nNotifications provide updates on relevant events.\nKey Design Considerations:', metadata={'id': 'documentsFromText/Instagram/content.txt:None:14', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='url = ""https://photoslibrary.googleapis.com/v1/mediaItems:search""\nheaders = {\n    ""Authorization"": ""Bearer YOUR_ACCESS_TOKEN""  # Replace with your access token\n}\ndata = {\n    ""filters"": {\n        ""mediaTypes"": [""PHOTO"", ""VIDEO""]  # Search for both photos and videos\n    }\n}\nresponse = requests.post(url, headers=headers, json=data)\n \nif response.status_code == 200:\n    results = response.json()\n    # Process the search results\nelse:\n    print(""Error:"", response.status_code, response.text)\n8. Database Design for Instagram Database Design\nWe need the following tables to store our data:', metadata={'id': 'documentsFromText/Instagram/content.txt:None:21', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='3.1 Storage Per Day\nPhotos: 60 million photos/day * 3 MB = 180 TeraBytes / day\nVideos: 35 million videos/day * 150 MB = 5250 TB / day\nTotal content size = 180 + 5250 = 5430 TB\nThe Total Space required for a Year:\n5430 TB/day * 365 (days a year) = 1981950 TB = 1981.95 PetaBytes\n\n3.2 Bandwidth Estimation\n5430 TB/(24 * 60* 60) = 5430 TB/86400 sec ~= 62.84 GB/s ~= 502.8 Gbps\nIncoming bandwidth ~= 502.8 Gbps\nLet’s say the ratio of readers to writers is 100:1.\nRequired outgoing bandwidth ~= 100 * 502.8 Gbps ~= 50.28 Tbps\n\n4. Use Case Diagram for Instagram System Design\numl\nUse Case Diagram Instagram\n\nIn the above Diagram we have discussed about the use case diagram of Instagram:', metadata={'id': 'documentsFromText/Instagram/content.txt:None:5', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='If the user is new, they will register firstly it will be store in database, they will verifiy the profile.\nIf user is already signup, they will provide the email-Id and Password.\nOn the home page they will get the photos and videos, as well as the story page.\nThe post which is posted now, it will come at the top. User can follow or unfollow the person. User can get live. It’s all depend on them.\nThere will be setting, in which user can see there past story or the post which has been archive. User can unblock the person they can get verified account, after paying.\n5. Low-Level Design(LLD) for Instagram System Design\ndesign-instagram-lld\n\nHere’s a breakdown of the key components and interactions for Instagram’s low-level design:', metadata={'id': 'documentsFromText/Instagram/content.txt:None:6', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='{\nuserId: string[Hashkey]\nuploadId: string\ncreationDateInUtc: long[RangeKey]\n}\n8.5 Which Database we should select for Data storing?\nIt is essential to choose the right kind of database for our Instagram system, but which is the right choice — SQL or NoSQL? Our data is inherently relational, and we need an order for the data (posts should appear in chronological order) and no data loss even in case of failures (data durability). Moreover, in our case, we would benefit from relational queries like fetching the followers or images based on a user ID. Hence, SQL-based databases fulfill these requirements.\n\nImage and Feed generation service used as microservice architecture.\n\n9. Microservices for Instagram System Design\nImage and Feed generation service used as microservice architecture.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:23', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='It allows us to load the content when the user scrolls and therefore save the bandwidth and focus on loading the content the user is currently viewing. It improves the latency to view or search a particular photo or video on Instagram.\n6. High-Level Design(HLD) for Instagram System Design\nOur system should allow us to upload, view, and search images and videos at a high level. To upload images and videos, we need to store them, and upon fetching, we need to retrieve the data from the storage. Moreover, the users should also be allowed to follow each other.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:10', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='2. Requirements for Instagram System Design\n2.1 Functional Requirements for Instagram System Design\nIn functional Requirements, we will not discuss the login or signup page of Instagram. Login and Signup architecture is the same for everyone. We will look for further like posting photos, etc.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:2', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='10. Scalability for Instagram System Design\nScalability refers to the ability of an organization (or a system, such as a computer network) to perform well under an increased or expanding workload. A system that scales well will be able to maintain or increase its level of performance even as it is tested by larger and larger operational demands.\n\nWe can add more servers to application service layers to make the scalability better and handle numerous requests from the clients. We can also increase the number of databases to store the growing users’ data.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:25', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='Microservices – also known as the microservice architecture – is an architectural style that structures an application as a collection of services that are:\n\nIndependently deployable\nLoosely coupled\nOrganized around business capabilities\nOwned by a small team\nThe microservice architecture enables an organization to deliver large, complex applications rapidly, frequently, reliably and sustainably – a necessity for competing and winning in today’s world.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:24', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='Notification Service:\nInforms users about relevant events like likes, comments, mentions, and follows.\nPushes notifications to mobile devices through platforms like Firebase Cloud Messaging or Amazon SNS.\nLeverages a queueing system for asynchronous notification delivery.\nAnalytics Service:\nTracks user engagement, post performance, and overall platform usage.\nGathers data on views, likes, comments, shares, and clicks.\nProvides insights to improve user experience, optimize content recommendations, and target advertising.\nWhy we need caching for storing the data?\nCache the data to handle millions of reads. It improves the user experience by making the fetching process fast. We’ll also opt for lazy loading, which minimizes the client’s waiting time.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:9', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='API Endpoints:\n\nGET /posts/{post_id}: Retrieves details of a post, including the number of likes/dislikes.\nPOST /posts/{post_id}/like: Registers a like for the post by the authenticated user.\nPOST /posts/{post_id}/dislike: Registers a dislike for the post by the authenticated user.\nDELETE /posts/{post_id}/like: Removes the like for the post by the authenticated user (if previously done).\nDELETE /posts/{post_id}/dislike: Removes the dislike for the post by the authenticated user (if previously done).', metadata={'id': 'documentsFromText/Instagram/content.txt:None:19', 'source': 'documentsFromText/Instagram/content.txt'})]"
+Is there any mention of minimizing the total number of deployed environments to save resources?,"Microservices – also known as the microservice architecture – is an architectural style that structures an application as a collection of services that are:
+
+Independently deployable
+Loosely coupled
+Organized around business capabilities
+Owned by a small team
+The microservice architecture enables an organization to deliver large, complex applications rapidly, frequently, reliably and sustainably – a necessity for competing and winning in today’s world.
+
+---
+
+API Endpoints:
+
+GET /posts/{post_id}: Retrieves details of a post, including the number of likes/dislikes.
+POST /posts/{post_id}/like: Registers a like for the post by the authenticated user.
+POST /posts/{post_id}/dislike: Registers a dislike for the post by the authenticated user.
+DELETE /posts/{post_id}/like: Removes the like for the post by the authenticated user (if previously done).
+DELETE /posts/{post_id}/dislike: Removes the dislike for the post by the authenticated user (if previously done).
+
+---
+
+Feed Generation adjusts based on changed relationships.
+User monitors activity:
+Client checks notifications feed.
+Notifications provide updates on relevant events.
+Key Design Considerations:
+
+---
+
+Post photos and videos: The users can post photos and videos on Instagram.
+Follow and unfollow users: The users can follow and unfollow other users on Instagram.
+Like or dislike posts: The users can like or dislike posts of the accounts they follow.
+Search photos and videos: The users can search photos and videos based on captions and location.
+Generate news feed: The users can view the news feed consisting of the photos and videos (in chronological order) from all the users they follow.
+2.2 Non-Functional requirements for Instagram System Design
+Scalability: The system should be scalable to handle millions of users in terms of computational resources and storage.
+Latency: The latency to generate a news feed should be low.
+Availability: The system should be highly available.
+
+---
+
+At a high level, Instagram can be viewed as a system with the following key components and interactions:
+
+design-instagram-hld",8.581583261489868," Judgement No ✅ The context mentions that microservices are independently deployable, which implies they can be managed in a way where resource usage is optimized. However explicit information about reducing environment count for saving more isn't provided directly from this snippet alone but it could inferred as an indirect benefit of using the Microservice architecture approach due to its scalability and efficiency characteristics mentioned hereinabove within context design-instagram hld paragraphs ✅
+Explanation: The microservices are independently deployable, suggesting that they can be managed in a way where resource usage is optimized. However explicit information about reducing environment count for saving more isn't provided directly from this snippet alone but it could inferred as an indirect benefit of using the Microservice architecture approach due to its scalability and efficiency characteristics mentioned hereinabove within context design-instagram hld paragraphs ✅
+",12.296489953994751,0,"[Document(page_content='Microservices – also known as the microservice architecture – is an architectural style that structures an application as a collection of services that are:\n\nIndependently deployable\nLoosely coupled\nOrganized around business capabilities\nOwned by a small team\nThe microservice architecture enables an organization to deliver large, complex applications rapidly, frequently, reliably and sustainably – a necessity for competing and winning in today’s world.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:24', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='API Endpoints:\n\nGET /posts/{post_id}: Retrieves details of a post, including the number of likes/dislikes.\nPOST /posts/{post_id}/like: Registers a like for the post by the authenticated user.\nPOST /posts/{post_id}/dislike: Registers a dislike for the post by the authenticated user.\nDELETE /posts/{post_id}/like: Removes the like for the post by the authenticated user (if previously done).\nDELETE /posts/{post_id}/dislike: Removes the dislike for the post by the authenticated user (if previously done).', metadata={'id': 'documentsFromText/Instagram/content.txt:None:19', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='Feed Generation adjusts based on changed relationships.\nUser monitors activity:\nClient checks notifications feed.\nNotifications provide updates on relevant events.\nKey Design Considerations:', metadata={'id': 'documentsFromText/Instagram/content.txt:None:14', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='Post photos and videos: The users can post photos and videos on Instagram.\nFollow and unfollow users: The users can follow and unfollow other users on Instagram.\nLike or dislike posts: The users can like or dislike posts of the accounts they follow.\nSearch photos and videos: The users can search photos and videos based on captions and location.\nGenerate news feed: The users can view the news feed consisting of the photos and videos (in chronological order) from all the users they follow.\n2.2 Non-Functional requirements for Instagram System Design\nScalability: The system should be scalable to handle millions of users in terms of computational resources and storage.\nLatency: The latency to generate a news feed should be low.\nAvailability: The system should be highly available.', metadata={'id': 'documentsFromText/Instagram/content.txt:None:3', 'source': 'documentsFromText/Instagram/content.txt'}), Document(page_content='At a high level, Instagram can be viewed as a system with the following key components and interactions:\n\ndesign-instagram-hld', metadata={'id': 'documentsFromText/Instagram/content.txt:None:11', 'source': 'documentsFromText/Instagram/content.txt'})]"

@@ -5413,3 +5413,190 @@ The client uses the Presigned URL to upload the file directly to the designated 
 
 3.7. Role of Task Runner:
 After the file is successfully uploaded to S3, a task runner process is triggered. The task runner communicates with the Metadata Database to update or perform additional tasks related to the uploaded file. This may include updating file status, triggering indexing for search functionality, or sending notifications.",2.3062851428985596,"No, there is no mention in the provided text about selecting the right hardware or VM instance types for energy-efficient AI/ML training. The focus of the text appears to be on the architecture and design of the Dropbox system, including the use of sharding, caching, and other techniques to improve performance and scalability. While energy efficiency may be a consideration in the overall design of the system, it is not a central theme in this particular passage.",5.137810468673706,0,"[(Document(page_content='design-dropbox-2\n\nLet’s assume we have a client installed on our computer (an app installed on your computer) and this client has 4 basic components. These basic components are Watcher, Chunker, Indexer, and Internal DB. We have considered only one client but there can be multiple clients belonging to the same user with the same basic components.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:14', 'source': 'documentsFromText/Dropbox/content.txt'}), 12419.60676211379), (Document(page_content='Request\n\nGET /api/v1/objects?local_object_id=<Max object_id present locally>&device_id=<Unique Device Id>\nX-API-Key: api_key\nAuthorization: auth_token\nResponse\n\n200 OK\n{\n  new_objects: [\n    {\n      object_id:\n      object_type:\n      name:\n      chunk_ids: [\n        chunk1,\n        chunk2,\n        chunk3\n      ]\n    }\n  ]\n}\nMeta Service will check the database and return an array of objects containing name of object, object id, object type and an array of chunk_ids. Client calls the Download Chunk API with these chunk_ids to download the chunks and reconstruct the file.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:32', 'source': 'documentsFromText/Dropbox/content.txt'}), 12777.99489224895), (Document(page_content='Request Queue:\nThis will be a global request queue shared among all the clients.\nWhenever a client receives any update or changes in the files/folder it sends the request through the request queue.\nThis request is received by the synchronization service to update the metadata database.\nResponse Queue:\nThere will be an individual response queue corresponding to the individual clients.\nThe synchronization service broadcast the update through this response queue and this response queue will deliver the updated messages to each client and then these clients will update their respective files accordingly.\nThe message will never be lost even if the client will be disconnected from the internet (the benefit of using the messaging queue service).', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:25', 'source': 'documentsFromText/Dropbox/content.txt'}), 13693.037845944218), (Document(page_content='We are creating n number of response queues for n number of clients because the message will be deleted from the queue once it will be received by the client and we need to share the updated message with the various subscribed clients.\n4.4. Synchronization Service\nThe client communicates with the synchronization services either to receive the latest update from the cloud storage or to send the latest request/updates to the Cloud Storage.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:26', 'source': 'documentsFromText/Dropbox/content.txt'}), 13882.35341494539), (Document(page_content='Scaling can be achieved using techniques such as vertical scaling (increasing hardware capabilities) or horizontal scaling (adding more machines).\nHowever, horizontal scaling for relational databases often involves complexities, especially in scenarios with high read and write operations.\n4.2.2 Database Sharding:\nDatabase sharding is a horizontal partitioning technique where a large database is divided into smaller, more manageable parts called shards.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:19', 'source': 'documentsFromText/Dropbox/content.txt'}), 13958.909223325754)]"
+Is there any mention of minimizing the total number of deployed environments to save resources?,"Requirements Gathering for Dropbox System Design
+Capacity Estimation for Dropbox System Design
+High-Level Design(HLD) of Dropbox System Design
+Low-Level Design(LLD) of Dropbox System Design
+Database Design for Dropbox System Design
+API Design for Dropbox System Design
+Scalabilty for Dropbox System Design
+1. Requirements Gathering for Dropbox System Design
+Functional Requirements:
+The user should be able to upload photos/files.
+The user should be able to create/delete directories on the drive.
+The user should be able to download files
+The user should be able to share the uploaded files.
+The drive should synchronize the data between user all devices.
+Non Functional Requirements:
+
+---
+
+It handles tasks like routing queries to the appropriate shard, managing transactions across shards, and abstracting the underlying complexities of database sharding.
+ORM, within the edge wrapper, enables the application to interact with the database using high-level programming constructs, reducing the need for developers to write complex SQL queries.
+This combination of edge wrapper and ORM simplifies database management, making it easier to scale the application horizontally with sharded databases while maintaining a cohesive and developer-friendly interface.
+design-dropbox-3
+
+4.3. Message Queuing Service
+The messaging service queue will be responsible for the asynchronous communication between the clients and the synchronization service. 
+
+design-dropbox-4
+
+---
+
+Request Queue:
+This will be a global request queue shared among all the clients.
+Whenever a client receives any update or changes in the files/folder it sends the request through the request queue.
+This request is received by the synchronization service to update the metadata database.
+Response Queue:
+There will be an individual response queue corresponding to the individual clients.
+The synchronization service broadcast the update through this response queue and this response queue will deliver the updated messages to each client and then these clients will update their respective files accordingly.
+The message will never be lost even if the client will be disconnected from the internet (the benefit of using the messaging queue service).
+
+---
+
+It acts as an intermediary, providing a unified interface for the application to interact with the database system.
+The edge wrapper encapsulates the complexities of managing multiple shards and provides a simplified interface to the application.
+4.2.5 Object-Relational Mapping (ORM):
+ORM is a programming technique that allows data to be seamlessly converted between the relational database format and the application’s object-oriented format.
+
+---
+
+3.8. Downloading Services:
+Clients initiate file download requests through the client application. The Download Service queries the Metadata Database for file details. The server’s Download Service retrieves metadata from the Metadata Database. Metadata includes information such as file name, size, owner, and access permissions.
+
+4. Low-Level Design(LLD) of Dropbox System Design
+A lot of people assume designing a Dropbox is that all they just need to do is to use some cloud services, upload the file, and download the file whenever they want but that’s not how it works. The core problem is “Where and how to save the files? “. Suppose you want to share a file that can be of any size (small or big) and you upload it into the cloud.
+
+---
+
+4.5. Cloud Storage
+You can use any cloud storage service like Amazon S3 to store the chunks of the files uploaded by the user. The client communicates with the cloud storage for any action performed in the files/folders using the API provided by the cloud provider.
+
+---
+
+Everything is fine till here but later if you have to make an update in your file then it’s not a good idea to edit the file and upload the whole file again and again into the cloud. The reason is:
+
+---
+
+The total number of users = 500 million.
+Total number of daily active users = 100 million
+The average number of files stored by each user = 200
+The average size of each file = 100 KB
+Total number of active connections per minute = 1 million
+
+Storage Estimations:
+
+Total number of files = 500 million * 200 = 100 billion
+Total storage required = 100 billion * 100 KB = 10 PB
+
+
+3. High-Level Design(HLD) of Dropbox System Design
+HighLevelDesignOfdropBoxdrawio-(2)
+
+3.1. User Uploading:
+Users interact with the client application or web interface to initiate file uploads. The client application communicates with the Upload Service on the server side. Large files may be broken into smaller chunks for efficient transfer.
+
+---
+
+Request
+
+GET /api/v1/objects?local_object_id=<Max object_id present locally>&device_id=<Unique Device Id>
+X-API-Key: api_key
+Authorization: auth_token
+Response
+
+200 OK
+{
+  new_objects: [
+    {
+      object_id:
+      object_type:
+      name:
+      chunk_ids: [
+        chunk1,
+        chunk2,
+        chunk3
+      ]
+    }
+  ]
+}
+Meta Service will check the database and return an array of objects containing name of object, object id, object type and an array of chunk_ids. Client calls the Download Chunk API with these chunk_ids to download the chunks and reconstruct the file.
+
+---
+
+7. Scalabilty for Dropbox System Design
+Horizontal Scaling
+We can add more servers behind the load balancer to increase the capacity of each service. This is known as Horizontal Scaling and each service can be independently scaled horizontally in our design.
+Database Sharding
+Metadata DB is sharded based on object_id. Our hash function will map each object_id to a random server where we can store the file/folder metadata. To query for a particular object_id, service can determine the database server using same hash function and query for data. This approach will distribute our database load to multiple servers making it scalable.
+Cache Sharding
+
+---
+
+ACID properties: Atomicity, Consistency, Integrity and Durability. All the file operations should follow these properties.
+2. Capacity Estimation for Dropbox System Design
+Storage Estimations:
+Assumptions:",23.644421100616455," Judgement No, ✅ because while horizontal scaling is mentioned as a way that can be used in designing scalability for Dropbox System Design by adding more servers behind load balancer and each service being independently scaled horizontally. However there's no specific mention of minimizing the total number deployed environments to save resources within this context, hence it seems like an environment optimization strategy is not explicitly discussed herein provided text snippet from design document for Dropbox System Design in your input above (Answer).",10.975826501846313,0,"[Document(page_content='Requirements Gathering for Dropbox System Design\nCapacity Estimation for Dropbox System Design\nHigh-Level Design(HLD) of Dropbox System Design\nLow-Level Design(LLD) of Dropbox System Design\nDatabase Design for Dropbox System Design\nAPI Design for Dropbox System Design\nScalabilty for Dropbox System Design\n1. Requirements Gathering for Dropbox System Design\nFunctional Requirements:\nThe user should be able to upload photos/files.\nThe user should be able to create/delete directories on the drive.\nThe user should be able to download files\nThe user should be able to share the uploaded files.\nThe drive should synchronize the data between user all devices.\nNon Functional Requirements:', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:1', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='It handles tasks like routing queries to the appropriate shard, managing transactions across shards, and abstracting the underlying complexities of database sharding.\nORM, within the edge wrapper, enables the application to interact with the database using high-level programming constructs, reducing the need for developers to write complex SQL queries.\nThis combination of edge wrapper and ORM simplifies database management, making it easier to scale the application horizontally with sharded databases while maintaining a cohesive and developer-friendly interface.\ndesign-dropbox-3\n\n4.3. Message Queuing Service\nThe messaging service queue will be responsible for the asynchronous communication between the clients and the synchronization service. \n\ndesign-dropbox-4', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:23', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='Request Queue:\nThis will be a global request queue shared among all the clients.\nWhenever a client receives any update or changes in the files/folder it sends the request through the request queue.\nThis request is received by the synchronization service to update the metadata database.\nResponse Queue:\nThere will be an individual response queue corresponding to the individual clients.\nThe synchronization service broadcast the update through this response queue and this response queue will deliver the updated messages to each client and then these clients will update their respective files accordingly.\nThe message will never be lost even if the client will be disconnected from the internet (the benefit of using the messaging queue service).', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:25', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='It acts as an intermediary, providing a unified interface for the application to interact with the database system.\nThe edge wrapper encapsulates the complexities of managing multiple shards and provides a simplified interface to the application.\n4.2.5 Object-Relational Mapping (ORM):\nORM is a programming technique that allows data to be seamlessly converted between the relational database format and the application’s object-oriented format.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:21', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='3.8. Downloading Services:\nClients initiate file download requests through the client application. The Download Service queries the Metadata Database for file details. The server’s Download Service retrieves metadata from the Metadata Database. Metadata includes information such as file name, size, owner, and access permissions.\n\n4. Low-Level Design(LLD) of Dropbox System Design\nA lot of people assume designing a Dropbox is that all they just need to do is to use some cloud services, upload the file, and download the file whenever they want but that’s not how it works. The core problem is “Where and how to save the files? “. Suppose you want to share a file that can be of any size (small or big) and you upload it into the cloud.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:8', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='4.5. Cloud Storage\nYou can use any cloud storage service like Amazon S3 to store the chunks of the files uploaded by the user. The client communicates with the cloud storage for any action performed in the files/folders using the API provided by the cloud provider.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:28', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='Everything is fine till here but later if you have to make an update in your file then it’s not a good idea to edit the file and upload the whole file again and again into the cloud. The reason is:', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:9', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='The total number of users = 500 million.\nTotal number of daily active users = 100 million\nThe average number of files stored by each user = 200\nThe average size of each file = 100 KB\nTotal number of active connections per minute = 1 million\n\nStorage Estimations:\n\nTotal number of files = 500 million * 200 = 100 billion\nTotal storage required = 100 billion * 100 KB = 10 PB\n\n\n3. High-Level Design(HLD) of Dropbox System Design\nHighLevelDesignOfdropBoxdrawio-(2)\n\n3.1. User Uploading:\nUsers interact with the client application or web interface to initiate file uploads. The client application communicates with the Upload Service on the server side. Large files may be broken into smaller chunks for efficient transfer.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:4', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='Request\n\nGET /api/v1/objects?local_object_id=<Max object_id present locally>&device_id=<Unique Device Id>\nX-API-Key: api_key\nAuthorization: auth_token\nResponse\n\n200 OK\n{\n  new_objects: [\n    {\n      object_id:\n      object_type:\n      name:\n      chunk_ids: [\n        chunk1,\n        chunk2,\n        chunk3\n      ]\n    }\n  ]\n}\nMeta Service will check the database and return an array of objects containing name of object, object id, object type and an array of chunk_ids. Client calls the Download Chunk API with these chunk_ids to download the chunks and reconstruct the file.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:32', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='7. Scalabilty for Dropbox System Design\nHorizontal Scaling\nWe can add more servers behind the load balancer to increase the capacity of each service. This is known as Horizontal Scaling and each service can be independently scaled horizontally in our design.\nDatabase Sharding\nMetadata DB is sharded based on object_id. Our hash function will map each object_id to a random server where we can store the file/folder metadata. To query for a particular object_id, service can determine the database server using same hash function and query for data. This approach will distribute our database load to multiple servers making it scalable.\nCache Sharding', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:33', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='ACID properties: Atomicity, Consistency, Integrity and Durability. All the file operations should follow these properties.\n2. Capacity Estimation for Dropbox System Design\nStorage Estimations:\nAssumptions:', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:3', 'source': 'documentsFromText/Dropbox/content.txt'})]"
+Is there any mention of minimizing the total number of deployed environments to save resources?,"Request Queue:
+This will be a global request queue shared among all the clients.
+Whenever a client receives any update or changes in the files/folder it sends the request through the request queue.
+This request is received by the synchronization service to update the metadata database.
+Response Queue:
+There will be an individual response queue corresponding to the individual clients.
+The synchronization service broadcast the update through this response queue and this response queue will deliver the updated messages to each client and then these clients will update their respective files accordingly.
+The message will never be lost even if the client will be disconnected from the internet (the benefit of using the messaging queue service).
+
+---
+
+Everything is fine till here but later if you have to make an update in your file then it’s not a good idea to edit the file and upload the whole file again and again into the cloud. The reason is:
+
+---
+
+5. Database Design for Dropbox System Design
+To understand Database design one should understand
+
+Each user must have at-least one device.
+Each device will have at-least one object (file or folder). Once user registers, we create a root folder for him/her making sure he/she has at-least one object.
+Each object may have chunks. Only files can have chunk, folders can’t have chunks.
+Each object may be shared with one or multiple users. This mapping is maintained in AccessControlList.
+We need the following tables to store our data:
+
+5.1 Users
+Users
+
+{
+  user_id(PK)
+  name
+  email
+  password
+  last_login_at
+  created_at
+  updated_at
+}
+5.2 Devices
+Devices
+
+{
+  device_id(PK)
+  user_id(FK)
+  created_at
+  updated_at
+}
+5.3 Objects
+Objects
+
+---
+
+More bandwidth and cloud space utilization:
+To provide a history of the files you need to keep multiple versions of the files.
+This requires more bandwidth and more space in the cloud. Even for the small changes in your file, you will have to back up and transfer the whole file into the cloud again and again which is not a good idea.
+Latency or Concurrency Utilization:
+You can’t do time optimization as well. It will consume more time to upload a single file as a whole even if you make small changes in your file.
+It’s also not possible to make use of concurrency to upload/download the files using multi threads or multi processes.
+Let’s discuss how we can solve this problem:
+design-dropbox-1
+
+---
+
+Now let’s talk about the various components for the complete low level design solution of the Dropbox.",8.623159170150757," Judgement No, because in context provided no information is given regarding deployment or resource saving strategies related specifically with deploying fewer instances/environments for software development purposes within this design document excerpt. The text discusses aspects like request queues and database designs but does not touch upon the topic of minimizing deployed environments to save resources directly, nor can it be inferred from given contexts about such a strategy being part or implied in their system'
+Explanation: There is no mention within this design document excerpt regarding strategies for reducing deployments. The focus seems primarily on data synchronization and management aspects of the Dropbox-like software, without explicit reference to deployment resource optimization techniques like minimizing deployed environments",11.47749924659729,0,"[Document(page_content='Request Queue:\nThis will be a global request queue shared among all the clients.\nWhenever a client receives any update or changes in the files/folder it sends the request through the request queue.\nThis request is received by the synchronization service to update the metadata database.\nResponse Queue:\nThere will be an individual response queue corresponding to the individual clients.\nThe synchronization service broadcast the update through this response queue and this response queue will deliver the updated messages to each client and then these clients will update their respective files accordingly.\nThe message will never be lost even if the client will be disconnected from the internet (the benefit of using the messaging queue service).', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:25', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='Everything is fine till here but later if you have to make an update in your file then it’s not a good idea to edit the file and upload the whole file again and again into the cloud. The reason is:', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:9', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='5. Database Design for Dropbox System Design\nTo understand Database design one should understand\n\nEach user must have at-least one device.\nEach device will have at-least one object (file or folder). Once user registers, we create a root folder for him/her making sure he/she has at-least one object.\nEach object may have chunks. Only files can have chunk, folders can’t have chunks.\nEach object may be shared with one or multiple users. This mapping is maintained in AccessControlList.\nWe need the following tables to store our data:\n\n5.1 Users\nUsers\n\n{\n  user_id(PK)\n  name\n  email\n  password\n  last_login_at\n  created_at\n  updated_at\n}\n5.2 Devices\nDevices\n\n{\n  device_id(PK)\n  user_id(FK)\n  created_at\n  updated_at\n}\n5.3 Objects\nObjects', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:29', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='More bandwidth and cloud space utilization:\nTo provide a history of the files you need to keep multiple versions of the files.\nThis requires more bandwidth and more space in the cloud. Even for the small changes in your file, you will have to back up and transfer the whole file into the cloud again and again which is not a good idea.\nLatency or Concurrency Utilization:\nYou can’t do time optimization as well. It will consume more time to upload a single file as a whole even if you make small changes in your file.\nIt’s also not possible to make use of concurrency to upload/download the files using multi threads or multi processes.\nLet’s discuss how we can solve this problem:\ndesign-dropbox-1', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:10', 'source': 'documentsFromText/Dropbox/content.txt'}), Document(page_content='Now let’s talk about the various components for the complete low level design solution of the Dropbox.', metadata={'id': 'documentsFromText/Dropbox/content.txt:None:13', 'source': 'documentsFromText/Dropbox/content.txt'})]"
