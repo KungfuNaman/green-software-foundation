@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from populate_database import setup_database, setup_database_after_clearance
 from query_data import query_rag, compare_retrieved_items
+
 # from parser import add_parsed_results
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
@@ -63,6 +64,7 @@ def evaluate_docs_in_bulk(doc_name):
     truth_length = len(ground_truth)
 
     # Iterative Querying
+
     retrieved_rec = {}
     for q_idx in range(truth_length):
         if q_idx > 2:
@@ -113,6 +115,7 @@ def get_retriever(retriever_type, db, doc_chunks, embedder):
     return retriever
 
 
+
 def get_paths(doc_name, pid, gen_model, ground_true=True):
     doc_path = "documentsFromText/" + doc_name + "/content.txt" if ground_true else "./documents/" + doc_name + ".pdf"
     log_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + ".csv"
@@ -125,6 +128,7 @@ def main():
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
     documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
     documentsFromText = ["Netflix"]
+
 
     for doc_name in documentsFromText:
         evaluate_docs_in_bulk(doc_name)
