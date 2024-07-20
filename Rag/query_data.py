@@ -1,4 +1,3 @@
-import os
 import time
 import json
 from langchain.prompts import ChatPromptTemplate
@@ -50,17 +49,17 @@ def query_rag(retriever, generator, prompt_template, query_text: str):
         # No longer have Similarity Score as retriever interaction changed
         "retrieved_items": retrieved_items
     }
-
-    # retrieved_info = {
-    #     "new_prediction": new_retriever,
-    #     "retriever_type": retriever_type,
-    #     "question": query_text,
-    #     "prediction": response_text,
-    #     "chroma_chunks": chroma_retrieved_chunk,
-    #     "llm_chunks": ensemble_retrieved_chunk
-    # }
-
     return response_info
+
+
+def compare_retrieved_items(retriever_lst, query_text: str):
+    retrieved_items_dict = {"question": query_text, "retrieved_chunks": {}}
+    for rtype, retriever in retriever_lst:
+        retrieved_items = get_retrieved_chunks(retriever, query_text)
+        retrieved_content = [i.page_content for i in retrieved_items]
+        print("{} retrieved {} chunks".format(rtype, len(retrieved_content)))
+        retrieved_items_dict["retrieved_chunks"][rtype] = retrieved_content
+    return retrieved_items_dict
 
 
 def get_context(retrieved_items, seperator="\n\n---\n\n"):

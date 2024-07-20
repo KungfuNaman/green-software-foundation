@@ -2,9 +2,7 @@ from langchain.retrievers import EnsembleRetriever, MultiQueryRetriever
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
 from langchain_community.llms.ollama import Ollama
-from langchain_core.language_models.base import BaseLanguageModel
-from pydantic import BaseModel, Field
-from typing import List
+from langchain_core.prompts.prompt import PromptTemplate
 
 
 class Retriever:
@@ -14,8 +12,8 @@ class Retriever:
         self.retriever_ready = False
         # multiquery
         if retriever_type == 'multiquery' and vectordb is not None and llm_name is not None:
-            self.vectordb, self.llm = vectordb, llm_name
-            self.init_multiquery_retriever(self.vectordb, self.llm)
+            self.vectordb, self.llm, self.mq_prompt = vectordb, llm_name, self.get_multiquery_prompt()
+            self.init_multiquery_retriever(self.vectordb, self.llm, self.mq_prompt)
         # bm25
         elif retriever_type == 'bm25' and doc_chunks is not None:
             self.document = doc_chunks
@@ -35,11 +33,12 @@ class Retriever:
         else:
             raise ValueError("Invalid arguments")
 
-    def init_multiquery_retriever(self, vectordb, llm):
-        o_model = OllamaModel(model_name=llm)
+    def init_multiquery_retriever(self, vectordb, llm, mq_prompt):
+        o_model = Ollama(model=llm)
         self.retriever = MultiQueryRetriever.from_llm(
             retriever=vectordb.as_retriever(),
-            llm=o_model
+            llm=o_model,
+            prompt=mq_prompt
         )
         self.retriever_ready = True
 
@@ -73,7 +72,6 @@ class Retriever:
         )
         self.retriever_ready = True
 
-
     def init_ensemble_retriever(self, ebr1, ebr2):
         self.retriever = EnsembleRetriever(
             retrievers=[ebr1, ebr2], weights=[0.5, 0.5]
@@ -98,35 +96,19 @@ class Retriever:
         else:
             raise ValueError("This retriever is not ensemble")
 
+    @staticmethod
+    def get_multiquery_prompt() -> PromptTemplate:
+        prompt = PromptTemplate(
+            input_variables=["question"],
+            template="""You are an AI language model assistant. Your task is 
+            to generate 3 different versions of the given user 
+            question to retrieve relevant documents from a vector  database. 
+            By generating multiple perspectives on the user question, 
+            your goal is to help the user overcome some of the limitations 
+            of distance-based similarity search. Provide these alternative 
+            questions separated by newlines. Original question: {question}""",
+        )
+        return prompt
+
     def get_retriever(self):
         return self.retriever if self.retriever_ready else ValueError("Retriever is not initialized yet.")
-
-
-class OllamaModel(BaseLanguageModel, BaseModel):
-    model_name: str = Field(...)
-    model: Ollama = None
-
-    def __init__(self, **data):
-        super().__init__(**data)
-        self.model = Ollama(model=self.model_name)
-
-    def predict(self, text: str) -> str:
-        return self.model.predict(text)
-
-    def predict_messages(self, messages: List[str]) -> List[str]:
-        return self.model.predict_messages(messages)
-
-    def generate_prompt(self, prompt: str) -> str:
-        return self.model.generate_prompt(prompt)
-
-    async def agenerate_prompt(self, prompt: str) -> str:
-        return await self.model.agenerate_prompt(prompt)
-
-    async def apredict(self, text: str) -> str:
-        return await self.model.apredict(text)
-
-    async def apredict_messages(self, messages: List[str]) -> List[str]:
-        return await self.model.apredict_messages(messages)
-
-    def invoke(self, command: str, *args, **kwargs) -> str:
-        return self.model.invoke(command, *args, **kwargs)
