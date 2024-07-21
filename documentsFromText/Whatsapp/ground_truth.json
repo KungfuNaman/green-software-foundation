@@ -305,8 +305,8 @@
         "practice": "Compress stored data",
         "query": "Is there any mention of compressing stored data?",
         "Response": {
-            "Judgement": "No",
-            "Explanation": "The document does not discuss compressing stored data to minimize storage requirements."
+            "Judgement": "Yes",
+            "Explanation": "The document mentions that media files are compressed on the device side before being sent to the asset service for storage. This reduces the amount of data stored, thus improving data efficiency."
         }
     },
     {

@@ -5,7 +5,7 @@
         "practice": "Minimize the total number of deployed environments",
         "query": "Is there any mention of minimizing the total number of deployed environments?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of minimizing the total number of deployed environments to save resources in the provided content."
         }
     },
@@ -55,7 +55,7 @@
         "practice": "Scale down Kubernetes applications when not in use",
         "query": "Is there any mention of scaling down Kubernetes applications when not in use?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of scaling down Kubernetes applications when not in use."
         }
     },
@@ -85,7 +85,7 @@
         "practice": "Scale Kubernetes workloads based on relevant demand metrics",
         "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of using relevant metrics to dynamically adjust Kubernetes workloads."
         }
     },
@@ -155,7 +155,7 @@
         "practice": "Time-shift Kubernetes cron jobs",
         "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of scheduling Kubernetes cron jobs during off-peak hours."
         }
     },
@@ -315,8 +315,8 @@
         "practice": "Cache static data",
         "query": "Is there any mention of caching static data?",
         "Response": {
-            "Judgement": "Yes",
-            "Explanation": "The document mentions using EV Cache to store frequently used data for faster response."
+            "Judgement": "No",
+            "Explanation": "The document does not specifically mention the use of technology for caching static data. It primarily discusses EV Cache, which is used for dynamic content to improve response times and reduce latency."
         }
     },
     {
@@ -383,7 +383,7 @@
         "type": "cloud",
         "category": "Performance Management",
         "practice": "Use a service mesh only if needed",
-        "query": "Is there any mention of using a service mesh only if needed?",
+        "query": "Is there any mention of using a service mesh only if needed ?",
         "Response": {
             "Judgement": "No",
             "Explanation": "There is no mention of using a service mesh only if needed."

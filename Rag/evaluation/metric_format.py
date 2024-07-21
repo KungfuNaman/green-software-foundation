@@ -1,15 +1,12 @@
 import json
 import pandas as pd
 import os
-<<<<<<< HEAD
-GROUND_TRUTH_PATH="documentsFromText/Whatsapp/ground_truth.json"
-COMBINED_RESULT_PATH="Rag/logger/phi3_P2_Whatsapp_combined.csv"
+GROUND_TRUTH_PATH="documentsFromText/Netflix/ground_truth.json"
+COMBINED_RESULT_PATH="Rag\logger\Results_PHI3_10E_P3\phi3_10E_P3_Netflix_combined.csv"
 EVAL_PATH="frontend/src/api_results/evaluation/results.json"
-=======
-
->>>>>>> 7ca723b94c428936c7c2c8141b285b77997f0fcf
 def combine_groundTruth_result(ground_truth_path,combined_result_path):
 
+    eval_path=COMBINED_RESULT_PATH
     with open(ground_truth_path, "r", encoding="utf-8") as file:
         ground_truth_json = json.load(file)
         ground_truth_query_map = {item['query']: {k: v for k, v in item.items() if k != 'query'} for item in ground_truth_json}
@@ -74,25 +71,17 @@ def generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
 
 
 
-def modify_to_old_queries(ground_truth_path):
+def modify_to_old_queries():
     old_queries_json_path="Rag/prompts/old_queries.json"
     with open(old_queries_json_path, "r", encoding="utf-8") as file:
             old_queries_arr = json.load(file)["queries"]
-    with open(ground_truth_path, "r", encoding="utf-8") as file:
+    with open(GROUND_TRUTH_PATH, "r", encoding="utf-8") as file:
             ground_truth_arr = json.load(file)
     for item in old_queries_arr:
         for ground_item in ground_truth_arr:
             if ground_item["category"] == item["category"] and ground_item["practice"] == item["practice"]:
                 ground_item["query"] =item["query"]
 
-    with open(ground_truth_path, 'w') as file:
+    with open(GROUND_TRUTH_PATH, 'w') as file:
             json.dump(ground_truth_arr, file, indent=4)
-
-
-documents=["Netflix","Whatsapp","Dropbox","Instagram","Uber"]
-for doc in documents:
-    ground_truth_path="documentsFromText/"+doc+"/ground_truth.json"
-    combined_result_path="Rag/logger/phi3_10E_P3_"+doc+"_combined.csv"
-    eval_path="frontend/src/api_results/evaluation/results.json"
-    modify_to_old_queries(ground_truth_path)
-    generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
+generate_eval_for_frontend(GROUND_TRUTH_PATH,COMBINED_RESULT_PATH,EVAL_PATH)
