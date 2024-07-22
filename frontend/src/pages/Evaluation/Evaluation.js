@@ -16,25 +16,29 @@ import "./Evaluation.css";
 import JudgementTable from "../../components/Evaluation/JudgementTable";
 
 export default function Evaluation() {
-  const [activeButton, setActiveButton] = useState(null);
-  const [evalList, setEvalList] = useState([]);
-  const [confusionMatrixData, setConfusionMatrixData] = useState({});
-  const [agreementData, setAgreementData] = useState([]);
-  const [precision, setPrecision] = useState(0);
-  const [recall, setRecall] = useState(0);
+  const [activeButtons, setActiveButtons] = useState([null, null]);
+  const [evalLists, setEvalLists] = useState([[], []]);
+  const [confusionMatrixData, setConfusionMatrixData] = useState([{}, {}]);
+  const [agreementData, setAgreementData] = useState([[], []]);
+  const [precision, setPrecision] = useState([0, 0]);
+  const [recall, setRecall] = useState([0, 0]);
+  const [accuracy, setAccuracy] = useState([0, 0]);
 
-  const [accuracy, setAccuracy] = useState(0);
   useEffect(() => {
-    console.log("eval list", setEvalList);
-  }, [evalList]);
+    console.log("eval lists", evalLists);
+  }, [evalLists]);
 
-  async function onFileClick(event, fileName) {
+  async function onFileClick(event, fileName, index) {
     try {
       const list = eval_results[fileName];
-      // Assign the default export from the module to the key
-      setActiveButton(fileName);
+      let newActiveButtons = [...activeButtons];
+      let newEvalLists = [...evalLists];
 
-      setEvalList(list);
+      newActiveButtons[index] = fileName;
+      newEvalLists[index] = list;
+
+      setActiveButtons(newActiveButtons);
+      setEvalLists(newEvalLists);
     } catch (error) {
       console.error(`Error loading JSON file ${fileName}:`, error);
     }
@@ -42,177 +46,207 @@ export default function Evaluation() {
 
   //calculate metrics
   useEffect(() => {
-    let tp = 0,
-      fp = 0,
-      tn = 0,
-      fn = 0;
-    let total = evalList.length;
-    let agreement = 0;
-
-    let modifiedEvalList = evalList.map((item) => ({
-      ...item, // this creates a shallow copy of each item
-      humanJudgement:
-        item["humanJudgement"] === "Not Applicable"
-          ? "No"
-          : item["humanJudgement"],
-      llmJudgement:
-        item["llmJudgement"] === "Not Applicable" ? "No" : item["llmJudgement"],
-    }));
-
-    console.log("modifedEvalList", modifiedEvalList);
-    modifiedEvalList?.forEach((item) => {
-      if (item.humanJudgement === item.llmJudgement) {
-        if (item.humanJudgement === "Yes") {
-          tp++; // True Positive
+    let newConfusionMatrixData = [];
+    let newAgreementData = [];
+    let newPrecision = [];
+    let newRecall = [];
+    let newAccuracy = [];
+  
+    evalLists.forEach((evalList, index) => {
+      let tp = 0,
+        fp = 0,
+        tn = 0,
+        fn = 0;
+      let total = evalList.length;
+      let agreement = 0;
+  
+      let modifiedEvalList = evalList.map((item) => ({
+        ...item, // this creates a shallow copy of each item
+        humanJudgement:
+          item["humanJudgement"] === "Not Applicable"
+            ? "No"
+            : item["humanJudgement"],
+        llmJudgement:
+          item["llmJudgement"] === "Not Applicable" ? "No" : item["llmJudgement"],
+      }));
+  
+      console.log("modifiedEvalList", modifiedEvalList);
+      modifiedEvalList?.forEach((item) => {
+        if (item.humanJudgement === item.llmJudgement) {
+          if (item.humanJudgement === "Yes") {
+            tp++; // True Positive
+          } else {
+            tn++; // True Negative
+          }
         } else {
-          tn++; // True Negative
+          if (item.humanJudgement === "Yes" && item.llmJudgement !== "Yes") {
+            fn++; // False Negative
+          } else if (
+            item.humanJudgement !== "Yes" &&
+            item.llmJudgement === "Yes"
+          ) {
+            fp++; // False Positive
+          }
         }
+      });
+      evalList?.forEach((item) => {
+        if (item.humanJudgement === item.llmJudgement) {
+          agreement++;
+        }
+      });
+  
+      let agreementRate = (agreement / total) * 100;
+      let discrepancyRate = 100 - agreementRate;
+      newAgreementData[index] = [
+        { id: 0, value: agreementRate, label: "Agree(%)" },
+        { id: 1, value: discrepancyRate, label: "Disagree(%)" },
+      ];
+  
+      // Precision and Recall
+      let tempPrecision;
+      if (tp + fp === 0) {
+        tempPrecision = 0; // or set to a default value that makes sense in your context
       } else {
-        if (item.humanJudgement === "Yes" && item.llmJudgement !== "Yes") {
-          fn++; // False Negative
-        } else if (
-          item.humanJudgement !== "Yes" &&
-          item.llmJudgement === "Yes"
-        ) {
-          fp++; // False Positive
-        }
+        tempPrecision = tp / (tp + fp);
       }
+      console.log("this is precision", tp, fp);
+      newPrecision[index] = tempPrecision;
+  
+      newAccuracy[index] = agreementRate;
+  
+      let tempRecall = tp / (tp + fn);
+      newRecall[index] = tempRecall;
+  
+      let f1Score = (2 * (tempPrecision * tempRecall)) / (tempPrecision + tempRecall);
+  
+      newConfusionMatrixData[index] = {
+        truePositive: tp,
+        falsePositive: fp,
+        trueNegative: tn,
+        falseNegative: fn,
+      };
     });
-    evalList?.forEach((item) => {
-      if (item.humanJudgement === item.llmJudgement) {
-        agreement++;
-      }
-    });
+  
+    setConfusionMatrixData(newConfusionMatrixData);
+    setAgreementData(newAgreementData);
+    setPrecision(newPrecision);
+    setAccuracy(newAccuracy);
+    setRecall(newRecall);
+  }, [evalLists]);
+  
 
-    let agreementRate = (agreement / total) * 100;
-    let discrepancyRate = 100 - agreementRate;
-    setAgreementData([
-      { id: 0, value: agreementRate, label: "Agree(%)" },
-      { id: 1, value: discrepancyRate, label: "Disagree(%)" },
-    ]);
-
-    // Precision and Recall
-    let precision;
-    if (tp + fp === 0) {
-      precision = 0; // or set to a default value that makes sense in your context
-    } else {
-      precision = tp / (tp + fp);
-    }
-    console.log("this is precision", tp, fp);
-    setPrecision(precision);
-    setAccuracy(agreementRate);
-    let recall = tp / (tp + fn);
-    setRecall(recall)
-    let f1Score = (2 * (precision * recall)) / (precision + recall);
-
-    setConfusionMatrixData({
-      truePositive: tp,
-      falsePositive: fp,
-      trueNegative: tn,
-      falseNegative: fn,
-    });
-  }, [evalList]);
-
-  function calculateMetrics(data) {
-    let tp = 0,
-      fp = 0,
-      tn = 0,
-      fn = 0;
-    let total = data.length;
-    let agreement = 0;
-
-    data.forEach((item) => {
-      if (item.humanJudgement === item.llmJudgement) {
-        agreement++;
-        if (item.humanJudgement === "Yes") {
-          tp++; // True Positive
-        } else {
-          tn++; // True Negative
-        }
-      } else {
-        if (item.humanJudgement === "Yes" && item.llmJudgement !== "Yes") {
-          fn++; // False Negative
-        } else if (
-          item.humanJudgement !== "Yes" &&
-          item.llmJudgement === "Yes"
-        ) {
-          fp++; // False Positive
-        }
-      }
-    });
-
-    let agreementRate = (agreement / total) * 100;
-    let discrepancyRate = 100 - agreementRate;
-
-    // Calculate Kappa
-    let pe =
-      ((tp + fp) / total) * ((tp + fn) / total) +
-      ((fn + tn) / total) * ((fp + tn) / total);
-    let po = (tp + tn) / total;
-    let kappa = (po - pe) / (1 - pe);
-
-    // Precision and Recall
-    let precision = tp / (tp + fp);
-    let recall = tp / (tp + fn);
-    let f1Score = (2 * (precision * recall)) / (precision + recall);
-
-    return {
-      AgreementRate: `${agreementRate.toFixed(2)}%`,
-      DiscrepancyRate: `${discrepancyRate.toFixed(2)}%`,
-      ConfusionMatrix: { TP: tp, FP: fp, TN: tn, FN: fn },
-      Precision: precision.toFixed(2),
-      Recall: recall.toFixed(2),
-      F1Score: f1Score.toFixed(2),
-      Kappa: kappa.toFixed(2),
-    };
-  }
 
   return (
     <div className="container">
       <div className="evalList">
         {Object.keys(eval_results).map((item) => {
           return (
-            <Button
-              key={item}
-              className="evalListItem"
-              variant={activeButton === item ? "contained" : "text"}
-              onClick={(event) => onFileClick(event, item)}
-            >
-              {item}
-            </Button>
+            <div key={item} style={{ marginBottom: "10px" }}>
+              <Button
+                className="evalListItem"
+                variant={activeButtons[0] === item ? "contained" : "text"}
+                onClick={(event) => onFileClick(event, item, 0)}
+                style={{ marginRight: "10px" }}
+              >
+                {item} (Left)
+              </Button>
+              <Button
+                className="evalListItem"
+                variant={activeButtons[1] === item ? "contained" : "text"}
+                onClick={(event) => onFileClick(event, item, 1)}
+              >
+                {item} (Right)
+              </Button>
+            </div>
           );
         })}
       </div>
-      <div className="evaluationGraphs">
-        <div className="confusion-matrix-container">
-          <ConfusionMatrix confusionMatrixData={confusionMatrixData} />
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div className="evaluationSection" style={{ width: "48%" }}>
+          <Typography variant="h4" component="h4">
+            Document 1
+          </Typography>
+          <div className="evaluationGraphs">
+            <div className="confusion-matrix-container">
+              <ConfusionMatrix confusionMatrixData={confusionMatrixData[0]} />
+            </div>
+            <AgreementRate data={agreementData[0]} />
+          </div>
+          <JudgementTable eval_results={evalLists[0]} />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "10px",
+              margin: "5px",
+            }}
+          >
+            <div>
+              <Typography variant="h3" component="h3">
+                Precision Score
+              </Typography>
+              <Typography variant="h2">{precision[0].toFixed(2)}</Typography>
+            </div>
+            <div>
+              <Typography variant="h3" component="h3">
+                Accuracy
+              </Typography>
+              <Typography variant="h2" color="text.secondary">
+                {`${Math.round(accuracy[0])}%`}
+              </Typography>
+            </div>
+            <div>
+              <Typography variant="h3" component="h3">
+                Recall
+              </Typography>
+              <Typography variant="h2" color="text.secondary">
+                {recall[0].toFixed(2)}
+              </Typography>
+            </div>
+          </div>
         </div>
-        <AgreementRate data={agreementData} />
-      </div>
-      <JudgementTable eval_results={evalList} />
-
-      <div style={{ display: "flex", justifyContent: "space-between",padding:"10px",margin:"5px" }}>
-        <div>
-          <Typography variant="h3" component="h3">
-            Precision Score
+        <div className="evaluationSection" style={{ width: "48%" }}>
+          <Typography variant="h4" component="h4">
+            Document 2
           </Typography>
-          <Typography variant="h2">{precision.toFixed(2)}</Typography>
-        </div>
-        <div>
-          <Typography variant="h3" component="h3">
-            Accuracy
-          </Typography>
-          <Typography variant="h2" color="text.secondary">
-            {`${Math.round(accuracy)}%`}
-          </Typography>
-        </div>
-        <div>
-          <Typography variant="h3" component="h3">
-            Recall
-          </Typography>
-          <Typography variant="h2" color="text.secondary">
-            {recall.toFixed(2)}
-          </Typography>
+          <div className="evaluationGraphs">
+            <div className="confusion-matrix-container">
+              <ConfusionMatrix confusionMatrixData={confusionMatrixData[1]} />
+            </div>
+            <AgreementRate data={agreementData[1]} />
+          </div>
+          <JudgementTable eval_results={evalLists[1]} />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              padding: "10px",
+              margin: "5px",
+            }}
+          >
+            <div>
+              <Typography variant="h3" component="h3">
+                Precision Score
+              </Typography>
+              <Typography variant="h2">{precision[1].toFixed(2)}</Typography>
+            </div>
+            <div>
+              <Typography variant="h3" component="h3">
+                Accuracy
+              </Typography>
+              <Typography variant="h2" color="text.secondary">
+                {`${Math.round(accuracy[1])}%`}
+              </Typography>
+            </div>
+            <div>
+              <Typography variant="h3" component="h3">
+                Recall
+              </Typography>
+              <Typography variant="h2" color="text.secondary">
+                {recall[1].toFixed(2)}
+              </Typography>
+            </div>
+          </div>
         </div>
       </div>
     </div>
