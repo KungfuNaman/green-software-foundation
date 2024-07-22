@@ -30,3 +30,6 @@ openpyxl
 pymongo
 trl
 requests
+
+fastapi
+uvicorn

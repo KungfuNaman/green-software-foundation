@@ -7,13 +7,14 @@ from tenacity import retry, wait_fixed, stop_after_attempt
 class Generator:
     HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
 
-    def __init__(self, run_local=True, model_name=os.getenv("LLM_MODEL")):
+    def __init__(self, run_local=True, model_name=os.getenv("LLM_MODEL"),instruction=None):
         self.run_local = run_local
         self.model = None
+        self.instruction= instruction if instruction else self.get_instruction()
 
         if self.run_local:
             self.model_name = model_name
-            self.template, self.instruction = self.get_template(), self.get_instruction()
+            self.template = self.get_template()
             self.init_local_generator(self.model_name, self.template, self.instruction)
         else:
             self.model_hf_id, self.api_url, self.headers, self.wait = None, None, None, None
