@@ -58,10 +58,10 @@ def ask_ecodoc(request: EcodocRequest):
     setup_db_time, db, doc_chunks = prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper)
 
     # Initialize Retriever 
-    retriever = init_retriever(retriever_type,retriever_type_lst,db,doc_chunks,embedder)
+    retriever, retriever_lst = init_retriever(retriever_type,retriever_type_lst,db,doc_chunks,embedder)
 
     # Initialize Generator
-    generator = Generator(run_local=True, model_name=generator_name,instruction=instruction)  
+    generator = Generator(run_local=True, model_name=generator_name, instruction=instruction)
 
     prompt,response_info = query_rag(retriever, prompt_template, q_question)
     response_text = generator.generate_answer(prompt)
