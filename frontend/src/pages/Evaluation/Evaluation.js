@@ -24,9 +24,7 @@ export default function Evaluation() {
   const [recall, setRecall] = useState([0, 0]);
   const [accuracy, setAccuracy] = useState([0, 0]);
 
-  useEffect(() => {
-    console.log("eval lists", evalLists);
-  }, [evalLists]);
+
 
   async function onFileClick(event, fileName, index) {
     try {
@@ -36,6 +34,21 @@ export default function Evaluation() {
 
       newActiveButtons[index] = fileName;
       newEvalLists[index] = list;
+
+      newEvalLists = newEvalLists.map((evalList) => {
+        return evalList.map((item) => ({
+          ...item, // this creates a shallow copy of each item
+          humanJudgement:
+            item["humanJudgement"] === "Not Applicable"
+              ? "No"
+              : item["humanJudgement"],
+          llmJudgement:
+            item["llmJudgement"] === "Not Applicable" ? "No" : item["llmJudgement"],
+        }));
+      });
+
+
+
 
       setActiveButtons(newActiveButtons);
       setEvalLists(newEvalLists);
@@ -60,18 +73,10 @@ export default function Evaluation() {
       let total = evalList.length;
       let agreement = 0;
   
-      let modifiedEvalList = evalList.map((item) => ({
-        ...item, // this creates a shallow copy of each item
-        humanJudgement:
-          item["humanJudgement"] === "Not Applicable"
-            ? "No"
-            : item["humanJudgement"],
-        llmJudgement:
-          item["llmJudgement"] === "Not Applicable" ? "No" : item["llmJudgement"],
-      }));
+      
   
-      console.log("modifiedEvalList", modifiedEvalList);
-      modifiedEvalList?.forEach((item) => {
+      console.log("modifiedEvalList", evalList);
+      evalList?.forEach((item) => {
         if (item.humanJudgement === item.llmJudgement) {
           if (item.humanJudgement === "Yes") {
             tp++; // True Positive
