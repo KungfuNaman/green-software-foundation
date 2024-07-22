@@ -5,8 +5,8 @@
         "practice": "Minimize the total number of deployed environments",
         "query": "Is there any mention of minimizing the total number of deployed environments?",
         "Response": {
-            "Judgement": "No",
-            "Explanation": "The document does not mention strategies related to minimizing the total number of deployed environments for resource savings."
+            "Judgement": "Not Applicable",
+            "Explanation": "The document does not mention specific details about deployed environments in Dropbox. It focuses on the synchronization service, data chunking, and cloud storage aspects of Dropbox's operation"
         }
     },
     {
@@ -155,7 +155,7 @@
         "practice": "Time-shift Kubernetes cron jobs",
         "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "No discussion on scheduling Kubernetes cron jobs during off-peak hours is found."
         }
     },
@@ -215,8 +215,8 @@
         "practice": "Optimize impact on customer devices and equipment",
         "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
         "Response": {
-            "Judgement": "No",
-            "Explanation": "The document does not cover the impact of software design on end-user devices and equipment."
+            "Judgement": "Yes",
+            "Explanation": "The context describes a synchronization service that minimizes the impact on end-user devices and equipment by breaking files into chunks and storing only modified parts in the cloud. This approach reduces bandwidth usage and processing needs on the end-user devices during file syncing processes."
         }
     },
     {
