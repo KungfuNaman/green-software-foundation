@@ -24,6 +24,7 @@ tenacity
 tensorboard
 tensorflow
 rank_bm25
+openai
 
 pandas
 openpyxl

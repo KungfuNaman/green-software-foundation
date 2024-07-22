@@ -23,12 +23,12 @@ def evaluate_docs_in_bulk(doc_name):
 
     # ============================================    CONFIG    ============================================
 
-    prompt_id = "P3"  # Choose From: P1, P2, P3, GROUND_TRUTH_PROMPT
-    prompt_template = prompts_file[prompt_id]
+    prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
+    prompt_template_text = prompts_file[prompt_id]
     embedder_name, generator_name = "llama2", "phi3"
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
-    retriever_type_lst = ["chroma", "multiquery"]  # For comparing the retrievers
+    retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True), FileOutputHelper()
     document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
@@ -65,23 +65,24 @@ def evaluate_docs_in_bulk(doc_name):
     # Iterative Querying
     retrieved_rec = {}
     for q_idx in range(truth_length):
-        if q_idx > 2:
+        if q_idx > 1:
             break
         q_question = ground_truth[q_idx].get("query", "")
         # ----------     Regular Invoke & Record to CSV     ----------
-        response_info = query_rag(retriever, generator, prompt_template, q_question)
-        response_info["query"] = q_question
-        response_info["setup_db_time"] = setup_db_time
-        response_info["logger_file_path"] = logger_file_path
-        fo_helper.append_to_csv(response_info)
+        # response_info = query_rag(retriever, generator, prompt_template_text, q_question)
+        # response_info["query"] = q_question
+        # response_info["setup_db_time"] = setup_db_time
+        # response_info["logger_file_path"] = logger_file_path
+        # fo_helper.append_to_csv(response_info)
         # TODO: ↓ Should Not Use Missing Log In Parser
         # add_parsed_results(logger_file_path, combined_path, prompt_id)
         # ------------------------------------------------------------
 
         # ----------     For Comparing Retriever Only     --------------------
-    #     retrieved_rec[q_idx] = compare_retrieved_items(retriever_lst, query_text=q_question)
-    #     print("Finished retrieval for ", doc_name, str(q_idx))
-    # fo_helper.save_retrieved_to_logger(doc_name, retriever_type_lst, retrieved_rec)
+        retrieved_rec[q_idx] = compare_retrieved_items(retriever_lst, prompt_template_text, q_question)
+        retrieved_rec[q_idx]["truth"] = ground_truth[q_idx]["Response"]["Judgement"]
+        print("Finished retrieval for ", doc_name, str(q_idx))
+    fo_helper.save_retrieved_to_logger(doc_name, retriever_type_lst, retrieved_rec)
     # ------------------------------------------------------------------------
 
 
@@ -124,7 +125,7 @@ def get_paths(doc_name, pid, gen_model, ground_true=True):
 def main():
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
     documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
-    documentsFromText = ["Netflix"]
+    documentsFromText = ["Uber"]
 
     for doc_name in documentsFromText:
         evaluate_docs_in_bulk(doc_name)

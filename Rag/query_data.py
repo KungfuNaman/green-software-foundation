@@ -9,7 +9,7 @@ from components.Generator import Generator
 from populate_database import setup_database
 
 
-def query_rag(retriever, generator, prompt_template, query_text: str):
+def query_rag(retriever, generator, prompt_template_text, query_text: str):
 
     # Context
     search_start_time = time.time()
@@ -20,7 +20,7 @@ def query_rag(retriever, generator, prompt_template, query_text: str):
     print("context is taken out : ", search_time, "s")
 
     # Prompt
-    prompt_template = ChatPromptTemplate.from_template(prompt_template)
+    prompt_template = ChatPromptTemplate.from_template(prompt_template_text)
     prompt = prompt_template.format(context=context_text, question=query_text)
     # print('*'*25, '  prompt  ', '*'*25, flush=True)
     # print(prompt, flush=True)
@@ -52,13 +52,26 @@ def query_rag(retriever, generator, prompt_template, query_text: str):
     return response_info
 
 
-def compare_retrieved_items(retriever_lst, query_text: str):
-    retrieved_items_dict = {"question": query_text, "retrieved_chunks": {}}
+def compare_retrieved_items(retriever_lst, prompt_template_text, query_text: str):
+    retrieved_items_dict = {"question": query_text, "retrieved_chunks": {}, "prediction": {}}
     for rtype, retriever in retriever_lst:
         retrieved_items = get_retrieved_chunks(retriever, query_text)
+
+        # retrieved content
         retrieved_content = [i.page_content for i in retrieved_items]
         print("{} retrieved {} chunks".format(rtype, len(retrieved_content)))
         retrieved_items_dict["retrieved_chunks"][rtype] = retrieved_content
+
+        # prompt
+        context_text = "\n\n---\n\n".join([doc for doc in retrieved_content])
+        prompt_template = ChatPromptTemplate.from_template(prompt_template_text)
+        prompt = prompt_template.format(context=context_text, question=query_text)
+
+        # get response
+        generator = Generator(run_local=False, sota_model=True)
+        response_text = generator.gpt_chat(prompt=prompt)
+
+        retrieved_items_dict["prediction"][rtype] = response_text
     return retrieved_items_dict
 
 

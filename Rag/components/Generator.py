@@ -1,20 +1,26 @@
 import os
 from langchain_community.llms.ollama import Ollama
 import requests
+from openai import OpenAI
 from tenacity import retry, wait_fixed, stop_after_attempt
 
 
 class Generator:
     HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-    def __init__(self, run_local=True, model_name=os.getenv("LLM_MODEL")):
+    def __init__(self, run_local=True, sota_model=False, model_name=os.getenv("LLM_MODEL")):
         self.run_local = run_local
+        self.sota_model = sota_model
         self.model = None
 
         if self.run_local:
             self.model_name = model_name
             self.template, self.instruction = self.get_template(), self.get_instruction()
             self.init_local_generator(self.model_name, self.template, self.instruction)
+        elif self.sota_model:
+            self.model_name = "gpt-4o-mini"
+            self.model = self.init_sota_generator(Generator.OPENAI_API_KEY)
         else:
             self.model_hf_id, self.api_url, self.headers, self.wait = None, None, None, None
             self.init_remote_generator()
@@ -70,6 +76,22 @@ class Generator:
         {{ .Response }}<|end|>
         """
         return template
+
+    @staticmethod
+    def init_sota_generator(api_key):
+        client = OpenAI(api_key=api_key)
+        return client
+
+    def gpt_chat(self, prompt):
+        instruction_text = Generator.get_instruction()
+        history = [{"role": "system", "content": instruction_text}, {"role": "user", "content": prompt}]
+        if self.sota_model and not self.run_local:
+            completion = self.model.chat.completions.create(
+                model=self.model_name,
+                messages=history,
+            )
+            assistant_answer = completion.choices[0].message.content
+            return assistant_answer
 
     def init_remote_generator(self):
         self.model_hf_id = "meta-llama/Llama-2-7b-chat-hf"
