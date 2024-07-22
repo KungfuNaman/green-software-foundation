@@ -4,7 +4,7 @@ import json
 from dotenv import load_dotenv
 
 from populate_database import setup_database, setup_database_after_clearance
-from query_data import query_rag, compare_retrieved_items
+from query_data import query_rag, compare_retrieved_items, generate_result
 
 # from parser import add_parsed_results
 from components.FileInputHelper import FileInputHelper
@@ -35,25 +35,15 @@ def evaluate_docs_in_bulk(doc_name):
     document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
 
     # ============================================    PIPELINE    ================================================
-
+    
     # Initialize Embedder
-    embedder_obj = Embedder(run_local=True, model_name=embedder_name)
-    embedder = embedder_obj.get_embedder()
+    embedder = init_embedder(embedder_name=embedder_name)
 
-    # Load Database & Document Chunks
-    setup_database_start_time = time.time()
-    new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper)
-    # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, collection_name, fi_helper)
-    setup_database_end_time = time.time()
-    setup_db_time = setup_database_end_time - setup_database_start_time if new_doc_embed else "0"
+    # Prepare Database and Chunking
+    setup_db_time, db, doc_chunks = prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper)
 
-    # Initialize Retriever
-    retriever = get_retriever(retriever_type, db, doc_chunks, embedder)
-
-    # Initialize Retriever List
-    retriever_lst = []
-    for rtype in retriever_type_lst:
-        retriever_lst.append( (rtype, get_retriever(rtype, db, doc_chunks, embedder)) )
+    # Initialize Retriever 
+    retriever, retriever_lst = init_retriever(retriever_type, retriever_type_lst, db, doc_chunks, embedder)
 
     # Initialize Generator
     generator = Generator(run_local=True, model_name=generator_name)
@@ -64,31 +54,60 @@ def evaluate_docs_in_bulk(doc_name):
     truth_length = len(ground_truth)
 
     # Iterative Querying
-
     retrieved_rec = {}
     for q_idx in range(truth_length):
-        if q_idx > 1:
+        if q_idx > 0:
             break
         q_question = ground_truth[q_idx].get("query", "")
         # ----------     Regular Invoke & Record to CSV     ----------
-        # response_info = query_rag(retriever, generator, prompt_template_text, q_question)
-        # response_info["query"] = q_question
-        # response_info["setup_db_time"] = setup_db_time
-        # response_info["logger_file_path"] = logger_file_path
-        # fo_helper.append_to_csv(response_info)
+        prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
+        response_text, response_info = generate_result(generator, prompt, response_info)
+        response_info["query"] = q_question
+        response_info["setup_db_time"] = setup_db_time
+        response_info["logger_file_path"] = logger_file_path
+        fo_helper.append_to_csv(response_info)
         # TODO: ↓ Should Not Use Missing Log In Parser
         # add_parsed_results(logger_file_path, combined_path, prompt_id)
         # ------------------------------------------------------------
 
-        # ----------     For Comparing Retriever Only     --------------------
-        retrieved_rec[q_idx] = compare_retrieved_items(retriever_lst, prompt_template_text, q_question)
-        retrieved_rec[q_idx]["truth"] = ground_truth[q_idx]["Response"]["Judgement"]
-        print("Finished retrieval for ", doc_name, str(q_idx))
-    fo_helper.save_retrieved_to_logger(doc_name, retriever_type_lst, retrieved_rec)
-    # ------------------------------------------------------------------------
+        # ----------     For Comparing Retrievers Only     ----------
+    #     retrieved_rec[q_idx] = compare_retrieved_items(retriever_lst, prompt_template_text, q_question)
+    #     retrieved_rec[q_idx]["truth"] = ground_truth[q_idx]["Response"]["Judgement"]
+    #     print("Finished retrieval for ", doc_name, str(q_idx))
+    # fo_helper.save_retrieved_to_logger(doc_name, retriever_type_lst, retrieved_rec)
+    # ---------------------------------------------------------------
+
+
+def init_embedder(embedder_name):
+    """ Initialize the embedder"""
+    embedder_obj = Embedder(run_local=True, model_name=embedder_name)
+    embedder = embedder_obj.get_embedder()
+    return embedder
+
+
+def prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper):
+    """ Load database & document chunks """
+    setup_database_start_time = time.time()
+    new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper)
+    # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, collection_name, fi_helper)
+    setup_database_end_time = time.time()
+    setup_db_time = setup_database_end_time - setup_database_start_time if new_doc_embed else "0"
+    
+    return setup_db_time, db, doc_chunks
+
+
+def init_retriever(retriever_type, retriever_type_lst, db, doc_chunks, embedder):
+    """ Initialize retriever & retriever list """
+    retriever = get_retriever(retriever_type, db, doc_chunks, embedder)
+    retriever_lst = []
+    for rtype in retriever_type_lst:
+        retriever_lst.append( (rtype, get_retriever(rtype, db, doc_chunks, embedder)) )
+
+    return retriever, retriever_lst
 
 
 def get_retriever(retriever_type, db, doc_chunks, embedder):
+    """ Get retrievers """
     retriever = None
     if retriever_type == "chroma":
         retriever_obj = Retriever(retriever_type=retriever_type, vectordb=db)
@@ -116,8 +135,8 @@ def get_retriever(retriever_type, db, doc_chunks, embedder):
     return retriever
 
 
-
 def get_paths(doc_name, pid, gen_model, ground_true=True):
+    """ Get all paths needed in the pipeline """
     doc_path = "documentsFromText/" + doc_name + "/content.txt" if ground_true else "./documents/" + doc_name + ".pdf"
     log_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + ".csv"
     combined_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + "_combined.csv"
@@ -128,8 +147,7 @@ def get_paths(doc_name, pid, gen_model, ground_true=True):
 def main():
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
     documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
-    documentsFromText = ["Uber"]
-
+    documentsFromText = ["Netflix", "Uber"]
 
     for doc_name in documentsFromText:
         evaluate_docs_in_bulk(doc_name)

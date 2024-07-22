@@ -68,6 +68,7 @@ class FileOutputHelper:
             # fill metadata
             ws.cell(row=current_row, column=1, value=idx)
             ws.cell(row=current_row, column=2, value=retrieved_dict["question"])
+
             ws.cell(row=current_row, column=3, value=retrieved_dict["truth"])
             for i, rt in enumerate(retriever_type_lst):
                 ws.row_dimensions[current_row + i].height = row_height

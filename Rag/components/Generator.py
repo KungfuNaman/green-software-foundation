@@ -9,18 +9,19 @@ class Generator:
     HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-    def __init__(self, run_local=True, sota_model=False, model_name=os.getenv("LLM_MODEL")):
+    def __init__(self, run_local=True, sota_model=False, model_name=os.getenv("LLM_MODEL"), instruction=None):
         self.run_local = run_local
         self.sota_model = sota_model
         self.model = None
+        self.instruction = instruction if instruction else self.get_instruction()
 
         if self.run_local:
             self.model_name = model_name
-            self.template, self.instruction = self.get_template(), self.get_instruction()
+            self.template = self.get_template()
             self.init_local_generator(self.model_name, self.template, self.instruction)
         elif self.sota_model:
             self.model_name = "gpt-4o-mini"
-            self.model = self.init_sota_generator(Generator.OPENAI_API_KEY)
+            self.client = self.init_sota_generator(Generator.OPENAI_API_KEY)
         else:
             self.model_hf_id, self.api_url, self.headers, self.wait = None, None, None, None
             self.init_remote_generator()
@@ -86,7 +87,7 @@ class Generator:
         instruction_text = Generator.get_instruction()
         history = [{"role": "system", "content": instruction_text}, {"role": "user", "content": prompt}]
         if self.sota_model and not self.run_local:
-            completion = self.model.chat.completions.create(
+            completion = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=history,
             )

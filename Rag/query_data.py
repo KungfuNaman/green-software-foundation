@@ -9,7 +9,7 @@ from components.Generator import Generator
 from populate_database import setup_database
 
 
-def query_rag(retriever, generator, prompt_template_text, query_text: str):
+def query_rag(retriever, prompt_template_text, query_text: str):
 
     # Context
     search_start_time = time.time()
@@ -27,6 +27,18 @@ def query_rag(retriever, generator, prompt_template_text, query_text: str):
     # print('*'*25, '  prompt  ', '*'*25, flush=True)
     print("prompt is created")
 
+    # Format the response
+    response_info = {
+        "context_text": context_text,
+        "search_time": search_time,
+        # No longer have Similarity Score as retriever interaction changed
+        "retrieved_items": retrieved_items
+    }
+
+    return prompt, response_info
+
+
+def generate_result(generator, prompt, response_info):
     # Get response from Extractor LLM
     response_start_time = time.time()
     response_text = generator.generate_answer(prompt)
@@ -37,19 +49,10 @@ def query_rag(retriever, generator, prompt_template_text, query_text: str):
     print("*" * 25, "  response  ", "*" * 25)
     print("response is generated: ", response_time, "s")
 
-    # Format the response
-    sources = [doc.metadata.get("id", None) for doc in retrieved_items]
-    formatted_response = f"Response: {response_text}\nSources: {sources}"
+    response_info["response_text"] = response_text
+    response_info["response_time"] = response_time
 
-    response_info = {
-        "context_text": context_text,
-        "search_time": search_time,
-        "response_text": response_text,
-        "response_time": response_time,
-        # No longer have Similarity Score as retriever interaction changed
-        "retrieved_items": retrieved_items
-    }
-    return response_info
+    return response_text, response_info
 
 
 def compare_retrieved_items(retriever_lst, prompt_template_text, query_text: str):
@@ -93,25 +96,25 @@ if __name__ == "__main__":
     embedder_obj = Embedder(run_local=True, model_name="llama2")
     embedder = embedder_obj.get_embedder()
 
-    doc_path = "documentsFromText/" + "Netflix" + "/content.txt"
-    coll = "test_collection"
-    _, vecdb, doc_chunks = setup_database(embedder=embedder, document_path=doc_path, collection_name=coll, create_doc=True)
+    # doc_path = "documentsFromText/" + "Netflix" + "/content.txt"
+    # coll = "test_collection"
+    # _, vecdb, doc_chunks = setup_database(embedder=embedder, document_path=doc_path, collection_name=coll)
 
-    retriever_obj = Retriever(retriever_type="chroma", vectordb=vecdb)
-    retriever1 = retriever_obj.get_retriever()
-    generator1 = Generator(run_local=True, model_name="phi3")
+    # retriever_obj = Retriever(retriever_type="chroma", vectordb=vecdb)
+    # retriever1 = retriever_obj.get_retriever()
+    # generator1 = Generator(run_local=True, model_name="phi3")
 
-    with open("Rag/prompts/prompt.json", 'r') as file:
-        prompts_file = json.load(file)
-    pt = prompts_file["P2"]
-    qt = "Is there any mention of implementing a stateless design?"
+    # with open("Rag/prompts/prompt.json", 'r') as file:
+    #     prompts_file = json.load(file)
+    # pt = prompts_file["P2"]
+    # qt = "Is there any mention of implementing a stateless design?"
 
-    response_info1 = query_rag(retriever1, generator1, pt, qt)
-    response_info1["query"] = qt
-    response_info1["setup_db_time"] = "0"
-    response_info1["logger_file_path"] = None
+    # prompt,response_info1 = query_rag(retriever1, pt, qt)
+    # response_info1["query"] = qt
+    # response_info1["setup_db_time"] = "0"
+    # response_info1["logger_file_path"] = None
 
-    fo_helper = FileOutputHelper()
-    fo_helper.append_to_csv(response_info1)
+    # fo_helper = FileOutputHelper()
+    # fo_helper.append_to_csv(response_info1)
 
 
