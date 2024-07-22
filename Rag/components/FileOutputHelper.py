@@ -42,56 +42,51 @@ class FileOutputHelper:
 
 
     @staticmethod
-    def save_retrieved_to_logger(doc_name, ds_type, record, extension_name=".xlsx"):
+    def save_retrieved_to_logger(doc_name, retriever_type_lst, record, extension_name=".xlsx"):
         # create folder
-        folder_path = "Rag/logger/retrieved/"
-        if record[0]["new_prediction"]:
-            file_name = doc_name + "_" + ds_type + "_" + record[0]["retriever_type"] + "_NC" + extension_name
-        else:
-            file_name = doc_name + "_" + ds_type + "_" + record[0]["retriever_type"] + extension_name
+        folder_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) + "/logger/retrieved/"
+        retrievers_num = len(retriever_type_lst)
+        file_name = doc_name + "_" + str(retrievers_num) + "retriever" + extension_name
         os.makedirs(folder_path, exist_ok=True)
 
-        # create file object
+        # create file object & config format
         wb = openpyxl.Workbook()
         ws = wb.active
-        headers = ["query_id", "query", "prediction", "ground_truth", "chunk"]
+        headers = ["Query_ID", "Query", "Chunks"]
         ws.append(headers)
         current_row = 2
         column_width = 25
         row_height = 200
-        for col in range(1, len(headers) + 1):
+
+        for col in range(1, len(headers) + 10):
             ws.column_dimensions[get_column_letter(col)].width = column_width
 
         # input record data
         for idx, retrieved_dict in record.items():
+            max_chunks = max(len(sub_list) for sub_list in retrieved_dict["retrieved_chunks"].values())
+
+            # fill metadata
             ws.cell(row=current_row, column=1, value=idx)
             ws.cell(row=current_row, column=2, value=retrieved_dict["question"])
-            ws.cell(row=current_row, column=3, value=retrieved_dict["prediction"])
-            ws.cell(row=current_row, column=4, value=retrieved_dict["truth"])
-            chroma_chunks = retrieved_dict["chroma_chunks"]
-            llm_chunks = retrieved_dict["llm_chunks"]
-            chroma_chunks, llm_chunks = FileOutputHelper.move_forwards_same_items(chroma_chunks, llm_chunks)
+            for i, rt in enumerate(retriever_type_lst):
+                ws.cell(row=current_row + i, column=3, value=rt)
+                ws.row_dimensions[current_row + i].height = row_height
+                # fill chunks content
+                cur_retriever_chunks = retrieved_dict["retrieved_chunks"][rt]
+                for j in range(max_chunks):
+                    if j < len(cur_retriever_chunks):
+                        ws.cell(row=current_row + i, column=4 + j, value=cur_retriever_chunks[j])
 
-            # adapts to different lengths
-            max_chunks = max(len(chroma_chunks), len(llm_chunks))
-            for i in range(max_chunks):
-                if i < len(chroma_chunks):
-                    ws.cell(row=current_row, column=5 + i, value=chroma_chunks[i])
-                if i < len(llm_chunks):
-                    ws.cell(row=current_row + 1, column=5 + i, value=llm_chunks[i])
-
-            # format excel
-            ws.merge_cells(start_row=current_row, start_column=1, end_row=current_row + 1, end_column=1)
-            ws.merge_cells(start_row=current_row, start_column=2, end_row=current_row + 1, end_column=2)
-            ws.merge_cells(start_row=current_row, start_column=3, end_row=current_row + 1, end_column=3)
-            ws.merge_cells(start_row=current_row, start_column=4, end_row=current_row + 1, end_column=4)
+            # format this query in Excel
+            if retrievers_num > 1:
+                ws.merge_cells(start_row=current_row, start_column=1, end_row=current_row + retrievers_num - 1, end_column=1)
+                ws.merge_cells(start_row=current_row, start_column=2, end_row=current_row + retrievers_num - 1, end_column=2)
             ws.row_dimensions[current_row].height = row_height
-            ws.row_dimensions[current_row + 1].height = row_height
 
-            current_row += 2
+            current_row += retrievers_num
 
         # save file
-        file_abs_path = os.path.dirname(os.path.abspath(__file__)) + "/retrieved/" + file_name
+        file_abs_path = folder_path + file_name
         wb.save(file_abs_path)
         print("File '{}' saved".format(file_name))
 

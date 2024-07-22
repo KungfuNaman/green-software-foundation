@@ -36,6 +36,11 @@ To Install all the dependencies
 pip install -r requirements.txt 
 ```
 
+### To run backend 
+```bash
+python Rag/api.py
+```
+Request will be served on port 8000
 
 
 

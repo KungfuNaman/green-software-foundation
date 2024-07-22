@@ -5,7 +5,7 @@ import json
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
-from main import get_paths, initilise_embedder_retriver
+from main import get_paths, initialise_embedder,   initialise_retriver
 from query_data import query_rag
 from pydantic.dataclasses import dataclass
 
@@ -37,16 +37,23 @@ def ask_ecodoc(request: EcodocRequest):
 
     prompt_id = "P3"  # Choose From: P1, P2, P3, GROUND_TRUTH_PROMPT
     prompt_template = prompts_file[prompt_id]
-    embedder_name, generator_name = "llama2", "llama2"
+    embedder_name, generator_name = "llama2", "phi3"
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "chroma"   # Choose From: chroma, multiquery, ensemble
+    retriever_type_lst = ["chroma", "multiquery"]  # For comparing the retrievers
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True), FileOutputHelper()
     document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
-    retriever,setup_db_time=initilise_embedder_retriver(retriever_type,embedder_name,document_path,db_collection_name,fi_helper)
-    
+    # Initialize Embedder 
+    setup_db_time,db, doc_chunks,embedder =initialise_embedder(embedder_name,document_path,db_collection_name,fi_helper)
+
+    # Initialize Retriever 
+    retriever=initialise_retriver(retriever_type,retriever_type_lst,db,doc_chunks,embedder)
+
+    # Initialize Generator
+    generator = Generator(run_local=True, model_name=generator_name,instruction=instruction)  
+
     prompt,response_info = query_rag(retriever, prompt_template, q_question)
-    generator = Generator(run_local=True,model_name="llama2",instruction=instruction)
     response_text = generator.generate_answer(prompt)
 
     return {"result": response_text}
