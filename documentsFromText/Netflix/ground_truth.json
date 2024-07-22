@@ -5,7 +5,7 @@
         "practice": "Minimize the total number of deployed environments",
         "query": "Is there any mention of minimizing the total number of deployed environments?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of minimizing the total number of deployed environments to save resources in the provided content."
         }
     },
@@ -55,7 +55,7 @@
         "practice": "Scale down Kubernetes applications when not in use",
         "query": "Is there any mention of scaling down Kubernetes applications when not in use?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of scaling down Kubernetes applications when not in use."
         }
     },
@@ -85,7 +85,7 @@
         "practice": "Scale Kubernetes workloads based on relevant demand metrics",
         "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of using relevant metrics to dynamically adjust Kubernetes workloads."
         }
     },
@@ -95,8 +95,8 @@
         "practice": "Scale logical components independently",
         "query": "Is there any mention of allowing independent scaling of logical components?",
         "Response": {
-            "Judgement": "No",
-            "Explanation": "There is no mention of allowing independent scaling of logical components."
+            "Judgement": "Yes",
+            "Explanation": "The document describes the use of microservices architecture, which inherently supports the independent scaling of logical components. Services are designed to be independent of each other, allowing them to scale based on specific demands."
         }
     },
     {
@@ -120,13 +120,13 @@
         }
     },
     {
-        "type": "web",
+        "type": "cloud",
         "category": "Data Efficiency",
         "practice": "Set storage retention policies",
         "query": "Is there any mention of setting storage retention policies?",
         "Response": {
-            "Judgement": "Yes",
-            "Explanation": "The document discusses compressing old rows of viewing history data to reduce storage footprint."
+            "Judgement": "No",
+            "Explanation": "The document does not mention setting storage retention policies."
         }
     },
     {
@@ -155,7 +155,7 @@
         "practice": "Time-shift Kubernetes cron jobs",
         "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of scheduling Kubernetes cron jobs during off-peak hours."
         }
     },
@@ -211,12 +211,12 @@
     },
     {
         "type": "web",
-        "category": "User Impact",
-        "practice": "Optimize impact on customer devices and equipment",
+        "category": "Resource Optimization",
+        "practice": "Design software to minimize impact on end-user devices and equipment",
         "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
         "Response": {
-            "Judgement": "Yes",
-            "Explanation": "The document discusses creating multiple replicas of videos in different formats to optimize performance based on the user\u2019s device."
+            "Judgement": "No",
+            "Explanation": "The context provided does not indicate the use or implementation of practices aimed at reducing energy consumption, electrical load demand reduction, device lifespan enhancement, recyclability optimization, or end-of-life disposal planning for electronic devices in software development."
         }
     },
     {
@@ -305,8 +305,8 @@
         "practice": "Set storage retention policies",
         "query": "Is there any mention of setting storage retention policies?",
         "Response": {
-            "Judgement": "Yes",
-            "Explanation": "The document mentions compressing old rows of viewing history data to reduce storage footprint."
+            "Judgement": "No",
+            "Explanation": "The document does not mention setting storage retention policies."
         }
     },
     {
@@ -315,8 +315,8 @@
         "practice": "Cache static data",
         "query": "Is there any mention of caching static data?",
         "Response": {
-            "Judgement": "Yes",
-            "Explanation": "The document mentions using EV Cache to store frequently used data for faster response."
+            "Judgement": "No",
+            "Explanation": "The document does not specifically mention the use of technology for caching static data. It primarily discusses EV Cache, which is used for dynamic content to improve response times and reduce latency."
         }
     },
     {
@@ -383,7 +383,7 @@
         "type": "cloud",
         "category": "Performance Management",
         "practice": "Use a service mesh only if needed",
-        "query": "Is there any mention of using a service mesh only if needed?",
+        "query": "Is there any mention of using a service mesh only if needed ?",
         "Response": {
             "Judgement": "No",
             "Explanation": "There is no mention of using a service mesh only if needed."
@@ -425,7 +425,7 @@
         "practice": "Time-shift Kubernetes cron jobs",
         "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
         "Response": {
-            "Judgement": "No",
+            "Judgement": "Not Applicable",
             "Explanation": "There is no mention of scheduling Kubernetes cron jobs during off-peak hours."
         }
     },
