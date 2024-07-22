@@ -14,6 +14,7 @@ const ConfusionMatrix = ({
              confusionMatrixData
 
 }) => {
+
   const { truePositive, falsePositive, trueNegative, falseNegative } = confusionMatrixData;
 
   return (
