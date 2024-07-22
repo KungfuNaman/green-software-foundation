@@ -117,10 +117,14 @@ def parse_generated_response(generated_response,PROMPT_ID):
             start_index = generated_response.find("Response") + len("Response:")
         elif "Answer" in generated_response:
             start_index = generated_response.find("Answer") + len("Answer:")
+        else:
+            start_index = 0
         if "Explan" in generated_response or "Explan_ment:" in generated_response or "Explan_ation:" in generated_response:
             end_index = generated_response.find("Explan") + len("Explanation:")
         elif "explan" in generated_response:
             end_index = generated_response.find("explan") + len("explanation:")
+        else: 
+            end_index = len("Answer:Yes")
 
         # Extract and strip any leading/trailing whitespace
         judgement = generated_response[start_index:end_index].strip()
@@ -201,7 +205,7 @@ def addCategories():
 
     with open("Rag/prompts/queries.json", "w") as f:
             json.dump(result_arr, f)
-    print("hello")
+    #print("hello")
 
 #add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
 
@@ -212,4 +216,4 @@ def addCategories():
 
 
 
-add_parsed_results("./Rag/logger/phi-3-7.0-10epoch_P3_Netflix.csv","./Rag/logger/phi-3-7.0-10epoch_P3_Netflix_combined.csv","P3")
+#add_parsed_results("./Rag/logger/phi-3-7.0-10epoch_P3_Netflix.csv","./Rag/logger/phi-3-7.0-10epoch_P3_Netflix_combined.csv","P3")

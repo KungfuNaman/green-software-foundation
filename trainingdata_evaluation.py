@@ -11,7 +11,7 @@ def get_all_data_to_lst(combined_dict):
   count1 = 0
   for i,q_lst in combined_dict.items():
     for j in q_lst:
-      if count1 >= 100:
+      if count1 >= 1000:
         break
       res.append(j)
       count1 += 1
@@ -26,8 +26,8 @@ def test_ollama_model(dataset_path, model):
     dataset = get_all_data_to_lst(dataset)
 
     for data in dataset:
-        if count >= 100:
-            break
+        # if count >= 100:
+        #     break
         
         question = data['query']
         context = data['context']
@@ -41,14 +41,27 @@ def test_ollama_model(dataset_path, model):
         # Pass the question and context to the ollama model
         predicted_response = model.invoke(prompt)
 
+        if "yes" in expected_response.lower():
+            expected_response = "Yes"
+        elif "no" in expected_response.lower() or "not applicable" in expected_response.lower():
+            expected_response = "No"
+        if "yes" in predicted_response.lower():
+            predicted_response = "Yes"
+        elif "no" in predicted_response.lower() or "not applicable" in predicted_response.lower():
+            predicted_response = "No"
+        
+        if predicted_response == expected_response:
+           count += 1
         # Compare the predicted response with the expected response
-        print("*"*50)
-        print(expected_response)
-        print("="*50)
-        print(predicted_response)
-        print("*"*50)
-        print("\n\n\n")
-        count += 1
+        # print("*"*50)
+        # print(expected_response)
+        # print("="*50)
+        # print(predicted_response)
+        # print("*"*50)
+        # print("\n\n\n")
+        # count += 1
+        print(count)
+    print(f"Accuracy: {count/len(dataset)}")
 
 PROMPT = """Act as a professional assistant in the field of software development, 
 you need to give precise and short answers to respond to the question that I gave.\n

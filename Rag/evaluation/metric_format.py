@@ -1,8 +1,8 @@
 import json
 import pandas as pd
 import os
-GROUND_TRUTH_PATH="documentsFromText/Whatsapp/ground_truth.json"
-COMBINED_RESULT_PATH="Rag/logger/phi3_P2_Whatsapp_combined.csv"
+GROUND_TRUTH_PATH="documentsFromText/Netflix/ground_truth.json"
+COMBINED_RESULT_PATH="Rag/logger/phi-3-30epoch_P3_Netflix_combined.csv"
 EVAL_PATH="frontend/src/api_results/evaluation/results.json"
 def combine_groundTruth_result(ground_truth_path,combined_result_path):
 
@@ -84,4 +84,6 @@ def modify_to_old_queries():
 
     with open(GROUND_TRUTH_PATH, 'w') as file:
             json.dump(ground_truth_arr, file, indent=4)
+
+# modify_to_old_queries()
 generate_eval_for_frontend(GROUND_TRUTH_PATH,COMBINED_RESULT_PATH,EVAL_PATH)

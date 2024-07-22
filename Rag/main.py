@@ -20,13 +20,13 @@ def evaluate_docs_in_bulk(document_path,logger_file_path,combined_path,create_do
 
     # set up database
     setup_database_start_time = time.time()
-    is_document_embedded = setup_database(document_path, False, emb_local,create_doc,collection_name)
+    is_document_embedded = setup_database(document_path, True, emb_local,create_doc,collection_name)
     setup_database_end_time = time.time()
     setup_database_time = setup_database_end_time - setup_database_start_time if is_document_embedded else "0"
 
     # query to model
     # Read the JSON file
-    with open("./Rag/prompts/queries.json", "r", encoding="utf-8") as file:
+    with open("./Rag/prompts/old_queries.json", "r", encoding="utf-8") as file:
         data = json.load(file)
 
     # Step 2: Extract the 'query' field
@@ -55,7 +55,7 @@ def main():
     
     # for documents from text
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-    documentsFromText=["Netflix"]
+    documentsFromText=["Dropbox","Netflix"]
 
     for item in documentsFromText:
         doc_path="documentsFromText/"+item+"/content.txt"
