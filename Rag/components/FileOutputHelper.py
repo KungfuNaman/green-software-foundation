@@ -52,7 +52,7 @@ class FileOutputHelper:
         # create file object & config format
         wb = openpyxl.Workbook()
         ws = wb.active
-        headers = ["Query_ID", "Query", "Chunks"]
+        headers = ["Query_ID", "Query", "Ground Truth", "Retriever", "Prediction", "Chunks"]
         ws.append(headers)
         current_row = 2
         column_width = 25
@@ -68,19 +68,23 @@ class FileOutputHelper:
             # fill metadata
             ws.cell(row=current_row, column=1, value=idx)
             ws.cell(row=current_row, column=2, value=retrieved_dict["question"])
+
+            ws.cell(row=current_row, column=3, value=retrieved_dict["truth"])
             for i, rt in enumerate(retriever_type_lst):
-                ws.cell(row=current_row + i, column=3, value=rt)
                 ws.row_dimensions[current_row + i].height = row_height
+                ws.cell(row=current_row + i, column=4, value=rt)
+                ws.cell(row=current_row + i, column=5, value=retrieved_dict["prediction"][rt])
                 # fill chunks content
                 cur_retriever_chunks = retrieved_dict["retrieved_chunks"][rt]
                 for j in range(max_chunks):
                     if j < len(cur_retriever_chunks):
-                        ws.cell(row=current_row + i, column=4 + j, value=cur_retriever_chunks[j])
+                        ws.cell(row=current_row + i, column=6 + j, value=cur_retriever_chunks[j])
 
             # format this query in Excel
             if retrievers_num > 1:
                 ws.merge_cells(start_row=current_row, start_column=1, end_row=current_row + retrievers_num - 1, end_column=1)
                 ws.merge_cells(start_row=current_row, start_column=2, end_row=current_row + retrievers_num - 1, end_column=2)
+                ws.merge_cells(start_row=current_row, start_column=3, end_row=current_row + retrievers_num - 1, end_column=3)
             ws.row_dimensions[current_row].height = row_height
 
             current_row += retrievers_num

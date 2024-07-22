@@ -33,7 +33,6 @@ class Retriever:
         else:
             raise ValueError("Invalid arguments")
 
-
     def init_multiquery_retriever(self, vectordb, llm, mq_prompt):
         o_model = Ollama(model=llm)
         self.retriever = MultiQueryRetriever.from_llm(
@@ -102,10 +101,13 @@ class Retriever:
         prompt = PromptTemplate(
             input_variables=["question"],
             template="""You are an AI language model assistant. Your task is 
-            to generate 3 different versions of the given user 
-            question to retrieve relevant documents from a vector  database. 
-            By generating multiple perspectives on the user question, 
-            your goal is to help the user overcome some of the limitations 
+            to generate 5 different versions of the given green practice related user 
+            question to retrieve relevant documents from a vector database. 
+            By generating multiple perspectives on the user question. These question
+            should be extend and concretise the practice in user's question. For example, 
+            if the user's question is "Is there any mention of optimizing storage utilization?", then your 
+            generated questions should be mentioned related technologies such as "data compression" and "avoid redundancy" etc.
+            Your goal is to help the user overcome some of the limitations 
             of distance-based similarity search. Provide these alternative 
             questions separated by newlines. Original question: {question}""",
         )
