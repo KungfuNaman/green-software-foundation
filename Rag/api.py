@@ -5,24 +5,28 @@ import json
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
-from main import get_paths, initialise_embedder,   initialise_retriver
+from main import get_paths, init_embedder, prep_db_and_chunking, init_retriever
 from query_data import query_rag
 from pydantic.dataclasses import dataclass
 
 
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the API"}
+
 
 @dataclass
 class EcodocRequest:
     doc_name: str
     q_question: str
 
+
 with open("Rag/prompts/prompt.json", 'r') as file:
     prompts_file = json.load(file)
+
 
 @app.post("/ask_ecodoc")
 def ask_ecodoc(request: EcodocRequest):
@@ -44,11 +48,17 @@ def ask_ecodoc(request: EcodocRequest):
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True), FileOutputHelper()
     document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
-    # Initialize Embedder 
-    setup_db_time,db, doc_chunks,embedder =initialise_embedder(embedder_name,document_path,db_collection_name,fi_helper)
+
+    # ============================================    PIPELINE    ================================================
+
+    # Initialize Embedder
+    embedder = init_embedder(embedder_name=embedder_name)
+
+    # Prepare Database and Chunking
+    setup_db_time, db, doc_chunks = prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper)
 
     # Initialize Retriever 
-    retriever=initialise_retriver(retriever_type,retriever_type_lst,db,doc_chunks,embedder)
+    retriever = init_retriever(retriever_type,retriever_type_lst,db,doc_chunks,embedder)
 
     # Initialize Generator
     generator = Generator(run_local=True, model_name=generator_name,instruction=instruction)  
@@ -59,6 +69,7 @@ def ask_ecodoc(request: EcodocRequest):
     return {"result": response_text}
 
 # Add more endpoints as needed
+
 
 if __name__ == "__main__":
     import uvicorn
