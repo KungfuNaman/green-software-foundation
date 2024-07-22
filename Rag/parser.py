@@ -112,16 +112,21 @@ def parse_generated_response(generated_response,PROMPT_ID):
             start_index = generated_response.find("Judgement") + len("Judgement:")
         elif "Judgment" in generated_response:
             start_index = generated_response.find("Judgment") + len("Judgment:")
-        elif "judgment" in generated_response:
+        elif "judgment" in generated_response.lower():
             start_index = generated_response.find("judgment") + len("judgment:")
         elif "Response" in generated_response:
             start_index = generated_response.find("Response") + len("Response:")
         elif "Answer" in generated_response:
             start_index = generated_response.find("Answer") + len("Answer:")
+        else:
+            start_index = 0
         if "Explan" in generated_response or "Explan_ment:" in generated_response or "Explan_ation:" in generated_response:
             end_index = generated_response.find("Explan") + len("Explanation:")
-        elif "explan" in generated_response:
+        elif "explan" in generated_response.lower():
             end_index = generated_response.find("explan") + len("explanation:")
+        else:
+            end_index = len(" Judgement - Yes")
+        
 
         # Extract and strip any leading/trailing whitespace
         judgement = generated_response[start_index:end_index].strip()
@@ -213,4 +218,6 @@ def addCategories():
 
 
 
-add_parsed_results("./Rag/logger/phi-3-7.0-10epoch_P3_Netflix.csv","./Rag/logger/phi-3-7.0-10epoch_P3_Netflix_combined.csv","P3")
+add_parsed_results("./Rag/logger/phi-3-30epoch_P3_Uber.csv","./Rag/logger/phi-3-30epoch_P3_Uber_combined.csv","P3")
+add_parsed_results("./Rag/logger/phi-3-30epoch_P3_Whatsapp.csv","./Rag/logger/phi-3-30epoch_P3_Whatsapp_combined.csv","P3")
+add_parsed_results("./Rag/logger/phi-3-30epoch_P3_Instagram.csv","./Rag/logger/phi-3-30epoch_P3_Instagram_combined.csv","P3")
