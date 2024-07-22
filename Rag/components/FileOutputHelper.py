@@ -57,6 +57,7 @@ class FileOutputHelper:
         current_row = 2
         column_width = 25
         row_height = 200
+
         for col in range(1, len(headers) + 10):
             ws.column_dimensions[get_column_letter(col)].width = column_width
 
