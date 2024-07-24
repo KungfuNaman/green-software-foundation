@@ -85,10 +85,10 @@ def modify_to_old_queries(ground_truth_path):
             json.dump(ground_truth_arr, file, indent=4)
 
 
-documents=["Netflix","Whatsapp","Dropbox","Instagram","Uber"]
-for doc in documents:
-    ground_truth_path="documentsFromText/"+doc+"/ground_truth.json"
-    combined_result_path="Rag/logger/phi3_10E_P3_"+doc+"_combined.csv"
-    eval_path="frontend/src/api_results/evaluation/results.json"
-    modify_to_old_queries(ground_truth_path)
-    generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
+# documents=["Netflix","Whatsapp","Dropbox","Instagram","Uber"]
+# for doc in documents:
+#     ground_truth_path="documentsFromText/"+doc+"/ground_truth.json"
+#     combined_result_path="Rag/logger/phi3_P2_"+doc+"_combined.csv"
+#     eval_path="frontend/src/api_results/evaluation/results.json"
+#     # modify_to_old_queries(ground_truth_path)
+#     generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)

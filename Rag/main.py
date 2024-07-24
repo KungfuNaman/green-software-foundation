@@ -56,8 +56,8 @@ def evaluate_docs_in_bulk(doc_name):
     # Iterative Querying
     retrieved_rec = {}
     for q_idx in range(truth_length):
-        if q_idx > 0:
-            break
+        # if q_idx > 0:
+        #     break
         q_question = ground_truth[q_idx].get("query", "")
         # ----------     Regular Invoke & Record to CSV     ----------
         prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
@@ -147,7 +147,7 @@ def get_paths(doc_name, pid, gen_model, ground_true=True):
 def main():
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
     documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
-    documentsFromText = ["Netflix", "Uber"]
+    # documentsFromText = ["Netflix", "Uber"]
 
     for doc_name in documentsFromText:
         evaluate_docs_in_bulk(doc_name)
