@@ -28,4 +28,4 @@ def extractWithImages(pdfPath):
 
 
 # extractTextUsingLangChain("./documents/2.pdf")
-extractWithImages("./documents/3.pdf")
+extractWithImages("./documents/Netflix_Document.pdf")
