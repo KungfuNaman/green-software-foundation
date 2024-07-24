@@ -12,7 +12,22 @@ of all sizes. Behind this seemingly effortless experience lies a nicely crafted 
 
 design. In this article, we will study Netflix’s system design.
 
-![Netflix_Document.pdf-0-0.png](Netflix_Document.pdf-0-0.png)
+Image 1:  The image depicts a diagram of a Netflix system design. It illustrates the architecture of a Netflix-like streaming service, with various components interconnected. At the center, there's a "Netflix System" which seems to be the main point of focus.
+
+The key components visible in the diagram include:
+
+1. **User Interface (UI)**: Represented by a tablet icon, likely indicating the user-facing interface through which users can interact with the system.
+2. **Member Service**: This is connected to the UI and appears to be responsible for handling user authentication and account management.
+3. **Video Streaming Services**: Shown as a central part of the system, it's presumably where video content is stored and served.
+4. **Account Management System (AMS)**: Connected to the Member Service, this system would handle various aspects of managing user accounts.
+5. **Database**: A crucial component that stores and manages all data for the service.
+6. **Authentication Server**: This is responsible for ensuring secure access to the system by handling authentication processes.
+7. **Video Encoding & Compression Services**: These services would be involved in preparing video content for streaming, possibly including converting videos into different formats for various devices.
+8. **Content Delivery Network (CDN)**: Represented as a series of pipes, this would distribute video content to users across the globe efficiently.
+9. **Video Storage & Management Services**: The 'V' symbol connected to the CDN represents where video content is stored and managed for delivery.
+10. **Website/Mobile Apps**: These are the platforms through which users can access the system, including browsers and mobile devices.
+
+The diagram uses various symbols like arrows, pipes, and icons representing different types of services or components within the system. It seems to be a simplified model for understanding the architecture of a streaming service. The text "Netflix System Design" is overlaid on top of the diagram, reinforcing that it represents Netflix's system design. 
 
 ### Important Topics for the Netflix System Design
 
@@ -77,7 +92,22 @@ television content and users pay the monthly rent to access these contents. Netf
 
 has 180M+ subscribers in 200+ countries.
 
-![Netflix_Document.pdf-1-0.png](Netflix_Document.pdf-1-0.png)
+Image 2:  The image appears to be a screenshot of a Netflix website interface, which includes the logo of Netflix at the top left corner. The main area of the interface is dominated by a flowchart diagram that outlines various steps and components involved in the user's experience on the platform.
+
+From what I can observe from this image:
+
+1. The flowchart starts with a user's interaction, which includes a search bar for searching content.
+2. There are two main paths shown, one for "Home" and another for "Search." Both paths lead to different components of the website or application.
+3. On the right side, there is a representation of a user profile with various icons representing different functionalities such as search, account information, settings, etc.
+4. There are also mentions of "User" and "Server," which suggests that the system involves both client-side interactions (users) and server-side operations.
+5. The flowchart includes a "Database" component, indicating where user data is stored.
+6. It also shows a "CDN" (Content Delivery Network) component, which is used for delivering content to users more quickly by replicating the content across multiple servers around the world.
+7. There are references to "HTML," "CSS," and "JavaScript," which are web technologies involved in creating the user interface.
+8. The flowchart includes a "Cloud" icon, suggesting that the platform's infrastructure is hosted on cloud services.
+9. There are also mentions of "API" (Application Programming Interface) components, which allow different systems to communicate with each other.
+10. Various icons and text indicate different aspects of the platform such as search algorithms, content delivery, and user interactions.
+
+The image is a simplified representation and does not provide specific details about how the platform functions, but it gives an overview of the architecture and components involved in delivering Netflix's streaming service to users. 
 
 Netflix works on two clouds AWS and Open Connect. These two clouds work
 
@@ -140,7 +170,25 @@ microservices. After that, a complete response for the API request is sent back 
 
 endpoint.
 
-![Netflix_Document.pdf-2-0.png](Netflix_Document.pdf-2-0.png)
+Image 3:  The image appears to be a flowchart or diagram representing a software architecture, specifically for a system that involves microservices and user interaction. Here's the summary of the key components visible in the image:
+
+1. **User Interface**: This is likely the starting point where a user initiates an action or request. The UI could be a web application or a mobile app, as indicated by the use of "microservices" and "user interface."
+
+2. **Microservices Architecture**: The diagram suggests that the system uses microservices architecture, which is designed for scalability and flexibility in software design. This means that the functionality of the system is broken down into smaller, independent services that can be deployed and scaled separately.
+
+3. **Netflix System Design**: The flowchart mentions "Netflix," suggesting that this is a diagram or architecture inspired by or used by Netflix's system design.
+
+4. **Interconnected Microservices**: There are several boxes labeled with various microservices such as "microservices," "user interface," "db," and "microservice services." These services are interconnected, indicating that they communicate with each other to provide the functionality of the system.
+
+5. **Database (DB)**: This component is likely where data persistence and storage occur.
+
+6. **User Interface Flow**: The diagram shows a flow from the user interface through to microservices and services like databases, indicating how user actions are processed and handled by the various components of the system.
+
+7. **System Flow**: The arrows between the components represent the flow of information or requests through the system, showing that the user's action is processed via microservices architecture and eventually results in an outcome or response, possibly to the user interface.
+
+8. **Architecture Components**: Apart from the mentioned ones, there are several boxes with labels like "user interface," "microservices," "db," and "microservice services." These components represent different layers or aspects of the architecture.
+
+The image is a bit blurry and lacks specific details about each component, so providing more detailed information would not be accurate based on this image alone. 
 
 In a microservice architecture, services should be independent of each other. For
 
@@ -268,7 +316,19 @@ and likes, Netflix uses it to build the movie recommendation for users using the
 
 1. Elastic Load Balancer
 
-![Netflix_Document.pdf-5-0.png](Netflix_Document.pdf-5-0.png)
+Image 4:  The image appears to be a screenshot of a presentation slide or an educational diagram related to software architecture. It illustrates the components and flow within a system that manages load balancing for a Netflix-like streaming service. Here's a summary of the key components in the diagram:
+
+1. **Input**: A source from which the system receives data, such as user requests or streaming content.
+2. **Router/Load Balancer**: The first component that processes incoming traffic. Its job is to distribute incoming network traffic across multiple servers for optimal performance and scalability. In this case, the router balances load between two different systems, possibly referring to two different networks or services.
+3. **System A/Network Design 1**: This could be a subsystem or a separate network within the main system. It has components like 'Load Balancer', 'App Server', and 'Database'. The diagram also shows that System A communicates with another system, likely indicating a connection to an external service or system.
+4. **System B/Network Design 2**: Similar to System A, this is another subsystem or network within the main system. It includes elements like 'Load Balancer', 'App Server', and 'Database'. There's also an arrow pointing from System B to System A, suggesting that these two systems might communicate with each other.
+5. **External Services**: This part of the diagram represents external services or APIs that are not part of the system but interact with it. These could be third-party services or components of a larger ecosystem.
+6. **App Server**: Represents a server dedicated to handling application logic and processing requests from users or clients.
+7. **Database**: A storage component for data persistence, likely storing information about user accounts, streaming content, and other relevant data.
+8. **Load Balancer**: This is the central component that manages the distribution of incoming traffic across different app servers to ensure that no single server becomes a bottleneck and to maintain optimal performance and scalability.
+9. **Users/Clients**: The end-users or clients that interact with the system, typically through web browsers or mobile apps to access streaming content.
+
+The diagram uses arrows to illustrate the flow of data between different components of the system. It's a simplified representation and doesn't include specific details about the technologies or protocols being used. 
 
 ELB in Netflix is responsible for routing the traffic to front-end services. ELB performs
 
@@ -392,7 +452,31 @@ problem is if the node goes down all the cache goes down and this can hit the
 
 performance of the application.
 
-![Netflix_Document.pdf-7-0.png](Netflix_Document.pdf-7-0.png)
+Image 5:  The image appears to be a screenshot of a user interface, possibly from an application or software system. It shows a flowchart or diagram with various boxes and arrows connecting them, indicating the flow of data or interactions between components. Here's a summary of the key components visible in the image:
+
+1. **EV COACHE** - This could be the main function or feature within the system. It seems to be connected to several other components, suggesting it is central to the application's functionality.
+
+2. **EMAIL** - There are two representations of an email address, which are likely used for communication purposes.
+
+3. **CLUSTER A** and **CLUSTER B** - These may represent different servers or groups of services within the system. They are connected to the EV COACHE function, indicating that they might be involved in processing data related to EV (which stands for Electric Vehicle) coaching.
+
+4. **SERVICE** - This is another key component in the diagram, linked to both CLUSTERS A and B. It seems to be responsible for providing a service or handling certain tasks within the system.
+
+5. **USER** - There is an icon of a user with an email address, which might represent a human user interacting with the system or being coached by the EV COACHE function.
+
+6. **NED DATABASE** and **NETWORK DATABASE** - These are databases that store data for the application. The NETWORK DATABASE is connected to the SERVICE, suggesting it may be accessed when certain services are executed.
+
+7. **READING FROM DATABASES** - There is an arrow pointing from the databases to a function labeled "WRITE," indicating that data can be read from these databases and then written into another system or used in some way within the application.
+
+8. **USER INTERFACE** - The user interface is indicated by the presence of a text box with a prompt for inputting data, likely where users interact with the system.
+
+9. **WRITE** - This function is connected to the databases and the USER INTERFACE, suggesting that it receives data from the user through the interface and then writes this data into the appropriate database.
+
+10. **TEXT BOX WITH "WRITE" LABEL** - The text box labeled "WRITE" implies a place where users can enter text, likely as part of an input process within the application.
+
+The diagram also shows an arrow connecting the EV COACHE function to the databases, indicating that data may be written directly from the EV COACH system into the databases. Additionally, there are two arrows pointing to a box labeled "READ," which is connected to both CLUSTERS A and B, suggesting that data might be read from these clusters as part of the application's operation.
+
+The overall layout suggests a complex system involving multiple components for managing user interactions with an electric vehicle coaching service, along with databases to store information related to users and services. 
 
 To solve this problem Netflix has built its own custom caching layer called EV cache.
 

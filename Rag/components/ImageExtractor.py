@@ -44,12 +44,12 @@ class ImageExtractor:
         matches = re.findall(image_pattern, markdown_content)
         no = 0
         for match in matches:
-            image_path = match[0]
-            image_link = match[1]
+            image_alt = match[0]
+            image_path = match[1]
             response = self.__query_local("documents/" + image_path)
             text_response = response['response']
             no += 1
-            markdown_content.replace(f"![{image_path}]({image_link})", "Image- " + no +  " " + text_response)
+            markdown_content = markdown_content.replace(f"![{image_alt}]({image_path})", f"Image {no}: {text_response}")
 
         with open(markdown_path, 'w', encoding='utf-8') as f:
             f.write(markdown_content)
