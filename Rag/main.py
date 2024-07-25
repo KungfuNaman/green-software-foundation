@@ -24,7 +24,8 @@ def evaluate_docs_in_bulk(doc_name):
 
     # ============================================    CONFIG    ============================================
 
-    prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
+    prompt_id = "P2"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT 
+
     prompt_template_text = prompts_file[prompt_id]
     embedder_name, generator_name = "llama2", "phi3"
     db_collection_name = doc_name + "_" + embedder_name
