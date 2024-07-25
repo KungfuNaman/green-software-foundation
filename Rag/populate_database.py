@@ -11,10 +11,10 @@ load_dotenv()
 CHROMA_PATH = os.getenv("CHROMA_PATH")
 
 
-def setup_database(embedder, document_path, collection_name: str, fi_helper):
+def setup_database(embedder, document_path, collection_name: str, fi_helper, image_extract):
 
     # load & split documents
-    documents = fi_helper.load_documents(document_path)   # list of langchain_Doc(page_content, meta_data)
+    documents = fi_helper.load_documents(document_path, image_extract)   # list of langchain_Doc(page_content, meta_data)
     chunks = fi_helper.split_documents(documents)         # split to n chunks of langchain_Doc
 
     # load / initialize database

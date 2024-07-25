@@ -12,6 +12,7 @@ from components.FileOutputHelper import FileOutputHelper
 from components.Embedder import Embedder
 from components.Retriever import Retriever
 from components.Generator import Generator
+from components.ImageExtractor import ImageExtractor
 
 load_dotenv()
 LLM_MODEL = os.getenv("LLM_MODEL")
@@ -30,6 +31,7 @@ def evaluate_docs_in_bulk(doc_name):
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
+    image_extract = True
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True), FileOutputHelper()
     document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
@@ -40,7 +42,7 @@ def evaluate_docs_in_bulk(doc_name):
     embedder = init_embedder(embedder_name=embedder_name)
 
     # Prepare Database and Chunking
-    setup_db_time, db, doc_chunks = prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper)
+    setup_db_time, db, doc_chunks = prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper, image_extract)
 
     # Initialize Retriever 
     retriever, retriever_lst = init_retriever(retriever_type, retriever_type_lst, db, doc_chunks, embedder)
@@ -85,10 +87,10 @@ def init_embedder(embedder_name):
     return embedder
 
 
-def prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper):
+def prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper, image_extract):
     """ Load database & document chunks """
     setup_database_start_time = time.time()
-    new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper)
+    new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper, image_extract)
     # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, collection_name, fi_helper)
     setup_database_end_time = time.time()
     setup_db_time = setup_database_end_time - setup_database_start_time if new_doc_embed else "0"

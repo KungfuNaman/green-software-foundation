@@ -9,7 +9,6 @@ class ImageExtractor:
         self.model_name = model_name
         self.prompt = 'Summarise the given image. If the image is a software architecture diagram describe all the key components in your summary.'
 
-
     def __encode_image_to_base64(self, image_path):
         with open(image_path, 'rb') as image_file:
             image_binary = image_file.read()
@@ -36,24 +35,29 @@ class ImageExtractor:
         except Exception as e:
             print(e)
 
-    def analyse_all_images_in_markdown(self, markdown_path):
+    def analyse_all_images_in_markdown_file(self, markdown_path):
         with open(markdown_path, 'r', encoding="utf-8") as file:
             markdown_content = file.read()
     
+        markdown_content = self.analyse_all_images_in_markdown(markdown_content)
+
+        with open(markdown_path, 'w', encoding='utf-8') as f:
+            f.write(markdown_content)
+    
+    def analyse_all_images_in_markdown(self, markdown_content):
         image_pattern = r'!\[(.*?)\]\((.*?)\)'
         matches = re.findall(image_pattern, markdown_content)
         no = 0
         for match in matches:
             image_alt = match[0]
             image_path = match[1]
+            if(image_path.startswith("http")):
+                continue
             response = self.__query_local("documents/" + image_path)
             text_response = response['response']
             no += 1
             markdown_content = markdown_content.replace(f"![{image_alt}]({image_path})", f"Image {no}: {text_response}")
-
-        with open(markdown_path, 'w', encoding='utf-8') as f:
-            f.write(markdown_content)
+        return markdown_content
     
-
 ie = ImageExtractor("llava")
-ie.analyse_all_images_in_markdown("documentExtraction/outputs/extractWithImages.md")
+ie.analyse_all_images_in_markdown_file("documentExtraction/outputs/extractWithImages.md")
