@@ -1,7 +1,7 @@
 import json
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from ImageExtractor import ImageExtractor
+from . import ImageExtractor
 import pymupdf4llm
 
 

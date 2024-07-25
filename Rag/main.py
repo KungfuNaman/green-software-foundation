@@ -12,7 +12,6 @@ from components.FileOutputHelper import FileOutputHelper
 from components.Embedder import Embedder
 from components.Retriever import Retriever
 from components.Generator import Generator
-from components.ImageExtractor import ImageExtractor
 
 load_dotenv()
 LLM_MODEL = os.getenv("LLM_MODEL")

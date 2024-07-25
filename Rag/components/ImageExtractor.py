@@ -45,6 +45,7 @@ class ImageExtractor:
             f.write(markdown_content)
     
     def analyse_all_images_in_markdown(self, markdown_content):
+        print("Extracting Images from Document..")
         image_pattern = r'!\[(.*?)\]\((.*?)\)'
         matches = re.findall(image_pattern, markdown_content)
         no = 0
@@ -57,6 +58,7 @@ class ImageExtractor:
             text_response = response['response']
             no += 1
             markdown_content = markdown_content.replace(f"![{image_alt}]({image_path})", f"Image {no}: {text_response}")
+        print("Image Extraction Complete!")
         return markdown_content
     
 ie = ImageExtractor("llava")
