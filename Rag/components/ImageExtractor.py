@@ -61,5 +61,5 @@ class ImageExtractor:
         print("Image Extraction Complete!")
         return markdown_content
     
-ie = ImageExtractor("llava")
-ie.analyse_all_images_in_markdown_file("documentExtraction/outputs/extractWithImages.md")
+#ie = ImageExtractor("llava")
+#ie.analyse_all_images_in_markdown_file("documentExtraction/outputs/extractWithImages.md")
