@@ -204,12 +204,12 @@ def addCategories():
             json.dump(result_arr, f)
     print("hello")
 
-#add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
+# add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
 
 # files=["Netflix","Uber","Instagram","Whatsapp","Dropbox"]
 # for item in files:
-#     path="Rag/logger/Results_R-M_G-FT/ft_phi3_P3_"+item+"_combined.csv"
-#     add_parsed_results("Rag/logger/Results_R-M_G-FT/ft_phi3_P3_"+item+".csv","Rag/logger/Results_R-M_G-FT/ft_phi3_P3_"+item+"_combined.csv","P2")
+#     path="Rag/logger/Results_R-M_G/phi3_P2_"+item+"_combined.csv"
+#     add_parsed_results("Rag/logger/Results_R-M_G/phi3_P2_"+item+".csv","Rag/logger/Results_R-M_G/phi3_P2_"+item+"_combined.csv","P2")
 
 
 
