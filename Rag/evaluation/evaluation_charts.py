@@ -38,6 +38,9 @@ def ragSettings_accuracyChart():
     results_r_m_g_ft = []
     results_r_e_g_ft = []
     results_r_c_g = []
+    results_r_m_g = []
+    results_r_e_g = []
+
 
     for key, value in data.items():
         if key.startswith("Results_R-C_G-FT"):
@@ -48,12 +51,19 @@ def ragSettings_accuracyChart():
             results_r_e_g_ft.extend(value)
         elif key.startswith("Results_R-C_G"):
             results_r_c_g.extend(value)
+        elif key.startswith("Results_R-M_G"):
+            results_r_m_g.extend(value)
+        elif key.startswith("Results_R-E_G"):
+            results_r_e_g.extend(value)
 
     # Calculate accuracy
     accuracy_r_c_g_ft = calculate_accuracy(results_r_c_g_ft)
     accuracy_r_m_g_ft = calculate_accuracy(results_r_m_g_ft)
     accuracy_r_e_g_ft = calculate_accuracy(results_r_e_g_ft)
     accuracy_r_c_g = calculate_accuracy(results_r_c_g)
+    accuracy_r_m_g = calculate_accuracy(results_r_m_g)
+    accuracy_r_e_g = calculate_accuracy(results_r_e_g)
+
 
     # Plotting the bar graph
     labels = [
@@ -61,16 +71,21 @@ def ragSettings_accuracyChart():
         "Results_R-M_G-FT",
         "Results_R-E_G-FT",
         "Results_R-C_G",
+        "Results_R-M_G",
+        "Results_R-E_G"
+
     ]
     accuracies = [
         accuracy_r_c_g_ft,
         accuracy_r_m_g_ft,
         accuracy_r_e_g_ft,
         accuracy_r_c_g,
+        accuracy_r_m_g,
+        accuracy_r_e_g
     ]
 
     plt.figure(figsize=(10, 5))
-    plt.bar(labels, accuracies, color=["blue", "green", "yellow", "red"])
+    plt.bar(labels, accuracies, color=["blue", "green", "yellow", "red","orange","pink"],width=0.4)
     plt.xlabel("Results")
     plt.ylabel("Accuracy (%)")
     plt.title("Accuracy Comparison")
@@ -106,6 +121,8 @@ def f1_score_rag_pipeline():
     results_r_m_g_ft = []
     results_r_e_g_ft = []
     results_r_c_g = []
+    results_r_m_g = []
+    results_r_e_g = []
 
     for key, value in data.items():
         if key.startswith("Results_R-C_G-FT"):
@@ -116,6 +133,10 @@ def f1_score_rag_pipeline():
             results_r_e_g_ft.extend(value)
         elif key.startswith("Results_R-C_G"):
             results_r_c_g.extend(value)
+        elif key.startswith("Results_R-M_G"):
+            results_r_m_g.extend(value)
+        elif key.startswith("Results_R-E_G"):
+            results_r_e_g.extend(value)
 
     # Calculate metrics
     precision_r_c_g_ft, recall_r_c_g_ft, f1_r_c_g_ft = calculate_metrics(
@@ -128,6 +149,8 @@ def f1_score_rag_pipeline():
         results_r_e_g_ft
     )
     precision_r_c_g, recall_r_c_g, f1_r_c_g = calculate_metrics(results_r_c_g)
+    precision_r_m_g, recall_r_m_g, f1_r_m_g = calculate_metrics(results_r_m_g)
+    precision_r_e_g, recall_r_e_g, f1_r_e_g = calculate_metrics(results_r_e_g)
 
     # Create a table using tabulate
     table = [
@@ -135,6 +158,9 @@ def f1_score_rag_pipeline():
         ["Results_R-M_G-FT", precision_r_m_g_ft, recall_r_m_g_ft, f1_r_m_g_ft],
         ["Results_R-E_G-FT", precision_r_e_g_ft, recall_r_e_g_ft, f1_r_e_g_ft],
         ["Results_R-C_G", precision_r_c_g, recall_r_c_g, f1_r_c_g],
+                ["Results_R-M_G", precision_r_m_g, recall_r_m_g, f1_r_m_g],
+        ["Results_R-E_G", precision_r_e_g, recall_r_e_g, f1_r_e_g],
+
     ]
 
     headers = ["Configuration", "Precision (%)", "Recall (%)", "F1 Score (%)"]
@@ -164,6 +190,8 @@ def confusion_matrix_rag_settings():
     results_r_m_g_ft = []
     results_r_e_g_ft = []
     results_r_c_g = []
+    results_r_m_g = []
+    results_r_e_g = []
 
     for key, value in data.items():
         if key.startswith("Results_R-C_G-FT"):
@@ -174,12 +202,18 @@ def confusion_matrix_rag_settings():
             results_r_e_g_ft.extend(value)
         elif key.startswith("Results_R-C_G"):
             results_r_c_g.extend(value)
+        elif key.startswith("Results_R-M_G"):
+            results_r_m_g.extend(value)
+        elif key.startswith("Results_R-E_G"):
+            results_r_e_g.extend(value)
 
     # Calculate confusion matrices
     confusion_matrix_r_c_g_ft, y_true_r_c_g_ft, y_pred_r_c_g_ft = calculate_confusion_matrix(results_r_c_g_ft)
     confusion_matrix_r_m_g_ft, y_true_r_m_g_ft, y_pred_r_m_g_ft = calculate_confusion_matrix(results_r_m_g_ft)
     confusion_matrix_r_e_g_ft, y_true_r_e_g_ft, y_pred_r_e_g_ft = calculate_confusion_matrix(results_r_e_g_ft)
     confusion_matrix_r_c_g, y_true_r_c_g, y_pred_r_c_g = calculate_confusion_matrix(results_r_c_g)
+    confusion_matrix_r_m_g, y_true_r_m_g, y_pred_r_m_g = calculate_confusion_matrix(results_r_m_g)
+    confusion_matrix_r_e_g, y_true_r_e_g, y_pred_r_e_g = calculate_confusion_matrix(results_r_e_g)
 
 
 
@@ -188,6 +222,8 @@ def confusion_matrix_rag_settings():
     labels_r_m_g_ft = sorted(set(y_true_r_m_g_ft + y_pred_r_m_g_ft))
     labels_r_e_g_ft = sorted(set(y_true_r_e_g_ft + y_pred_r_e_g_ft))
     labels_r_c_g = sorted(set(y_true_r_c_g + y_pred_r_c_g))
+    labels_r_m_g = sorted(set(y_true_r_m_g + y_pred_r_m_g))
+    labels_r_e_g = sorted(set(y_true_r_e_g + y_pred_r_e_g))
 
 
     # Convert confusion matrices to DataFrame for better visualization
@@ -195,6 +231,8 @@ def confusion_matrix_rag_settings():
     df_confusion_matrix_r_m_g_ft = pd.DataFrame(confusion_matrix_r_m_g_ft, index=[f"True {label}" for label in labels_r_m_g_ft], columns=[f"Predicted {label}" for label in labels_r_m_g_ft])
     df_confusion_matrix_r_e_g_ft = pd.DataFrame(confusion_matrix_r_e_g_ft, index=[f"True {label}" for label in labels_r_e_g_ft], columns=[f"Predicted {label}" for label in labels_r_e_g_ft])
     df_confusion_matrix_r_c_g = pd.DataFrame(confusion_matrix_r_c_g, index=[f"True {label}" for label in labels_r_c_g], columns=[f"Predicted {label}" for label in labels_r_c_g])
+    df_confusion_matrix_r_m_g = pd.DataFrame(confusion_matrix_r_m_g, index=[f"True {label}" for label in labels_r_m_g], columns=[f"Predicted {label}" for label in labels_r_m_g])
+    df_confusion_matrix_r_e_g  = pd.DataFrame(confusion_matrix_r_e_g , index=[f"True {label}" for label in labels_r_e_g ], columns=[f"Predicted {label}" for label in labels_r_e_g ])
 
     # Display the confusion matrices using tabulate
     print("Confusion Matrix for Results_R-C_G-FT:")
@@ -209,9 +247,16 @@ def confusion_matrix_rag_settings():
     print("\nConfusion Matrix for Results_R-C_G:")
     print(tabulate(df_confusion_matrix_r_c_g, headers='keys', tablefmt='grid'))
 
+    print("\nConfusion Matrix for Results_R-M_G:")
+    print(tabulate(df_confusion_matrix_r_c_g, headers='keys', tablefmt='grid'))
+
+    print("\nConfusion Matrix for Results_R-E_G:")
+    print(tabulate(df_confusion_matrix_r_c_g, headers='keys', tablefmt='grid'))
 
 
-ragSettings_accuracyChart()
-f1_score_rag_pipeline()
 
+
+# f1_score_rag_pipeline()
 confusion_matrix_rag_settings()
+# ragSettings_accuracyChart()
+
