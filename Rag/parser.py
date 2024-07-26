@@ -209,15 +209,12 @@ def addCategories():
             json.dump(result_arr, f)
     print("hello")
 
-#add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
+# add_parsed_results("Rag/logger/phi3_P2_Netflix.csv","Rag/logger/phi3_P2_Netflix_combined.csv","P2")
 
-# files=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
+# files=["Netflix","Uber","Instagram","Whatsapp","Dropbox"]
 # for item in files:
-#     path="Rag/logger/Results_Phi3_prompt2/phi3_P2_"+item+"_combined.csv"
-#     export_combined_results_to_json(path)
+#     path="Rag/logger/Results_R-M_G/phi3_P2_"+item+"_combined.csv"
+#     add_parsed_results("Rag/logger/Results_R-M_G/phi3_P2_"+item+".csv","Rag/logger/Results_R-M_G/phi3_P2_"+item+"_combined.csv","P2")
 
 
 
-add_parsed_results("./Rag/logger/phi-3-30epoch_P3_Uber.csv","./Rag/logger/phi-3-30epoch_P3_Uber_combined.csv","P3")
-add_parsed_results("./Rag/logger/phi-3-30epoch_P3_Whatsapp.csv","./Rag/logger/phi-3-30epoch_P3_Whatsapp_combined.csv","P3")
-add_parsed_results("./Rag/logger/phi-3-30epoch_P3_Instagram.csv","./Rag/logger/phi-3-30epoch_P3_Instagram_combined.csv","P3")

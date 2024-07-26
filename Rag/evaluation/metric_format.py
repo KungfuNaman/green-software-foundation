@@ -63,8 +63,9 @@ def update_json_file(file_path, key, value):
 
 def generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path):
     result_arr=combine_groundTruth_result(ground_truth_path,combined_result_path)
+    # ft_phi3_P3_"+doc+"_combined.csv
 
-    key=combined_result_path.split("/")[-1].replace("_combined.csv","")
+    key=combined_result_path.split("/")[-2].replace("_combined.csv","").replace("ft_phi3_P3_","")+"_"+combined_result_path.split("/")[-1].replace("ft_phi3_P3_","").replace("_combined.csv","")
     update_json_file(eval_path,key,result_arr)
 
 
@@ -85,10 +86,10 @@ def modify_to_old_queries(ground_truth_path):
             json.dump(ground_truth_arr, file, indent=4)
 
 
-documents=["Netflix","Whatsapp","Dropbox","Instagram","Uber"]
-for doc in documents:
-    ground_truth_path="documentsFromText/"+doc+"/ground_truth.json"
-    combined_result_path="Rag/logger/phi3_10E_P3_"+doc+"_combined.csv"
-    eval_path="frontend/src/api_results/evaluation/results.json"
-    modify_to_old_queries(ground_truth_path)
-    generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
+# documents=["Netflix","Whatsapp","Dropbox","Instagram","Uber"]
+# for doc in documents:
+#     ground_truth_path="documentsFromText/"+doc+"/ground_truth.json"
+#     combined_result_path="Rag/logger/Results_R-E_G/phi3_P3_"+doc+"_combined.csv"
+#     eval_path="frontend/src/api_results/evaluation/results.json"
+#     # modify_to_old_queries(ground_truth_path)
+#     generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
