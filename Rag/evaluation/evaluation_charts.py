@@ -1,17 +1,30 @@
 import json
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.metrics import precision_score, recall_score, f1_score
+from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 from tabulate import tabulate
+from sklearn.metrics import confusion_matrix
 
 
 RESULTS_JSON_PATH = "frontend/src/api_results/evaluation/results.json"
+
+
+def preprocess_data(data):
+    for key, value in data.items():
+        for item in value:
+            if item['humanJudgement'] == 'Not Applicable':
+                item['humanJudgement'] = 'No'
+            if item['llmJudgement'] == 'Not Applicable':
+                item['llmJudgement'] = 'No'
+    return data
 
 
 def ragSettings_accuracyChart():
     # Load the JSON data
     with open(RESULTS_JSON_PATH) as f:
         data = json.load(f)
+    # Preprocess the data
+    data = preprocess_data(data)
 
     def calculate_accuracy(results):
         total = len(results)
@@ -74,6 +87,8 @@ def f1_score_rag_pipeline():
     # Load the JSON data
     with open(RESULTS_JSON_PATH) as f:
         data = json.load(f)
+    # Preprocess the data
+    data = preprocess_data(data)
 
     def calculate_metrics(results):
         y_true = [item["humanJudgement"] for item in results]
@@ -129,5 +144,74 @@ def f1_score_rag_pipeline():
     print(table_str)
 
 
-# ragSettings_accuracyChart()
+def confusion_matrix_rag_settings():
+    
+    # Load the JSON data
+    with open(RESULTS_JSON_PATH) as f:
+        data = json.load(f)
+    
+    # Preprocess the data
+    data = preprocess_data(data)
+
+    def calculate_confusion_matrix(results):
+        y_true = [item['humanJudgement'] for item in results]
+        y_pred = [item['llmJudgement'] for item in results]
+        
+        cm = confusion_matrix(y_true, y_pred)
+        return cm, y_true, y_pred
+
+    results_r_c_g_ft = []
+    results_r_m_g_ft = []
+    results_r_e_g_ft = []
+    results_r_c_g = []
+
+    for key, value in data.items():
+        if key.startswith("Results_R-C_G-FT"):
+            results_r_c_g_ft.extend(value)
+        elif key.startswith("Results_R-M_G-FT"):
+            results_r_m_g_ft.extend(value)
+        elif key.startswith("Results_R-E_G-FT"):
+            results_r_e_g_ft.extend(value)
+        elif key.startswith("Results_R-C_G"):
+            results_r_c_g.extend(value)
+
+    # Calculate confusion matrices
+    confusion_matrix_r_c_g_ft, y_true_r_c_g_ft, y_pred_r_c_g_ft = calculate_confusion_matrix(results_r_c_g_ft)
+    confusion_matrix_r_m_g_ft, y_true_r_m_g_ft, y_pred_r_m_g_ft = calculate_confusion_matrix(results_r_m_g_ft)
+    confusion_matrix_r_e_g_ft, y_true_r_e_g_ft, y_pred_r_e_g_ft = calculate_confusion_matrix(results_r_e_g_ft)
+    confusion_matrix_r_c_g, y_true_r_c_g, y_pred_r_c_g = calculate_confusion_matrix(results_r_c_g)
+
+
+
+    # Get the unique labels for dynamic indexing
+    labels_r_c_g_ft = sorted(set(y_true_r_c_g_ft + y_pred_r_c_g_ft))
+    labels_r_m_g_ft = sorted(set(y_true_r_m_g_ft + y_pred_r_m_g_ft))
+    labels_r_e_g_ft = sorted(set(y_true_r_e_g_ft + y_pred_r_e_g_ft))
+    labels_r_c_g = sorted(set(y_true_r_c_g + y_pred_r_c_g))
+
+
+    # Convert confusion matrices to DataFrame for better visualization
+    df_confusion_matrix_r_c_g_ft = pd.DataFrame(confusion_matrix_r_c_g_ft, index=[f"True {label}" for label in labels_r_c_g_ft], columns=[f"Predicted {label}" for label in labels_r_c_g_ft])
+    df_confusion_matrix_r_m_g_ft = pd.DataFrame(confusion_matrix_r_m_g_ft, index=[f"True {label}" for label in labels_r_m_g_ft], columns=[f"Predicted {label}" for label in labels_r_m_g_ft])
+    df_confusion_matrix_r_e_g_ft = pd.DataFrame(confusion_matrix_r_e_g_ft, index=[f"True {label}" for label in labels_r_e_g_ft], columns=[f"Predicted {label}" for label in labels_r_e_g_ft])
+    df_confusion_matrix_r_c_g = pd.DataFrame(confusion_matrix_r_c_g, index=[f"True {label}" for label in labels_r_c_g], columns=[f"Predicted {label}" for label in labels_r_c_g])
+
+    # Display the confusion matrices using tabulate
+    print("Confusion Matrix for Results_R-C_G-FT:")
+    print(tabulate(df_confusion_matrix_r_c_g_ft, headers='keys', tablefmt='grid'))
+
+    print("\nConfusion Matrix for Results_R-M_G-FT:")
+    print(tabulate(df_confusion_matrix_r_m_g_ft, headers='keys', tablefmt='grid'))
+
+    print("\nConfusion Matrix for Results_R-E_G-FT:")
+    print(tabulate(df_confusion_matrix_r_e_g_ft, headers='keys', tablefmt='grid'))
+
+    print("\nConfusion Matrix for Results_R-C_G:")
+    print(tabulate(df_confusion_matrix_r_c_g, headers='keys', tablefmt='grid'))
+
+
+
+ragSettings_accuracyChart()
 f1_score_rag_pipeline()
+
+confusion_matrix_rag_settings()
