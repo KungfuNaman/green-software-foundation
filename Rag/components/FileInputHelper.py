@@ -19,7 +19,7 @@ class FileInputHelper:
             document = self.create_own_doc(document_path)
             documents.append(document)
         else:
-            md_text = pymupdf4llm.to_markdown(document_path, write_images=True)
+            md_text = pymupdf4llm.to_markdown(document_path, write_images=True, image_path="documents/")
             if image_extract:
                 ie = ImageExtractor('llava')
                 md_text = ie.analyse_all_images_in_markdown(md_text)

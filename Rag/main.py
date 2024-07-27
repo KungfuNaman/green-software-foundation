@@ -158,7 +158,7 @@ def parse_doc_path(doc_path):
 
 
 def main():
-    documents = ["./documents/Netflix_Document.pdf", "./documents/2.pdf"] #specify whole document path(s) here
+    documents = ["./documents/Netflix.pdf", "./documents/2.pdf"] #specify whole document path(s) here
     for doc in documents:
         evaluate_docs_in_bulk(doc)
 
