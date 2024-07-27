@@ -54,7 +54,7 @@ class ImageExtractor:
             image_path = match[1]
             if(image_path.startswith("http")):
                 continue
-            response = self.__query_local("documents/" + image_path)
+            response = self.__query_local(image_path)
             text_response = response['response']
             no += 1
             markdown_content = markdown_content.replace(f"![{image_alt}]({image_path})", f"Image {no}: {text_response}")
