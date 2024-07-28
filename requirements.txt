@@ -34,3 +34,6 @@ requests
 
 fastapi
 uvicorn
+
+matplotlib
+tabulate

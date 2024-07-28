@@ -24,7 +24,8 @@ def evaluate_docs_in_bulk(document_path):
     doc_name, extension = parse_doc_path(document_path)
     # ============================================    CONFIG    ============================================
 
-    prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
+    prompt_id = "P2"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT 
+
     prompt_template_text = prompts_file[prompt_id]
     embedder_name, generator_name = "llama2", "phi3"
     db_collection_name = doc_name + "_" + embedder_name
@@ -64,8 +65,8 @@ def evaluate_docs_in_bulk(document_path):
     # Iterative Querying
     retrieved_rec = {}
     for q_idx in range(truth_length):
-        if q_idx > 0:
-            break
+        # if q_idx > 0:
+        #     break
         q_question = ground_truth[q_idx].get("query", "")
         # ----------     Regular Invoke & Record to CSV     ----------
         prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
