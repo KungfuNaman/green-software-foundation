@@ -104,7 +104,7 @@ if __name__ == "__main__":
     # retriever1 = retriever_obj.get_retriever()
     # generator1 = Generator(run_local=True, model_name="phi3")
 
-    # with open("Rag/prompts/prompt.json", 'r') as file:
+    # with open("Rag/prompts/prompt_templates.json", 'r') as file:
     #     prompts_file = json.load(file)
     # pt = prompts_file["P2"]
     # qt = "Is there any mention of implementing a stateless design?"

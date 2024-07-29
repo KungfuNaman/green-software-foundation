@@ -24,7 +24,7 @@ class EcodocRequest:
     q_question: str
 
 
-with open("Rag/prompts/prompt.json", 'r') as file:
+with open("Rag/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
 

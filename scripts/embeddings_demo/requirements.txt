@@ -1,9 +1,0 @@
-langchain
-langchain_community
-langchain-openai
-faiss-cpu
-openai
-python-dotenv
-pandas
-xlrd
-tiktoken

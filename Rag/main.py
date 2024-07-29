@@ -19,7 +19,7 @@ from components.Generator import Generator
 
 load_dotenv()
 LLM_MODEL = os.getenv("LLM_MODEL")
-with open("Rag/prompts/prompt.json", 'r') as file:
+with open("Rag/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
 
@@ -29,7 +29,7 @@ def evaluate_docs_in_bulk(document_path):
 
     # ============================================    CONFIG    ============================================
 
-    image_extract = True
+    image_extract = False
     prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
 
     prompt_template_text = prompts_file[prompt_id]
@@ -37,7 +37,7 @@ def evaluate_docs_in_bulk(document_path):
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
-    alternate_query_file_path = "./Rag/prompts/old_queries.json"  # Query file to use when ground truth is not available
+    alternate_query_file_path = "./Rag/prompts/queries_old.json"  # Query file to use when ground truth is not available
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
     logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
@@ -58,7 +58,7 @@ def evaluate_docs_in_bulk(document_path):
 
     # Load Query File
     try:
-        query_file_path = "./documentsFromText/" + doc_name + "/ground_truth.json"
+        query_file_path = "./doc_data/documentsFromText/" + doc_name + "/ground_truth.json"
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")
@@ -70,8 +70,8 @@ def evaluate_docs_in_bulk(document_path):
     # Iterative Querying
     retrieved_rec = {}
     for q_idx in range(truth_length):
-        # if q_idx > 0:
-        #     break
+        if q_idx > 0:
+            break
         q_question = ground_truth[q_idx].get("query", "")
         # ----------     Regular Invoke & Record to CSV     ----------
         prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
@@ -79,7 +79,7 @@ def evaluate_docs_in_bulk(document_path):
         response_info["query"] = q_question
         response_info["setup_db_time"] = setup_db_time
         response_info["logger_file_path"] = logger_file_path
-        fo_helper.append_to_csv(response_info)
+        # fo_helper.append_to_csv(response_info)
         # TODO: ↓ Should Not Use Missing Log In Parser
         # add_parsed_results(logger_file_path, combined_path, prompt_id)
         # ------------------------------------------------------------
@@ -165,7 +165,8 @@ def parse_doc_path(doc_path):
 
 
 def main():
-    documents = ["./documents/Netflix.pdf", "./documents/2.pdf"]  # specify whole document path(s) here
+    documents = ["./doc_data/documents/Netflix.pdf", "./doc_data/documents/2.pdf"]  # specify whole document path(s) here
+    documents = ["./doc_data/documents/Netflix.pdf"]  # specify whole document path(s) here
     for doc in documents:
         evaluate_docs_in_bulk(doc)
 

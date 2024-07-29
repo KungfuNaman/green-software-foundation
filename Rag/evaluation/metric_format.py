@@ -72,7 +72,7 @@ def generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
 
 
 def modify_to_old_queries(ground_truth_path):
-    old_queries_json_path="Rag/prompts/old_queries.json"
+    old_queries_json_path="Rag/prompts/queries_old.json"
     with open(old_queries_json_path, "r", encoding="utf-8") as file:
             old_queries_arr = json.load(file)["queries"]
     with open(ground_truth_path, "r", encoding="utf-8") as file:
