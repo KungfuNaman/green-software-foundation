@@ -34,8 +34,8 @@ class FileInputHelper:
     @staticmethod
     def split_documents(documents: list[Document]):
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=800,
-            chunk_overlap=80,
+            chunk_size=500,
+            chunk_overlap=100,
             length_function=len,
             is_separator_regex=False,
         )

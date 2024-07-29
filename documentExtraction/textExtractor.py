@@ -1,3 +1,5 @@
+import sys
+
 from langchain_community.document_loaders import PyMuPDFLoader
 import pymupdf4llm
 import os
@@ -13,13 +15,13 @@ def extractText(pdfPath):
             file.write("\n\n")
 
 
-def extractWithImages(pdfPath):
+def extractWithImages(pdf_path, output_dir):
 
-    md_text = pymupdf4llm.to_markdown(pdfPath, write_images=True)
+    md_text = pymupdf4llm.to_markdown(pdf_path, write_images=True)
 
-    output_dir = "./documentExtraction/outputs/extractWithImages.txt"
+    # output_dir = "./documentExtraction/outputs/extractWithImages.md"
 
-    pathlib.Path("./documentExtraction/outputs/extractWithImages.md").write_bytes(md_text.encode())
+    pathlib.Path(output_dir).write_bytes(md_text.encode())
 
     # with open(output_dir, "w", encoding="utf-8") as file:
     #     # Write the markdown text to the file
@@ -27,5 +29,7 @@ def extractWithImages(pdfPath):
     #     file.write("\n\n")
 
 
-# extractTextUsingLangChain("./documents/2.pdf")
-extractWithImages("./documents/3.pdf")
+if __name__ == "__main__":
+    pdf_path = r"E:\PROJECTS\Python_Projects\gsf_docextraction\green-software-foundation\documentsFromText\Netflix\Netflix_Document.pdf"
+    output_dir = r"E:\PROJECTS\Python_Projects\gsf_docextraction\green-software-foundation\documentsFromText\Netflix\Netflix_Document.md"
+    extractWithImages(pdf_path, output_dir)

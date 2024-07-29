@@ -230,4 +230,4 @@ Netflix divided the data into two parts:
 Live Viewing History (LiveVH):
 This section included the small number of recent viewing historical data of users with frequent updates. The data is frequently used for the ETL jobs and stored in uncompressed form.
 Compressed Viewing History (CompressedVH):
-A large amount of older viewing records with rare updates is categorized in this section. The data is stored in a single column per row key, also in compressed form to reduce the storage footprin
+A large amount of older viewing records with rare updates is categorized in this section. The data is stored in a single column per row key, also in compressed form to reduce the storage footprint.

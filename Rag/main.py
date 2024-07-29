@@ -2,6 +2,8 @@ import os
 import time
 import json
 from dotenv import load_dotenv
+import pymupdf4llm
+
 
 from populate_database import setup_database, setup_database_after_clearance
 from query_data import query_rag, compare_retrieved_items, generate_result
@@ -20,7 +22,7 @@ with open("Rag/prompts/prompt.json", 'r') as file:
 
 
 def evaluate_docs_in_bulk(doc_name):
-    """Function to execute the whole Rag Pipeline"""
+    """ Function to execute the whole Rag Pipeline """
 
     # ============================================    CONFIG    ============================================
 
@@ -89,7 +91,7 @@ def prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper)
     """ Load database & document chunks """
     setup_database_start_time = time.time()
     new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper)
-    # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, collection_name, fi_helper)
+    # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, db_collection_name, fi_helper)
     setup_database_end_time = time.time()
     setup_db_time = setup_database_end_time - setup_database_start_time if new_doc_embed else "0"
     
@@ -122,7 +124,7 @@ def get_retriever(retriever_type, db, doc_chunks, embedder):
         r2_obj = Retriever(retriever_type="faiss", doc_chunks=doc_chunks, embedder=embedder)
         r2 = r2_obj.get_retriever()
         retriever_obj = Retriever(retriever_type=retriever_type, ebr1=r1, ebr2=r2)
-        retriever_obj.set_ensemble_weights(0.4, 0.6)
+        retriever_obj.set_ensemble_weights(0.6, 0.4)
         retriever = retriever_obj.get_retriever()
     elif retriever_type == "bm25":
         retriever_obj = Retriever(retriever_type="bm25", doc_chunks=doc_chunks)
@@ -147,7 +149,7 @@ def get_paths(doc_name, pid, gen_model, ground_true=True):
 def main():
     # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
     documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
-    documentsFromText = ["Netflix", "Uber"]
+    documentsFromText = ["Netflix", "Whatsapp", "Dropbox"]
 
     for doc_name in documentsFromText:
         evaluate_docs_in_bulk(doc_name)
