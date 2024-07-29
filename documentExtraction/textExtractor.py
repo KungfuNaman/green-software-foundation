@@ -15,9 +15,9 @@ def extractText(pdfPath):
             file.write("\n\n")
 
 
-def extractWithImages(pdf_path, output_dir):
+def extractWithImages(pdfPath, output_dir):
 
-    md_text = pymupdf4llm.to_markdown(pdf_path, write_images=True)
+    md_text = pymupdf4llm.to_markdown(pdfPath, write_images=True, image_path="documents/")
 
     # output_dir = "./documentExtraction/outputs/extractWithImages.md"
 
@@ -29,7 +29,5 @@ def extractWithImages(pdf_path, output_dir):
     #     file.write("\n\n")
 
 
-if __name__ == "__main__":
-    pdf_path = r"E:\PROJECTS\Python_Projects\gsf_docextraction\green-software-foundation\documentsFromText\Netflix\Netflix_Document.pdf"
-    output_dir = r"E:\PROJECTS\Python_Projects\gsf_docextraction\green-software-foundation\documentsFromText\Netflix\Netflix_Document.md"
-    extractWithImages(pdf_path, output_dir)
+# extractTextUsingLangChain("./documents/2.pdf")
+extractWithImages("./documents/Netflix_Document.pdf")

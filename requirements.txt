@@ -10,7 +10,7 @@ jupytext
 pymupdf
 
 # for Image Extraction
-pymupdf4llm
+pymupdf4llm==0.0.10
 
 boto3
 chromadb
@@ -34,3 +34,6 @@ requests
 
 fastapi
 uvicorn
+
+matplotlib
+tabulate
