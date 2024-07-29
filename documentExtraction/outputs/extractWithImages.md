@@ -1,646 +1,789 @@
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+# System Design Netflix | A Complete Architecture
 
+Last Updated : 01 Apr, 2024
 
-# Software Architecture Document
+Designing Netflix is a quite common question of system design rounds in interviews.
 
-## Online Catering Service 1.0
- Yummy Inc.
+In the world of streaming services, Netflix stands as a monopoly, captivating millions
 
-![3.pdf-0-0.png](3.pdf-0-0.png)
+of viewers worldwide with its vast library of content delivered seamlessly to screens
 
-Confidential Ó Yummy Inc, 2024 Page 1 of 17
+of all sizes. Behind this seemingly effortless experience lies a nicely crafted system
+
+design. In this article, we will study Netflix’s system design.
+
+Image 1:  The image depicts a diagram of a Netflix system design. It illustrates the architecture of a Netflix-like streaming service, with various components interconnected. At the center, there's a "Netflix System" which seems to be the main point of focus.
+
+The key components visible in the diagram include:
+
+1. **User Interface (UI)**: Represented by a tablet icon, likely indicating the user-facing interface through which users can interact with the system.
+2. **Member Service**: This is connected to the UI and appears to be responsible for handling user authentication and account management.
+3. **Video Streaming Services**: Shown as a central part of the system, it's presumably where video content is stored and served.
+4. **Account Management System (AMS)**: Connected to the Member Service, this system would handle various aspects of managing user accounts.
+5. **Database**: A crucial component that stores and manages all data for the service.
+6. **Authentication Server**: This is responsible for ensuring secure access to the system by handling authentication processes.
+7. **Video Encoding & Compression Services**: These services would be involved in preparing video content for streaming, possibly including converting videos into different formats for various devices.
+8. **Content Delivery Network (CDN)**: Represented as a series of pipes, this would distribute video content to users across the globe efficiently.
+9. **Video Storage & Management Services**: The 'V' symbol connected to the CDN represents where video content is stored and managed for delivery.
+10. **Website/Mobile Apps**: These are the platforms through which users can access the system, including browsers and mobile devices.
+
+The diagram uses various symbols like arrows, pipes, and icons representing different types of services or components within the system. It seems to be a simplified model for understanding the architecture of a streaming service. The text "Netflix System Design" is overlaid on top of the diagram, reinforcing that it represents Netflix's system design. 
+
+### Important Topics for the Netflix System Design
+
+Requirements of Netflix System Design
+
+High-Level Design of Netflix System Design
+
+Microservices Architecture of Netflix
+
+Low Level Design of Netflix System Design
+
+How Does Netflix Onboard a Movie/Video?
+
+How Netflix balance the high traffic load
+
+EV Cache
+
+Data Processing in Netflix Using Kafka And Apache Chukwa
+
+Elastic Search
+
+Apache Spark For Movie Recommendation
+
+Database Design of Netflix System Design
+
+## 1. Requirements of Netflix System Design
+
+1.1. Functional Requirements
+
+Users should be able to create accounts, log in, and log out.
+
+Subscription management for users.
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+functionalities.
 
+Ability to download content for offline viewing.
 
-#### SAD Revision History
+Personalized content recommendations based on user preferences and viewing
 
-|Date|Version|Description|Author|
-|---|---|---|---|
-|2005-03-16|0.1|Significant Use-Cases : the key requirements|Yummy Inc. Architecture Team|
-|2003-03-18|0.2|Candidate architecture : the high level architecture of the system|Yummy Inc. Architecture Team|
-|2003-03-20|0.3|Initial Deployment Model|Yummy Inc. Architecture Team|
-|2003-04-24|0.4|Key abstractions : the key data elements used in the system|Yummy Inc. Architecture Team|
-|2003-04-29|0.5|Analysis Model|Yummy Inc. Architecture Team|
-|2003-05-05|0.6|Design Model|Yummy Inc. Architecture Team|
-|2004-05-11|0.7|Concurrency mechanisms|Yummy Inc. Architecture Team|
-|????-??-??|0.8||Yummy Inc. Architecture Team|
+history.
 
+1.2. Non-Functional Requirements
 
+Low latency and high responsiveness during content playback.
 
-Confidential Ó Yummy Inc, 2024 Page 2 of 17
+Scalability to handle a large number of concurrent users.
 
+High availability with minimal downtime.
 
------
+Secure user authentication and authorization.
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+Intuitive user interface for easy navigation.
 
+## 2. High-Level Design of Netflix System Design
 
-### Table of Contents
+We all are familiar with Netflix services. It handles large categories of movies and
 
-**1.** **INTRODUCTION** **................................................................................................................................................ 4**
+television content and users pay the monthly rent to access these contents. Netflix
 
+has 180M+ subscribers in 200+ countries.
 
-1.1 P URPOSE ......................................................................................................................................................... 4
+Image 2:  The image appears to be a screenshot of a Netflix website interface, which includes the logo of Netflix at the top left corner. The main area of the interface is dominated by a flowchart diagram that outlines various steps and components involved in the user's experience on the platform.
 
+From what I can observe from this image:
 
-1.2 S COPE ............................................................................................................................................................. 5
+1. The flowchart starts with a user's interaction, which includes a search bar for searching content.
+2. There are two main paths shown, one for "Home" and another for "Search." Both paths lead to different components of the website or application.
+3. On the right side, there is a representation of a user profile with various icons representing different functionalities such as search, account information, settings, etc.
+4. There are also mentions of "User" and "Server," which suggests that the system involves both client-side interactions (users) and server-side operations.
+5. The flowchart includes a "Database" component, indicating where user data is stored.
+6. It also shows a "CDN" (Content Delivery Network) component, which is used for delivering content to users more quickly by replicating the content across multiple servers around the world.
+7. There are references to "HTML," "CSS," and "JavaScript," which are web technologies involved in creating the user interface.
+8. The flowchart includes a "Cloud" icon, suggesting that the platform's infrastructure is hosted on cloud services.
+9. There are also mentions of "API" (Application Programming Interface) components, which allow different systems to communicate with each other.
+10. Various icons and text indicate different aspects of the platform such as search algorithms, content delivery, and user interactions.
 
+The image is a simplified representation and does not provide specific details about how the platform functions, but it gives an overview of the architecture and components involved in delivering Netflix's streaming service to users. 
 
-1.3 D EFINITIONS , A CRONYMS AND A BBREVIATIONS ............................................................................................ 5
+Netflix works on two clouds AWS and Open Connect. These two clouds work
 
+together as the backbone of Netflix and both are highly responsible for providing the
 
-1.4 R EFERENCES ................................................................................................................................................... 5
+best video to the subscribers.
 
+The application has mainly 3 components:
 
-1.5 O VERVIEW ...................................................................................................................................................... 5
+Client:
 
+Device (User Interface) which is used to browse and play Netflix videos.
 
-**2.** **ARCHITECTURAL REPRESENTATION ...................................................................................................... 6**
+TV, XBOX, laptop or mobile phone, etc
 
-**3.** **ARCHITECTURAL GOALS AND CONSTRAINTS** **...................................................................................... 7**
+OC (Open Connect) or Netflix CDN:
 
+CDN is the network of distributed servers in different geographical
 
-3.1 T ECHNICAL P LATFORM ................................................................................................................................... 7
+locations, and Open Connect is Netflix’s own custom global CDN (Content
 
-
-3.2 T RANSACTION ................................................................................................................................................. 7
-
-
-3.3 S ECURITY ........................................................................................................................................................ 7
-
-
-3.4 P ERSISTENCE .................................................................................................................................................. 7
-
-
-3.5 R ELIABILITY /A VAILABILITY ( FAILOVER ) ........................................................................................................ 7
-
-
-3.6 P ERFORMANCE ................................................................................................................................................ 8
-
-
-3.7 I NTERNATIONALIZATION ( I 18 N ) ...................................................................................................................... 8
-
-
-**4.** **USE-CASE VIEW** **................................................................................................................................................ 8**
-
-
-4.1 O RDERING M ENUS .......................................................................................................................................... 8
-
-4.2 U SE -C ASE R EALIZATIONS ............................................................................................................................... 9
-
-**5.** **LOGICAL VIEW** **................................................................................................................................................. 9**
-
-
-5.1 O VERVIEW ...................................................................................................................................................... 9
-
-5.2 A RCHITECTURALLY S IGNIFICANT D ESIGN P ACKAGES .................................................................................. 11
-
-**6.** **PROCESS VIEW ............................................................................................................................................... 13**
-
-**7.** **DEPLOYMENT VIEW ..................................................................................................................................... 14**
-
-**8.** **IMPLEMENTATION VIEW ........................................................................................................................... 15**
-
-
-8.1 O VERVIEW .................................................................................................................................................... 15
-
-8.2 L AYERS ......................................................................................................................................................... 15
-
-**9.** **DATA VIEW ...................................................................................................................................................... 16**
-
-**10.** **SIZE AND PERFORMANCE ...................................................................................................................... 16**
-
-**11.** **QUALITY ....................................................................................................................................................... 17**
-
-Confidential Ó Yummy Inc, 2024 Page 3 of 17
+delivery network).
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+It is distributed in different locations and once you hit the play button the
 
+video stream from this component is displayed on your device.
 
-**1.** **Introduction**
+So if you’re trying to play the video sitting in North America, the video will
 
-This document comes as a complement to the article “Developing a J2EE Architecture with Rational Software
-Architect using the Rational Unified Process®” [RUPRSA]. It illustrates what can be the content of a Software
-Architecture Document (SAD) produced during the RUP Elaboration phase.
+be served from the nearest open connect (or server) instead of the original
 
-As stated in the companion article, a RUP Software Architect will typically perform height major steps in order to
-define a global architecture, and each time an activity is completed, a specific section of the SAD is enriched
-accordingly.
+server (faster response from the nearest server).
 
-|Architectural activities|Software Architecture Document|
-|---|---|
-|Step 1 - Identify and prioritize significant Use-Cases|Section 4|
-|Step 2 - Define the candidate architecture|Section 3, 5.1, 10, 11|
-|Step 3 - Define the initial Deployment Model|Section 7|
-|Step 4 - Identify key abstractions|Section 9|
-|Step 5 - Create an Analysis Model|Section 5|
-|Step 6 - Create the Design Model|Section 5|
-|Step 7 - Document concurrency mechanisms|Section 6, 7|
-|Step 8 - Create the Implementation Model|Section 8|
+Backend (Database):
 
+This part handles everything that doesn’t involve video streaming (before
 
+you hit the play button) such as onboarding new content, processing
 
-**1.1** **Purpose**
+videos, distributing them to servers located in different parts of the world,
 
-The Software Architecture Document (SAD) provides a comprehensive architectural overview of the Online
-Catering Service 1.0 offered by Yummy Inc. It presents a number of different architectural views to depict different
-aspects of the system. It is intended to capture and convey the significant architectural decisions which have been
-made on the system.
+and managing the network traffic.
 
-In order to depict the software as accurately as possible, the structure of this document is based on the “4+1” model
-view of architecture [KRU41].
+Most of the processes are taken care of by Amazon Web Services.
 
-![3.pdf-3-0.png](3.pdf-3-0.png)
+## 2.1. Microservices Architecture of Netflix
 
-The “4+1” View Model allows various stakeholders to find what they need in the software architecture.
+Netflix’s architectural style is built as a collection of services. This is known as
 
-Confidential Ó Yummy Inc, 2024 Page 4 of 17
+microservices architecture and this power all of the APIs needed for applications and
 
+Web apps. When the request arrives at the endpoint it calls the other microservices
 
------
+for required data and these microservices can also request the data from different
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+microservices. After that, a complete response for the API request is sent back to the
 
+endpoint.
 
-**1.2** **Scope**
+Image 3:  The image appears to be a flowchart or diagram representing a software architecture, specifically for a system that involves microservices and user interaction. Here's the summary of the key components visible in the image:
 
-The scope of this SAD is to depict the architecture of the online catering application created by the company
-Yummy Inc.
+1. **User Interface**: This is likely the starting point where a user initiates an action or request. The UI could be a web application or a mobile app, as indicated by the use of "microservices" and "user interface."
 
-**1.3** **Definitions, Acronyms and Abbreviations**
+2. **Microservices Architecture**: The diagram suggests that the system uses microservices architecture, which is designed for scalability and flexibility in software design. This means that the functionality of the system is broken down into smaller, independent services that can be deployed and scaled separately.
 
-**RUP** : Rational Unified Process
+3. **Netflix System Design**: The flowchart mentions "Netflix," suggesting that this is a diagram or architecture inspired by or used by Netflix's system design.
 
-**UML:** Unified Modeling Language
+4. **Interconnected Microservices**: There are several boxes labeled with various microservices such as "microservices," "user interface," "db," and "microservice services." These services are interconnected, indicating that they communicate with each other to provide the functionality of the system.
 
-**SAD:** Software Architecture Document
+5. **Database (DB)**: This component is likely where data persistence and storage occur.
 
-**1.4** **References**
+6. **User Interface Flow**: The diagram shows a flow from the user interface through to microservices and services like databases, indicating how user actions are processed and handled by the various components of the system.
 
-[KRU41]: The “4+1” view model of software architecture, Philippe Kruchten, November 1995,
-[http://www3.software.ibm.com/ibmdl/pub/software/rational/web/whitepapers/2003/Pbk4p1.pdf](http://www3.software.ibm.com/ibmdl/pub/software/rational/web/whitepapers/2003/Pbk4p1.pdf)
+7. **System Flow**: The arrows between the components represent the flow of information or requests through the system, showing that the user's action is processed via microservices architecture and eventually results in an outcome or response, possibly to the user interface.
 
-[RSA]: IBM Rational Software Architect
+8. **Architecture Components**: Apart from the mentioned ones, there are several boxes with labels like "user interface," "microservices," "db," and "microservice services." These components represent different layers or aspects of the architecture.
 
-[http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html](http://www-306.ibm.com/software/awdtools/architect/swarchitect/index.html)
+The image is a bit blurry and lacks specific details about each component, so providing more detailed information would not be accurate based on this image alone. 
 
-[RUP]: The IBM Rational Unified Process : [http://www-306.ibm.com/software/awdtools/rup/index.html](http://www-306.ibm.com/software/awdtools/rup/index.html)
+In a microservice architecture, services should be independent of each other. For
 
-[RUPRSA]: Developing a J2EE Architecture with Rational Software Architect using the Rational
+example, The video storage service would be decoupled from the service responsible
 
-Unified Process®, IBM DeveloperWorks, Jean-Louis Maréchaux, Mars 2005,
+for transcoding videos.
 
-[http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/](http://www-128.ibm.com/developerworks/rational/library/05/0816_Louis/)
+How to make microservice architecture reliable?
 
-**1.5** **Overview**
+Use Hystrix (Already explained above)
 
-In order to fully document all the aspects of the architecture, the Software Architecture Document contains the
-following subsections.
+Separate Critical Microservices:
 
-Section 2: describes the use of each view
-
-Section 3: describes the architectural constraints of the system
-
-Section 4: describes the functional requirements with a significant impact on the architecture
-
-Section 5: describes the most important use-case realization. Will contain the Analysis Model and the Design Model
-
-Section 6: describes design’s concurrency aspects
-
-Section 7: describes how the system will be deployed. Will contain the Deployment Model
-
-Confidential Ó Yummy Inc, 2024 Page 5 of 17
+We can separate out some critical services (or endpoint or APIs) and make
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+services.
 
+While choosing the critical microservices you can include all the basic
 
-Section 8: describes the layers and subsystems of the application
+functionalities, like searching for a video, navigating to the videos, hitting
 
-Section 9: describes any significant persistent element. Will contain the Data Model
+and playing the video, etc.
 
-Section 10: describes any performance issues and constraints
+This way you can make the endpoints highly available and even in worst
+case scenarios at least a user will be able to do the basic things.
 
-Section 11: describes any aspects related to the quality of service (QoS) attributes
+Treat Servers as Stateless:
 
-**2.** **Architectural Representation**
+To understand this concept think of your servers like a herd of cows and
 
-This document details the architecture using the views defined in the “4+1” model [KRU41], but using the RUP
-naming convention. The views used to document the Yummy Inc. application are:
+you care about how many gallons of milk you get every day.
 
-**Logical view**
+If one day you notice that you’re getting less milk from a cow then you just
 
-**Audience** : Designers.
-**Area** : Functional Requirements: describes the design's object model. Also describes the most important
-use-case realizations.
-**Related Artifacts** : Design model
+need to replace that cow (producing less milk) with another cow.
 
-**Process view**
+You don’t need to be dependent on a specific cow to get the required
 
-**Audience** : Integrators.
-**Area** : Non-functional requirements: describes the design's concurrency and synchronization aspects.
-**Related Artifacts** : (no specific artifact).
+amount of milk. We can relate the above example to our application.
 
-**Implementation view**
+The idea is to design the service in such a way that if one of the endpoints
 
-**Audience** : Programmers.
-**Area** : Software components: describes the layers and subsystems of the application.
-**Related Artifacts** : Implementation model, components
+is giving the error or if it’s not serving the request in a timely fashion then
 
-**Deployment view**
+you can switch to another server and get your work done.
 
-**Audience** : Deployment managers.
-**Area** : Topology: describes the mapping of the software onto the hardware and shows the system's
-distributed aspects.
-**Related Artifacts** : Deployment model.
+## 3. Low Level Design of Netflix System Design
 
-**Use Case view**
+ 3.1. How Does Netflix Onboard a Movie/Video?
 
-**Audience** : all the stakeholders of the system, including the end-users.
-**Area** : describes the set of scenarios and/or use cases that represent some significant, central functionality of
-the system.
-**Related Artifacts** : Use-Case Model, Use-Case documents
+Netflix receives very high-quality videos and content from the production houses, so
 
-**Data view (optional)**
+before serving the videos to the users it does some preprocessing.
 
-**Audience** : Data specialists, Database administrators
-**Area** : Persistence: describes the architecturally significant persistent elements in the data model
-**Related Artifacts** : Data model.
+Netflix supports more than 2200 devices and each one of them requires different
 
-Confidential Ó Yummy Inc, 2024 Page 6 of 17
+resolutions and formats.
+
+To make the videos viewable on different devices, Netflix performs transcoding or
+
+encoding, which involves finding errors and converting the original video into
+
+different formats and resolutions.
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+Netflix also creates file optimization for different network speeds. The quality of
 
+a video is good when you’re watching the video at high network speed. Netflix
 
-**3.** **Architectural Goals and Constraints**
+creates multiple replicas (approx 1100-1200) for the same movie with different
 
-This section describes the software requirements and objectives that have some significant impact on the
-architecture
+resolutions.
 
-**3.1** **Technical Platform**
+These replicas require a lot of transcoding and preprocessing. Netflix breaks the
 
-The Yummy Inc online application will be deployed onto a J2EE application server (Websphere Application Server
-version 6, as it is already the application server use for internal applications).
+original video into different smaller chunks and using parallel workers in AWS it
 
-**3.2** **Transaction**
+converts these chunks into different formats (like mp4, 3gp, etc) across different
 
-The Yummy Inc online application is transactional, leveraging the technical platform capabilities. Transaction
-management model of the J2EE platform will be reused intensively.
+resolutions (like 4k, 1080p, and more). After transcoding, once we have multiple
 
-**3.3** **Security**
+copies of the files for the same movie, these files are transferred to each and every
 
-The system must be secured, so that a customer can make online payments.
+Open Connect server which is placed in different locations across the world.
 
-The application must implement basic security behaviors:
+Below is the step by step process of how Netflix ensures optimal streaming quality:
 
--  Authentication: Login using at least a user name and a password
+When the user loads the Netflix app on his/her device firstly AWS instances come
 
--  Authorization: according to their profile, online customer must be granted or not to perform some
-specific actions (gold customer, business partners, etc..)
+into the picture and handle some tasks such as login, recommendations, search,
 
-For internet access, the following requirements are mandatory
+user history, the home page, billing, customer support, etc.
 
--  Confidentiality: sensitive data must be encrypted (credit card payments)
+After that, when the user hits the play button on a video, Netflix analyzes the
 
--  Data integrity : Data sent across the network cannot be modified by a tier
+network speed or connection stability, and then it figures out the best Open
 
--  Auditing: Every sensitive action can be logged
+Connect server near to the user.
 
--  Non-repudiation : gives evidence a specific action occurred
+Depending on the device and screen size, the right video format is streamed into
 
-J2EE security model will be reused
+the user’s device. While watching a video, you might have noticed that the video
 
-**3.4** **Persistence**
+appears pixelated and snaps back to HD after a while.
 
-Data persistence will be addressed using a relational database.
+This happens because the application keeps checking the best streaming open
 
-**3.5** **Reliability/Availability (failover)**
+connect server and switches between formats (for the best viewing experience)
 
-The availability of the system is a key requirement by nature, as it is a selling system. The candidate architecture
-must ensure failover capabilities. Reliability/Availability will be addressed through the J2EE platform
+when it’s needed.
 
-Targeted availability is 16/7: 16 hours a day, 7 days a week
+User data is saved in AWS such as searches, viewing, location, device, reviews,
 
-Confidential Ó Yummy Inc, 2024 Page 7 of 17
+and likes, Netflix uses it to build the movie recommendation for users using the
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+## 3.2. How Netflix balance the high traffic load
 
+1. Elastic Load Balancer
 
-The time left (8 hours) is reserved for any maintenance activities
+Image 4:  The image appears to be a screenshot of a presentation slide or an educational diagram related to software architecture. It illustrates the components and flow within a system that manages load balancing for a Netflix-like streaming service. Here's a summary of the key components in the diagram:
 
-**3.6** **Performance**
+1. **Input**: A source from which the system receives data, such as user requests or streaming content.
+2. **Router/Load Balancer**: The first component that processes incoming traffic. Its job is to distribute incoming network traffic across multiple servers for optimal performance and scalability. In this case, the router balances load between two different systems, possibly referring to two different networks or services.
+3. **System A/Network Design 1**: This could be a subsystem or a separate network within the main system. It has components like 'Load Balancer', 'App Server', and 'Database'. The diagram also shows that System A communicates with another system, likely indicating a connection to an external service or system.
+4. **System B/Network Design 2**: Similar to System A, this is another subsystem or network within the main system. It includes elements like 'Load Balancer', 'App Server', and 'Database'. There's also an arrow pointing from System B to System A, suggesting that these two systems might communicate with each other.
+5. **External Services**: This part of the diagram represents external services or APIs that are not part of the system but interact with it. These could be third-party services or components of a larger ecosystem.
+6. **App Server**: Represents a server dedicated to handling application logic and processing requests from users or clients.
+7. **Database**: A storage component for data persistence, likely storing information about user accounts, streaming content, and other relevant data.
+8. **Load Balancer**: This is the central component that manages the distribution of incoming traffic across different app servers to ensure that no single server becomes a bottleneck and to maintain optimal performance and scalability.
+9. **Users/Clients**: The end-users or clients that interact with the system, typically through web browsers or mobile apps to access streaming content.
 
-The payment process (credit card authorization and confirmation) must be under 10 seconds.
+The diagram uses arrows to illustrate the flow of data between different components of the system. It's a simplified representation and doesn't include specific details about the technologies or protocols being used. 
 
-**3.7** **Internationalization (i18n)**
+ELB in Netflix is responsible for routing the traffic to front-end services. ELB performs
 
-The online catering service of Yummy Inc must be able to deal with several languages (at least French and English)
-So the presentation layer must be able to support i18n.
-Other layers must be generic enough to work with any internationalization context
+a two-tier load-balancing scheme where the load is balanced over zones first and
 
-**4.** **Use-Case View**
+then instances (servers).
 
-This section lists use cases or scenarios from the use-case model if they represent some significant, central
-functionality of the final system. The only use-case with a significant impact on the online catering architecture is
-the one related to online orders. It includes a search feature as well as a call to external services (delivery and
-payment)
+The First-tier consists of basic DNS-based Round Robin Balancing. When the
 
-**4.1** **Ordering Menus**
+request lands on the first load balancing ( see the figure), it is balanced across one
 
-A customer accesses the online catering application and search for the available menus. The customer chooses from
-a list of menus and select what she/he wants to order. Then, the customer performs an online payment (credit card).
-Once the payment has been validated, the customer confirms the order, enters her/his delivery information (name,
-address, phone number, etc..) and all the relevant information is sent to the Yummy Inc delivery service.
+of the zones (using round-robin) that your ELB is configured to use.
 
-Confidential Ó Yummy Inc, 2024 Page 8 of 17
+The second tier is an array of load balancer instances, and it performs the Round
 
+Robin Balancing technique to distribute the request across the instances that are
 
------
+behind it in the same zone.
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+2. ZUUL
 
+ZUUL is a gateway service that provides dynamic routing, monitoring, resiliency, and
 
-![3.pdf-8-0.png](3.pdf-8-0.png)
+security. It provides easy routing based on query parameters, URL, and path. Let’s
 
-**4.2** **Use-Case Realizations**
+understand the working of its different parts:
 
-Refers to section 5.2 to see how design elements provide the functionalities identified in the significant use-cases.
+The Netty server takes responsibility to handle the network protocol, web server,
 
-**5.** **Logical View**
+connection management, and proxying work. When the request will hit the Netty
 
-**5.1** **Overview**
+server, it will proxy the request to the inbound filter.
 
-The online catering application is divided into layers based on the N-tier architecture
+The inbound filter is responsible for authentication, routing, or decorating the
 
-Confidential Ó Yummy Inc, 2024 Page 9 of 17
+request. Then it forwards the request to the endpoint filter.
 
+The endpoint filter is used to return a static response or to forward the request to
 
------
-
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
-
-
-![3.pdf-9-0.png](3.pdf-9-0.png)
-
-The layering model of the online catering application is based on a responsibility layering strategy that associates
-each layer with a particular responsibility.
-
-This strategy has been chosen because it isolates various system responsibilities from one another, so that it
-improves both system development and maintenance.
-
-![3.pdf-9-1.png](3.pdf-9-1.png)
-
-Confidential Ó Yummy Inc, 2024 Page 10 of 17
+the backend service (or origin as we call it).
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+outbound filter.
 
+An outbound filter is used for zipping the content, calculating the metrics, or
 
-Each layer has specific responsibilities.
+adding/removing custom headers. After that, the response is sent back to the Netty
 
--  The **presentation layer** deals with the presentation logic and the pages rendering
+server and then it is received by the client.
 
--  The **control layer** manages the access to the domain layer
+Advantages of using ZUUL:
 
--  The **resource layer** (integration layer) is responsible for the access to the enterprise information system
-(databases or other sources of information)
+You can create some rules and share the traffic by distributing the different parts of
 
--  The **domain layer** is related to the business logic and manages the accesses to the resource layer.
+the traffic to different servers.
 
--  The **Common Elements** **layer** gathers the common objects reused through all the layers
+Developers can also do load testing on newly deployed clusters in some machines.
 
-The online catering application version 1.0 is quite simple and only contains two basic features, one for the submit
-orders and the other allowing a customer to browse the online catalogue.
+They can route some existing traffic on these clusters and check how much load a
 
-External services are reused fro the payment and the delivery functionalities.
+specific server can bear.
 
-![3.pdf-10-0.png](3.pdf-10-0.png)
+You can also test new services. When you upgrade the service and you want to
 
-**5.2** **Architecturally Significant Design Packages**
+check how it behaves with the real-time API requests, in that case, you can deploy
 
-_5.2.1_ _Ordering Menus_
+the particular service on one server and you can redirect some part of the traffic to
 
-This package is responsible for all the logic related to the online orders. It provides ordering features and the
-necessary components to access the external services (Payment and Delivery)
+the new service to check the service in real-time.
 
-Analysis Model
+We can also filter the bad request by setting the custom rules at the endpoint filter
 
-Confidential Ó Yummy Inc, 2024 Page 11 of 17
+or firewall.
 
+3. Hystrix
 
------
+In a complex distributed system a server may rely on the response of another server.
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+Dependencies among these servers can create latency and the entire system may
 
+stop working if one of the servers will inevitably fail at some point. To solve this
 
-**Participants:**
+problem we can isolate the host application from these external failures.
 
-![3.pdf-11-0.png](3.pdf-11-0.png)
+Hystrix library is designed to do this job. It helps you to control the interactions
 
-**Basic Flow:**
+between these distributed services by adding latency tolerance and fault tolerance
 
-![3.pdf-11-1.png](3.pdf-11-1.png)
+logic. Hystrix does this by isolating points of access between the services, remote
 
-Confidential Ó Yummy Inc, 2024 Page 12 of 17
+system, and 3rd party libraries. The library helps to:
 
+Stop cascading failures in a complex distributed system.
 
------
+control over latency and failure from dependencies accessed (typically over the
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+network) via third-party client libraries.
 
+Fail fast and rapidly recover.
 
-Design Model
+Fallback and gracefully degrade when possible.
 
-**Process Delivery**
+Enable near real-time monitoring, alerting, and operational control.
 
-![3.pdf-12-0.png](3.pdf-12-0.png)
+Concurrency-aware request caching. Automated batching through request
 
-_5.2.2_ _Delivery Service_
+collapsing
 
-Contains all the logic related to the Yummy Inc delivery service.
-The Delivery Service is an external subsystem documented in its own Software Architecture Document
-
-_5.2.3_ _Payment Service_
-
-Contains all the logic related to the online payment and credit card validation.
-The Payment Service is an external subsystem documented in its own Software Architecture Document.
-
-**6.** **Process View**
-
-There’s only one process to take into account. The J2EE model automatically handles threads which are instances of
-this process.
-
-Confidential Ó Yummy Inc, 2024 Page 13 of 17
+## 3.3. EV Cache
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+these data can be cached in so many endpoints and it can be fetched from the cache
 
+instead of the original server. This reduces the load from the original server but the
 
-**7.** **Deployment View**
+problem is if the node goes down all the cache goes down and this can hit the
 
-**Global Overview**
+performance of the application.
 
-![3.pdf-13-0.png](3.pdf-13-0.png)
+Image 5:  The image appears to be a screenshot of a user interface, possibly from an application or software system. It shows a flowchart or diagram with various boxes and arrows connecting them, indicating the flow of data or interactions between components. Here's a summary of the key components visible in the image:
 
-**Detailed deployment model with clustering**
+1. **EV COACHE** - This could be the main function or feature within the system. It seems to be connected to several other components, suggesting it is central to the application's functionality.
 
--  One IBM HTTP Server will dispatch requests to two different IBM WebSphere servers (load balancing +
-clustering)
+2. **EMAIL** - There are two representations of an email address, which are likely used for communication purposes.
 
--  An IBM DB2 Database stores all the information related to online orders
+3. **CLUSTER A** and **CLUSTER B** - These may represent different servers or groups of services within the system. They are connected to the EV COACHE function, indicating that they might be involved in processing data related to EV (which stands for Electric Vehicle) coaching.
 
-Confidential Ó Yummy Inc, 2024 Page 14 of 17
+4. **SERVICE** - This is another key component in the diagram, linked to both CLUSTERS A and B. It seems to be responsible for providing a service or handling certain tasks within the system.
 
+5. **USER** - There is an icon of a user with an email address, which might represent a human user interacting with the system or being coached by the EV COACHE function.
 
------
+6. **NED DATABASE** and **NETWORK DATABASE** - These are databases that store data for the application. The NETWORK DATABASE is connected to the SERVICE, suggesting it may be accessed when certain services are executed.
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+7. **READING FROM DATABASES** - There is an arrow pointing from the databases to a function labeled "WRITE," indicating that data can be read from these databases and then written into another system or used in some way within the application.
 
+8. **USER INTERFACE** - The user interface is indicated by the presence of a text box with a prompt for inputting data, likely where users interact with the system.
 
-![3.pdf-14-0.png](3.pdf-14-0.png)
+9. **WRITE** - This function is connected to the databases and the USER INTERFACE, suggesting that it receives data from the user through the interface and then writes this data into the appropriate database.
 
-**8.** **Implementation View**
+10. **TEXT BOX WITH "WRITE" LABEL** - The text box labeled "WRITE" implies a place where users can enter text, likely as part of an input process within the application.
 
-**8.1** **Overview**
+The diagram also shows an arrow connecting the EV COACHE function to the databases, indicating that data may be written directly from the EV COACH system into the databases. Additionally, there are two arrows pointing to a box labeled "READ," which is connected to both CLUSTERS A and B, suggesting that data might be read from these clusters as part of the application's operation.
 
-The Implementation view depicts the physical composition of the implementation in terms of
-Implementation Subsystems, and Implementation Elements (directories and files, including source code,
-data, and executable files).
-Usually, the layers of the Implementation view do fit the layering defined in the Logical view
+The overall layout suggests a complex system involving multiple components for managing user interactions with an electric vehicle coaching service, along with databases to store information related to users and services. 
 
-It is unnecessary to document the Implementation view in great details in this document. For further
-information, refer to the Online Catering Service 1.0 workspace in Rational Software Architect.
+To solve this problem Netflix has built its own custom caching layer called EV cache.
 
-**8.2** **Layers**
+EV cache is based on Memcached and it is actually a wrapper around Memcached.
 
-_8.2.1_ _Presentation Layer_
+Netflix has deployed a lot of clusters in a number of AWS EC2 instances and these
 
-The Presentation layer contains all the components needed to allow interactions with an end-user. It encompasses
-the user interface
+clusters have so many nodes of Memcached and they also have cache clients.
 
-_8.2.2_ _Control Layer_
+The data is shared across the cluster within the same zone and multiple copies of
 
-The Control layer contains all the components used to access the domain layer or directly the resource layer when
-this is appropriate.
+the cache are stored in sharded nodes.
 
-_8.2.3_ _Resource Layer_
+Every time when write happens to the client all the nodes in all the clusters are
 
-The Resource layer contains the components needed to enable communication between the business tier and the
-enterprise information systems (Database, external services, ERP, etc…)
+updated but when the read happens to the cache, it is only sent to the nearest
 
-Confidential Ó Yummy Inc, 2024 Page 15 of 17
+cluster (not all the cluster and nodes) and its nodes.
 
+In case, a node is not available then read from a different available node. This
 
------
+approach increases performance, availability, and reliability.
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+## 3.4. Data Processing in Netflix Using Kafka And Apache Chukwa
 
+When you click on a video Netflix starts processing data in various terms and it takes
 
-_8.2.4_ _Domain layer_
+less than a nanosecond. Let’s discuss how the evolution pipeline works on Netflix.
 
-The Domain layer contains all the components related to the business logic. It gathers all the subsystems that meet
-the needs of a particular business domain. It also contains the business object model.
+Netflix uses Kafka and Apache Chukwe to ingest the data which is produced in a
 
-.
+different part of the system. Netflix provides almost 500B data events that consume
 
-_8.2.5_ _Common Elements Layer_
+1.3 PB/day and 8 million events that consume 24 GB/Second during peak time. These
 
-The Common Element layer contains the components re-used within several layers.
+events include information like:
 
-**9.** **Data View**
+Error logs
 
-The key data elements related to the online catering system are:
+UI activities
 
-![3.pdf-15-0.png](3.pdf-15-0.png)
+Performance events
 
-**10.** **Size and Performance**
-
-Volumes:
-
--  Estimated online orders : 100 a day, with peaks in the evening
-
--  Yummy Inc registered individual customer : about 150
-
--  Yummy Inc corporate customers : about 100
-
-Performance:
-
--  Time to process and online payment (credit card validation + confirmation) : less that 10 seconds required
-
-Confidential Ó Yummy Inc, 2024 Page 16 of 17
+Video viewing activities
 
 
 -----
 
-|Sample Software Architecture Document (version 0.7)|Col2|
-|---|---|
+events from a distributed system. It is built on top of HDFS and Map-reduce
+
+framework. It comes with Hadoop’s scalability and robustness features.
+
+It includes a lot of powerful and flexible toolkits to display, monitor, and analyze
+
+the result.
+
+Chukwe collects the events from different parts of the system and from Chukwe
+
+you can do monitoring and analysis or you can use the dashboard to view the
+
+events.
+
+Chukwe writes the event in the Hadoop file sequence format (S3). After that Big
+
+Data team processes these S3 Hadoop files and writes Hive in Parquet data
+
+format.
+
+This process is called batch processing which basically scans the whole data at the
+
+hourly or daily frequency.
+
+To upload online events to EMR/S3, Chukwa also provide traffic to Kafka (the main
+
+gate in real-time data processing).
+
+Kafka is responsible for moving data from fronting Kafka to various sinks: S3,
+
+Elasticsearch, and secondary Kafka.
+
+Routing of these messages is done using the Apache Samja framework.
+
+Traffic sent by the Chukwe can be full or filtered streams so sometimes you may
+
+have to apply further filtering on the Kafka streams.
+
+That is the reason we consider the router to take from one Kafka topic to a different
+
+Kafka topic.
+
+## 3.5. Elastic Search
+
+In recent years we have seen massive growth in using Elasticsearch within Netflix.
+
+Netflix is running approximately 150 clusters of elastic search and 3, 500 hosts with
+
+instances. Netflix is using elastic search for data visualization, customer support, and
+
+for some error detection in the system.
+
+For example:
+
+If a customer is unable to play the video then the customer care executive will
+
+resolve this issue using elastic search. The playback team goes to the elastic
+
+search and searches for the user to know why the video is not playing on the
+
+user’s device.
+
+They get to know all the information and events happening for that particular user.
+
+They get to know what caused the error in the video stream. Elastic search is also
 
 
-**11.** **Quality**
+-----
 
-As far as the online catering application is concerned, the following quality goals have been identified:
+resource usage and to detect signup or login problems.
 
-**Scalability** :
+## 3.6. Apache Spark For Movie Recommendation
 
--  **Description** : System’s reaction when user demands increase
+Netflix uses Apache Spark and Machine learning for Movie recommendations. Let’s
 
--  **Solution** : J2EE application servers support several workload management techniques
+understand how it works with an example.
 
-**Reliability** , **Availability** :
+When you load the front page you see multiple rows of different kinds of
 
--  **Description** : Transparent failover mechanism, mean-time-between-failure
+movies. Netflix personalizes this data and decides what kind of rows or what
 
--  **Solution :** : J2EE application server supports load balancing through clusters
+kind of movies should be displayed to a specific user. This data is based on the
 
-**Portability** :
+user’s historical data and preferences.
 
--  **Description** : Ability to be reused in another environment
+Also, for that specific user, Netflix performs sorting of the movies and calculates the
 
--  **Solution :** The system me be fully J2EE compliant and thus can be deploy onto any J2EE
-application server
+relevance ranking (for the recommendation) of these movies available on their
 
-**Security** :
+platform. In Netflix, Apache Spark is used for content recommendations and
 
--  **Description** : Authentication and authorization mechanisms
+personalization.
 
--  **Solution :** J2EE native security mechanisms will be reused
+A majority of the machine learning pipelines are run on these large spark
 
-Confidential Ó Yummy Inc, 2024 Page 17 of 17
+clusters. These pipelines are then used to do row selection, sorting, title
+
+relevance ranking, and artwork personalization among others.
+
+Video Recommendation System
+
+If a user wants to discover some content or video on Netflix, the recommendation
+
+system of Netflix helps users to find their favorite movies or videos. To build this
+
+recommendation system Netflix has to predict the user interest and it gathers
+
+different kinds of data from the users such as:
+
+User interaction with the service (viewing history and how the user rated other
+
+titles)
+
+Other members with similar tastes and preferences.
+
+Metadata information from the previously watched videos for a user such as titles,
+
+genre, categories, actors, release year, etc.
+
+The device of the user, at what time a user is more active, and for how long a user
+
+is active.
+
+Netflix uses two different algorithms to build a recommendation system…
+
+1. Collaborative filtering:
+
+The idea of this filtering is that if two users have similar rating histories then
+
+they will behave similarly in the future.
+
+
+-----
+
+rated the movie with a good score.
+
+Now, there is a good chance that the other person will also have a similar
+
+pattern and he/she will do the same thing that the first person has done.
+
+2. Content-based filtering:
+
+The idea is to filter those videos which are similar to the video a user has liked
+
+before.
+
+Content-based filtering is highly dependent on the information from the
+
+products such as movie title, release year, actors, the genre.
+
+So to implement this filtering it’s important to know the information describing
+
+each item and some sort of user profile describing what the user likes is also
+
+desirable.
+
+## 4. Database Design of Netflix System Design
+
+Netflix uses two different databases i.e. MySQL(RDBMS) and Cassandra(NoSQL) for
+
+different purposes.
+
+4.1. EC2 Deployed MySQL
+
+Netflix saves data like billing information, user information, and transaction
+
+information in MySQL because it needs ACID compliance. Netflix has a master
+master setup for MySQL and it is deployed on Amazon’s large EC2 instances
+
+using InnoDB.
+
+The setup follows the “Synchronous replication protocol” where if the writer
+
+happens to be the primary master node then it will be also replicated to another
+
+master node. The acknowledgment will be sent only if both the primary and remote
+
+master nodes’ write have been confirmed. This ensures the high availability of data.
+
+Netflix has set up the read replica for each and every node (local, as well as cross
+region). This ensures high availability and scalability.
+
+
+-----
+
+All the read queries are redirected to the read replicas and only the write queries are
+
+redirected to the master nodes.
+
+In the case of a primary master MySQL failure, the secondary master node will take
+
+over the primary role, and the route53 (DNS configuration) entry for the database
+
+will be changed to this new primary node.
+
+This will also redirect the write queries to this new primary master node.
+
+4.2. Cassandra
+
+Cassandra is a NoSQL database that can handle large amounts of data and it can also
+
+handle heavy writing and reading. When Netflix started acquiring more users, the
+
+viewing history data for each member also started increasing. This increases the total
+
+number of viewing history data and it becomes challenging for Netflix to handle this
+
+massive amount of data.
+
+Netflix scaled the storage of viewing history data-keeping two main goals in their
+
+mind:
+
+Smaller Storage Footprint.
+
+Consistent Read/Write Performance as viewing per member grows (viewing
+
+history data write-to-read ratio is about 9:1 in Cassandra).
+
+
+-----
+
+Over 50 Cassandra Clusters
+
+Over 500 Nodes
+
+Over 30TB of daily backups
+
+The biggest cluster has 72 nodes.
+
+1 cluster over 250K writes/s
+
+Initially, the viewing history was stored in Cassandra in a single row. When the
+
+number of users started increasing on Netflix the row sizes as well as the overall data
+
+size increased. This resulted in high storage, more operational cost, and slow
+
+performance of the application. The solution to this problem was to compress the old
+
+rows.
+
+Netflix divided the data into two parts:
+
+Live Viewing History (LiveVH):
+
+This section included the small number of recent viewing historical data of
+
+users with frequent updates. The data is frequently used for the ETL jobs
+
+and stored in uncompressed form.
+
+Compressed Viewing History (CompressedVH):
+
+A large amount of older viewing records with rare updates is categorized
+
+in this section. The data is stored in a single column per row key, also in
+
+compressed form to reduce the storage footprint.
 
 
 -----

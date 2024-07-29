@@ -15,7 +15,7 @@ def extractText(pdfPath):
 
 def extractWithImages(pdfPath):
 
-    md_text = pymupdf4llm.to_markdown(pdfPath, write_images=True)
+    md_text = pymupdf4llm.to_markdown(pdfPath, write_images=True, image_path="documents/")
 
     output_dir = "./documentExtraction/outputs/extractWithImages.txt"
 
@@ -28,4 +28,4 @@ def extractWithImages(pdfPath):
 
 
 # extractTextUsingLangChain("./documents/2.pdf")
-extractWithImages("./documents/3.pdf")
+extractWithImages("./documents/Netflix_Document.pdf")

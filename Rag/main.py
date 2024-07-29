@@ -19,9 +19,9 @@ with open("Rag/prompts/prompt.json", 'r') as file:
     prompts_file = json.load(file)
 
 
-def evaluate_docs_in_bulk(doc_name):
+def evaluate_docs_in_bulk(document_path):
     """Function to execute the whole Rag Pipeline"""
-
+    doc_name, extension = parse_doc_path(document_path)
     # ============================================    CONFIG    ============================================
 
     prompt_id = "P2"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT 
@@ -31,9 +31,12 @@ def evaluate_docs_in_bulk(doc_name):
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
+    alternate_query_file_path = "./Rag/prompts/old_queries.json" # Query file to use when ground truth is not available
+    image_extract = True
+    
 
-    fi_helper, fo_helper = FileInputHelper(create_doc=True), FileOutputHelper()
-    document_path, logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
+    fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
+    logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
 
     # ============================================    PIPELINE    ================================================
     
@@ -41,7 +44,7 @@ def evaluate_docs_in_bulk(doc_name):
     embedder = init_embedder(embedder_name=embedder_name)
 
     # Prepare Database and Chunking
-    setup_db_time, db, doc_chunks = prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper)
+    setup_db_time, db, doc_chunks = prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper, image_extract)
 
     # Initialize Retriever 
     retriever, retriever_lst = init_retriever(retriever_type, retriever_type_lst, db, doc_chunks, embedder)
@@ -50,8 +53,13 @@ def evaluate_docs_in_bulk(doc_name):
     generator = Generator(run_local=True, model_name=generator_name)
 
     # Load Query File
-    query_file_path = "./documentsFromText/" + doc_name + "/ground_truth.json"
-    ground_truth = fi_helper.load_json_file(query_file_path)
+    try:
+        query_file_path = "./documentsFromText/" + doc_name + "/ground_truth.json"
+        ground_truth = fi_helper.load_json_file(query_file_path)
+    except FileNotFoundError:
+        query_file_path = alternate_query_file_path
+        ground_truth = fi_helper.load_json_file(query_file_path)
+
     truth_length = len(ground_truth)
 
     # Iterative Querying
@@ -86,10 +94,10 @@ def init_embedder(embedder_name):
     return embedder
 
 
-def prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper):
+def prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper, image_extract):
     """ Load database & document chunks """
     setup_database_start_time = time.time()
-    new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper)
+    new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper, image_extract)
     # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, collection_name, fi_helper)
     setup_database_end_time = time.time()
     setup_db_time = setup_database_end_time - setup_database_start_time if new_doc_embed else "0"
@@ -136,26 +144,24 @@ def get_retriever(retriever_type, db, doc_chunks, embedder):
     return retriever
 
 
-def get_paths(doc_name, pid, gen_model, ground_true=True):
+def get_paths(doc_name, pid, gen_model):
     """ Get all paths needed in the pipeline """
-    doc_path = "documentsFromText/" + doc_name + "/content.txt" if ground_true else "./documents/" + doc_name + ".pdf"
     log_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + ".csv"
     combined_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + "_combined.csv"
 
-    return doc_path, log_path, combined_path
+    return log_path, combined_path
+
+def parse_doc_path(doc_path):
+    """ Parse the document path """
+    doc_name = doc_path.split("/")[-1].split(".")[0]
+    extension = doc_path.split(".")[-1]
+    return doc_name, extension
 
 
 def main():
-    # documentsFromText=["CloudFare","Cassandra","Airflow","Flink","Hadoop","Kafka","SkyWalking","Spark","TrafficServer"]
-    documentsFromText = ["Netflix", "Uber", "Whatsapp", "Dropbox", "Instagram"]
-    # documentsFromText = ["Netflix", "Uber"]
-
-    for doc_name in documentsFromText:
-        evaluate_docs_in_bulk(doc_name)
-
-    # documents=["3"]
-    # for doc_name in documents:
-    #   evaluate_docs_in_bulk(doc_name)
+    documents = ["./documents/Netflix.pdf", "./documents/2.pdf"] #specify whole document path(s) here
+    for doc in documents:
+        evaluate_docs_in_bulk(doc)
 
 
 if __name__ == "__main__":
