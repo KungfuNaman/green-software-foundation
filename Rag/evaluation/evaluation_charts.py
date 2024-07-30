@@ -77,6 +77,27 @@ def ragSettings_accuracyChart():
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.show()
+    # Save the figure
+    plt.savefig('accuracy_barchart.png', format='png')
+    plt.clf()
+
+    x = range(len(prefixes))
+
+    # Plotting the line chart
+    plt.plot(x, accuracies, marker='o', label='F1 Score')
+
+    plt.xlabel('Configuration')
+    plt.ylabel('Percentage (%)')
+    plt.title('Accuracy Comparison')
+    plt.xticks(x, prefixes, rotation=45, ha='right')
+    plt.ylim(70, 90)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    # Save the figure
+    plt.savefig('accuracy_linechart.png', format='png')
 
 
 def f1_score_rag_pipeline():
@@ -130,9 +151,11 @@ def f1_score_rag_pipeline():
 
     # Create a table using tabulate
     table = []
+    f1_scores = []
     for prefix in prefixes:
         precision, recall, f1 = metrics[prefix]
         table.append([prefix, precision, recall, f1])
+        f1_scores.append(f1)
 
     headers = ["Configuration", "Precision (%)", "Recall (%)", "F1 Score (%)"]
     table_str = tabulate(table, headers, tablefmt="grid")
@@ -140,6 +163,26 @@ def f1_score_rag_pipeline():
     # Display the table
     print(table_str)
 
+    plt.figure(figsize=(12, 6))
+
+    x = range(len(prefixes))
+
+    # Plotting the line chart
+    plt.plot(x, f1_scores, marker='o', label='F1 Score')
+
+    plt.xlabel('Configuration')
+    plt.ylabel('Percentage (%)')
+    plt.title('F1 Score Comparison')
+    plt.xticks(x, prefixes, rotation=45, ha='right')
+    plt.ylim(40, 80)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    # Save the figure
+    plt.savefig('F1_chart.png', format='png')
+    plt.clf()
 
 def confusion_matrix_rag_settings():
     
@@ -212,9 +255,10 @@ def confusion_matrix_rag_settings():
 
 
 
-
+# Enable interactive mode
+plt.ion()
 
 f1_score_rag_pipeline()
-confusion_matrix_rag_settings()
-# ragSettings_accuracyChart()
+# confusion_matrix_rag_settings()
+ragSettings_accuracyChart()
 
