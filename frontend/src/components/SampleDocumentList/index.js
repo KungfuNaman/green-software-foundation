@@ -36,7 +36,7 @@ const itemData = [
 const SampleDocumentList = () => {
   const navigate = useNavigate();
   const handleClick = (title) => {
-    navigate("/analysis");
+    navigate('/analysis', { state: { doc_name: title } });
   };
 
 

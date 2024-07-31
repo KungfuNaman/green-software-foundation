@@ -21,21 +21,6 @@
   width: 30%; /* Fixed width for better control */
 }
 
-.button-container{
-  margin-top: 7em;
-}
-
-.downloadPDF{
-    background: #aecc53;
-    border-radius: 4px;
-    color: #0b161f;
-    font-weight: 700;
-    padding: 8px 16px;
-    text-decoration: none;
-    white-space: nowrap;
-    cursor: pointer;
-}
-
 .chart-tabs {
   display: flex;
   flex-direction: column;

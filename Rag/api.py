@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from components.Generator import Generator
 import json
+from fastapi.middleware.cors import CORSMiddleware
+
 # from some_module import some_function  # Adjust the import according to your function location
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
@@ -11,6 +13,13 @@ from pydantic.dataclasses import dataclass
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"], # here
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -75,14 +84,12 @@ def ask_ecodoc(request: EcodocRequest):
 @app.get("/get_sample_results/{doc_name}")
 def get_sample_results(doc_name: str):
     sample_results_path = "Rag/results/modified_results.json"
-    with open(sample_results_path, 'r') as file:
-        sample_results = json.load(file)
-
-    try:    
-        result = sample_results[doc_name]
-    except KeyError:
-        return {"response": "No results found for the given document name."}
-    return {"response": result}
+    try:
+        with open(sample_results_path, 'r') as file:
+            sample_results = json.load(file)
+        return {"response": sample_results[doc_name]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 
 if __name__ == "__main__":
