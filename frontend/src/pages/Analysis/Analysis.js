@@ -32,7 +32,7 @@ const jsonFiles = {
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(100);
-  const [totalQuestions, setTotalQuestions] = useState( 138);
+  const [totalQuestions, setTotalQuestions] = useState(138);
   const [projectType, setProjectType] = useState(ProjectType["response"]);
   const [activeButton, setActiveButton] = useState(null);
 
@@ -52,7 +52,6 @@ const Analysis = () => {
       setActiveButton(filePath);
 
       setGraphResponse(module["default"]);
-
     } catch (error) {
       console.error(`Error loading JSON file ${filePath}:`, error);
     }
@@ -76,7 +75,7 @@ const Analysis = () => {
     }
   }, [graphResponse]);
 
-  // use effect for streaming effect
+  //use effect for streaming effect
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     if (filteredResponse.length > 0) {
@@ -93,6 +92,7 @@ const Analysis = () => {
 
   //   return () => clearInterval(interval);
   // }, [filteredResponse]);
+
   useEffect(() => {
     setApiResponse(filteredResponse);
   }, [filteredResponse]);
@@ -136,6 +136,9 @@ const Analysis = () => {
       <div className="analysisContent">
         <div className="progress-timer">
           <ProgressTimer value={progressValue} />
+          <div className="button-container">
+            <button className="downloadPDF">Download PDF</button>
+          </div>
         </div>
         <div className="chart-tabs">
           <div className="projectTypeList">

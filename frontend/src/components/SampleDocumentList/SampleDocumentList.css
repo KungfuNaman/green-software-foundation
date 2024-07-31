@@ -1,0 +1,16 @@
+.sample-container{
+    display: 'flex';
+    justify-content: 'center';
+    align-items: 'center';
+    height: '100vh';
+    margin: 1em auto;
+    padding: 1em;
+    background-color: #003734;
+    border-radius: 1em;
+    color: white;
+    width: 75%;
+}
+
+.image:hover{
+    cursor: pointer;
+}

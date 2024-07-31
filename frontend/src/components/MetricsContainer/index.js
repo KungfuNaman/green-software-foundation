@@ -5,7 +5,7 @@ const MetricsContainer = () => {
   return (
     <>
       <div className="metrics-container">
-        <h4>Output Metrics</h4>
+        <h3>Output Metrics</h3>
         <MetricTable />
       </div>
     </>

@@ -18,10 +18,25 @@
     padding: 1em;
     border-radius: 1em;
   }
-  
-  .fileUploadButton{
-    margin: 2em;
+
+  .custom-file-upload{
+    display: inline-block;
+    margin-right: 3em;
   }
+  
+  .custom-file-upload input[type="file"] {
+    display: none;
+  }
+
+  .custom-file-upload label {
+    background-color: #002d2a;
+    color: #aecc53;
+    padding: 10px 25px;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 4px;
+    display: inline-block;
+ }
   
   .submitFileButton{
     background: #aecc53;

@@ -57,11 +57,14 @@ function AddDocumentForm(){
 
     return(
         <form className="submitForm" enctype='multipart/form-data'>
-            <input type="file" name="document" onChange={handleFileChange} className='fileUploadButton'/>
+            <div class="custom-file-upload">
+                <input type="file" id="fileInput" onChange={handleFileChange} />
+                <label for="fileInput">Upload File</label>
+            </div>
             <button type="submit" className='submitFileButton' disabled={submitBlocked} onClick={handleSubmit}>Analyse Document</button>
             <hr className='hr1'></hr>
             {isRunning && <Timer/>}
-            {documentUrl != null && !isRunning && <h4>Document Viewer</h4>}
+            {documentUrl != null && !isRunning && <h3>Document Viewer</h3>}
             {documentUrl != null && !isRunning && <button type="button" className='previewButton' onClick={hidePreview}>Hide/Reveal Preview</button>}
             {documentUrl != null && !isRunning && showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
         </form>
