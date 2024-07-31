@@ -95,8 +95,12 @@ const Analysis = () => {
   return (
     <div className="analysis-container">
       <div className="analysisContent">
-        <div className="progress-timer">
+        <div className="left-container">
           <ProgressTimer value={progressValue} />
+          <ResultPieChart
+          categoryWiseResult={categoryWiseResult}
+          apiResponse={apiResponse}
+          />
         </div>
         <div className="chart-tabs">
           <div className="projectTypeList">
@@ -119,10 +123,6 @@ const Analysis = () => {
         </div>
       </div>
       <div className="results">
-        <ResultPieChart
-          categoryWiseResult={categoryWiseResult}
-          apiResponse={apiResponse}
-        />
         <div className="ranking">
           Ranking :
           {progressValue === 100 && (

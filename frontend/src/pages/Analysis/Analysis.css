@@ -17,8 +17,9 @@
   box-sizing: border-box; /* Ensure padding is included in width */
 }
 
-.progress-timer {
-  width: 30%; /* Fixed width for better control */
+.left-container {
+  width: 40%; /* Fixed width for better control */
+  margin-left: 0;
 }
 
 .chart-tabs {
@@ -29,7 +30,7 @@
   box-shadow: 10px 5px 5px #cdd7e1;
   padding: 10px;
   flex: 1; /* Allow it to grow and fit space */
-  width: 80%;
+  width: 70%;
 }
 
 .projectTypeList {

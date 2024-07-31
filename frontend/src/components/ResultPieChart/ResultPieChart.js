@@ -65,8 +65,7 @@ export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
             },
           },
         ]}
-        height={200}
-        width={700}
+        height={230}
         onItemClick={handleOpen}
       />
 
