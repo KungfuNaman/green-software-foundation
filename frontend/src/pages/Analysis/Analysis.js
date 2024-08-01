@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect} from "react";
 import { Button } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ProgressTimer from "../../components/ProgressTimer/ProgressTimer";
@@ -6,7 +6,7 @@ import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
 import ProjectType from "./../../api_results/projectType.json";
 import "./Analysis.css";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
@@ -91,9 +91,19 @@ const Analysis = () => {
       return resultCount;
     });
   };
+  
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/");
+  };
 
   return (
     <div className="analysis-container">
+      <div className="analysis-header">
+        <button onClick={handleClick} className="analysis-back-button">Return</button>
+        <h2 className="analysis-title">Results for: {doc_name}</h2>
+      </div>
       <div className="analysisContent">
         <div className="left-container">
           <ProgressTimer value={progressValue} />
@@ -105,13 +115,13 @@ const Analysis = () => {
         <div className="chart-tabs">
           <div className="projectTypeList">
             <Button className="projectType" variant="contained">
+              All
+            </Button>
+            <Button className="projectType" variant="outlined">
               Web
             </Button>
-            <Button className="projectType" variant="outlined" disabled>
+            <Button className="projectType" variant="outlined">
               Cloud
-            </Button>
-            <Button className="projectType" variant="outlined" disabled>
-              AI
             </Button>
           </div>
           <div className="charts">

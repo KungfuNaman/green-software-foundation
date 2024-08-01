@@ -31,7 +31,7 @@
   .custom-file-upload label {
     background-color: #002d2a;
     color: #aecc53;
-    padding: 10px 25px;
+    padding: 9px 40px;
     font-weight: 800;
     cursor: pointer;
     border-radius: 4px;
@@ -50,7 +50,7 @@
   }
   
   .submitFileButton:disabled{
-    background: #aecc53;
+    background: grey;
     border-radius: 4px;
     color: #0b161f;
     font-weight: 700;
@@ -58,6 +58,7 @@
     text-decoration: none;
     white-space: nowrap;
     cursor: not-allowed;
+    filter: blur(1px);
   }
 
 

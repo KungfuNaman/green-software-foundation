@@ -53,8 +53,9 @@ export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
   }, [apiResponse]);
   return (
     <div className="pieChartContainer">
-      <h2>Category wise responses</h2>
+      <h3>Category wise responses</h3>
       <PieChart
+        margin={{ left:-150 }}
         series={[
           {
             data,
