@@ -12,7 +12,7 @@ function Timer(){
       }, []);   
     
     return(
-        <p>Loading - Time Elapsed: {time}s</p>
+        <p>Analysis In Progress - Time Elapsed: {time}s</p>
     )
 }
 

@@ -157,7 +157,7 @@ def categorize_text(text):
 
 
 
-def export_combined_results_to_json(combined_results_path):
+def export_combined_results_to_json_file(combined_results_path):
     with open("Rag/prompts/queries.json", "r", encoding="utf-8") as file:
         queries = json.load(file)["queries"]
         
@@ -185,7 +185,31 @@ def export_combined_results_to_json(combined_results_path):
     with open("frontend/src/api_results/"+graphResponsePath, "w") as f:
             json.dump(json_file, f)
 
+def export_combined_results_to_json(combined_results_path):
+    with open("Rag/prompts/old_queries.json", "r", encoding="utf-8") as file:
+        queries = json.load(file)["queries"]
+        
+    df = pd.read_csv(combined_results_path)
     
+    records=df.to_dict(orient="records")
+    result_arr=[]    
+    for item in records:
+        obj={}
+        obj["query"] = "" if pd.isna(item["query"]) else item["query"]
+        obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
+        obj["result"] = "" if pd.isna(item["result"]) else item["result"]
+
+        for question in queries:
+            if item["query"] in question["query"]:
+                obj["category"]=question["category"]
+                obj["practice"]=question["practice"]
+                obj["type"]=question["type"]
+
+        if "type" in obj and obj["type"] is not None:
+             result_arr.append(obj)
+
+    json_response ={"response":result_arr}
+    return json_response
 
 def addCategories():
     with open("frontend/src/api_results/categories.json", "r", encoding="utf-8") as file:

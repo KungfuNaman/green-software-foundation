@@ -6,11 +6,12 @@ import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
 import ProjectType from "./../../api_results/projectType.json";
 import "./Analysis.css";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
-import { useLocation, useNavigate } from "react-router-dom";
+import { json, useLocation, useNavigate } from "react-router-dom";
+import Timer from "../../components/AddDocument/Timer";
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
-  const [totalQuestions, setTotalQuestions] = useState(54);
+  const [totalQuestions, setTotalQuestions] = useState(45);
   const [projectType, setProjectType] = useState(ProjectType["response"]);
   const [activeButton, setActiveButton] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -18,9 +19,10 @@ const Analysis = () => {
   const [apiResponse, setApiResponse] = useState([]);
   const [graphResponse, setGraphResponse] = useState([]);
   const [categoryWiseResult, setCategoryWiseResult] = useState({});
+  const [runTimer, setRunTimer] = useState(false);
   
   const location = useLocation();
-  const { doc_name } = location.state || {};
+  const { doc_name, file } = location.state || {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,15 +31,57 @@ const Analysis = () => {
         try {
           const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`);
           const data = await response.json();
-          setGraphResponse(data); // Assuming the response is set here
+          setGraphResponse(data); 
         } catch (error) {
           console.error("Error fetching data:", error);
         }
       }
+      else if(doc_name && file){
+        try {
+          setRunTimer(true);
+          const formData = new FormData();
+          formData.append('file', file);
+          const response = await fetch('http://localhost:8000/ask_ecodoctest', {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json',
+            },
+          });
+          
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let receivedText = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            receivedText += decoder.decode(value, { stream: true });
+            let boundary = receivedText.indexOf('\n');
+            while (boundary !== -1) {
+              const jsonString = receivedText.slice(0, boundary).trim();
+              console.log(receivedText);
+              if(jsonString){
+               try {
+                 const jsonObject = JSON.parse(jsonString);
+                 setGraphResponse(jsonObject); 
+               } catch (e) {
+                 console.error('Error parsing JSON:', e);
+               }
+              }
+              receivedText = receivedText.slice(boundary + 1);
+              boundary = receivedText.indexOf('\n');
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);  
+        }
+        setRunTimer(false);
+      }
     };
 
     fetchData(); 
-  }, [doc_name]);
+  }, [doc_name, file]);
 
   useEffect(() => {
     if (graphResponse && graphResponse.response) {
@@ -45,9 +89,7 @@ const Analysis = () => {
       const updatedResponse = allResponses.filter((item) => {
         return item.type && item.type !== "AI";
       });
-
       setFilteredResponse(updatedResponse);
-      setTotalQuestions(updatedResponse.length);
 
       setCategories((prev) => {
         const uniqueCategories = new Set();
@@ -103,6 +145,7 @@ const Analysis = () => {
       <div className="analysis-header">
         <button onClick={handleClick} className="analysis-back-button">Return</button>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
+        {runTimer && <div className="analysis-timer"><Timer/></div>}
       </div>
       <div className="analysisContent">
         <div className="left-container">
@@ -133,20 +176,6 @@ const Analysis = () => {
         </div>
       </div>
       <div className="results">
-        <div className="ranking">
-          Ranking :
-          {progressValue === 100 && (
-            <>
-              <div>1/5</div>
-              <div sx={{ display: "flex" }}>
-                <StarIcon sx={{ color: "#f7c81e" }} />
-                {/* <StarIcon sx={{ color: "#f7c81e" }} />
-                <StarIcon sx={{ color: "#f7c81e" }} /> */}
-              </div>
-            </>
-          )}
-          {progressValue !== 100 && <div style={{ padding: "10px" }}>?</div>}
-        </div>
       </div>
     </div>
   );

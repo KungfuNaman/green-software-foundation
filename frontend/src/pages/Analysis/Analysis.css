@@ -33,6 +33,10 @@
   transform: translateX(-50%);
 }
 
+.analysis-timer {
+  margin-left: auto;
+}
+
 .analysisContent {
   display: flex;
   gap: 20px; /* Reduced gap to fit content better */
