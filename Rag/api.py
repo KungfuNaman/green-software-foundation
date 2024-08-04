@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from components.Generator import Generator
@@ -133,7 +134,7 @@ async def ask_ecodoc(file: UploadFile):
     truth_length = len(ground_truth)
 
      # Iterative Querying
-    async def generate_results(): 
+    def generate_results(): 
         for q_idx in range(truth_length):
             q_question = ground_truth[q_idx].get("query", "")
             # ----------     Regular Invoke & Record to CSV     ----------
@@ -144,15 +145,13 @@ async def ask_ecodoc(file: UploadFile):
             response_info["logger_file_path"] = logger_file_path
             fo_helper.append_to_csv(response_info) 
             add_parsed_results(logger_file_path, combined_path, prompt_id)
-            json_response = export_combined_results_to_json(combined_path)
-            print(json.dumps(json_response) + "\n") 
+            json_response = export_combined_results_to_json(combined_path) 
             yield json.dumps(json_response) + "\n"
-    
+
     return StreamingResponse(generate_results(), media_type="application/json")
 
 @app.post("/ask_ecodoctest")
 async def ask_ecodoctest(file: UploadFile):
-    # Your existing logic
     async def generate():
         yield json.dumps({"response": [{"query": "Is there any mention of minimizing the total number of deployed environments?", "explanation": "The context provided does not discuss minimizing the total number of deployed environments, as it focuses on Git's features and benefits within software development processes.", "result": "Not Applicable", "category": "Resource Optimization", "practice": "Minimize the total number of deployed environments", "type": "web"}]}) + "\n"
         await asyncio.sleep(10)

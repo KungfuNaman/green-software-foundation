@@ -41,7 +41,7 @@ const Analysis = () => {
           setRunTimer(true);
           const formData = new FormData();
           formData.append('file', file);
-          const response = await fetch('http://localhost:8000/ask_ecodoctest', {
+          const response = await fetch('http://localhost:8000/ask_ecodoc', {
             method: 'POST',
             body: formData,
             headers: {
@@ -50,13 +50,17 @@ const Analysis = () => {
           });
           
           const reader = response.body.getReader();
+          console.log("reached reader")
           const decoder = new TextDecoder('utf-8');
+          console.log("reached decoder")
           let receivedText = '';
 
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
+            console.log("reached await reader")
             receivedText += decoder.decode(value, { stream: true });
+            console.log(receivedText)
             let boundary = receivedText.indexOf('\n');
             while (boundary !== -1) {
               const jsonString = receivedText.slice(0, boundary).trim();
