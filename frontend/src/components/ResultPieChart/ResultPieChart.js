@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import ResultTabs from "../ResultTabs/ResultTabs";
+import { alignProperty } from "@mui/material/styles/cssUtils";
 // import ResultTabs from "./ResultTabs";
 
 const style = {
@@ -16,6 +17,7 @@ const style = {
   maxHeight: '80vh', // Set a maximum height for the Box
   overflow:"auto",
   borderRadius:"20px",
+  textAlign: 'center',
 };
 
 export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
@@ -77,6 +79,7 @@ export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+          <h3>View Data Breakdown (Click on a tab)</h3>
           <ResultTabs tabularData={tabularData} />
         </Box>
       </Modal>

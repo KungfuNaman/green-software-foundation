@@ -6,12 +6,14 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Button } from "@mui/material";
+import { styled } from '@mui/material/styles';
+
 export default function ResultTabs({ tabularData }) {
   const [value, setValue] = React.useState("1");
   const [apiRows,setApiRows]=useState([])
@@ -27,17 +29,26 @@ export default function ResultTabs({ tabularData }) {
     console.log(apiRows)
     setApiRows(tabularData[newValue]);
   };
-
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-    createData("Gingerbread", 356, 16.0, 49, 3.9),
-  ];
+  
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
 
 
   return (
@@ -52,26 +63,26 @@ export default function ResultTabs({ tabularData }) {
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650,fontSize: '1.25rem' }} aria-label="simple table">
           <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontSize: '1.25rem' }}>Practice</TableCell>
-              <TableCell sx={{ fontSize: '1.25rem' }} align="right">Query</TableCell>
-              <TableCell sx={{ fontSize: '1.25rem' }} align="right">Explanation</TableCell>
-              <TableCell sx={{ fontSize: '1.25rem' }} align="right">Result</TableCell>
-            </TableRow>
+            <StyledTableRow>
+              <StyledTableCell sx={{ fontSize: '1.25rem' }}>Practice</StyledTableCell>
+              <StyledTableCell sx={{ fontSize: '1.25rem' }} align="left">Query</StyledTableCell>
+              <StyledTableCell sx={{ fontSize: '1.25rem' }} align="left">Explanation</StyledTableCell>
+              <StyledTableCell sx={{ fontSize: '1.25rem' }} align="left">Result</StyledTableCell>
+            </StyledTableRow>
           </TableHead>
           <TableBody>
             {apiRows.map((row) => (
-              <TableRow
+              <StyledTableRow
                 key={row.name}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
-                <TableCell sx={{ fontSize: '1.25rem' }} component="th" scope="row">
+                <StyledTableCell sx={{ fontSize: '1.25rem'}} component="th" scope="row">
                   {row.practice}
-                </TableCell>
-                <TableCell sx={{ fontSize: '1.25rem' }} align="right">{row.query}</TableCell>
-                <TableCell sx={{ fontSize: '1.25rem' }} align="right">{row.explanation}</TableCell>
-                <TableCell sx={{ fontSize: '1.25rem' }} align="right">{row.result}</TableCell>
-              </TableRow>
+                </StyledTableCell>
+                <StyledTableCell sx={{ fontSize: '1.25rem'}} align="left">{row.query}</StyledTableCell>
+                <StyledTableCell sx={{ fontSize: '1.25rem'}} align="left">{row.explanation}</StyledTableCell>
+                <StyledTableCell sx={{ fontSize: '1.25rem'}} align="left">{row.result}</StyledTableCell>
+              </StyledTableRow>
             ))}
           </TableBody>
         </Table>

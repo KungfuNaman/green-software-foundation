@@ -46,7 +46,7 @@
 }
 
 .left-container {
-  width: 35%; /* Fixed width for better control */
+  width: 45%; /* Fixed width for better control */
 }
 
 .chart-tabs {
@@ -57,7 +57,7 @@
   box-shadow: 10px 5px 5px #cdd7e1;
   padding: 10px;
   flex: 1; /* Allow it to grow and fit space */
-  width: 70%;
+  width: 55%;
 }
 
 .projectTypeList {
@@ -81,17 +81,47 @@
 
 .results {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   width: 100%; /* Ensure full width usage */
+  margin: 1.5em;
 }
 
-.documents-container {
+.analysis-preview-button {
+  background-color: #aecc53;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.analysis-download-button {
+  background-color: #aecc53;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.analysis-download-button:disabled {
+  background: grey;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: not-allowed;
+}
+
+.document-preview{
   display: flex;
-  flex-wrap: wrap;
-}
-
-.DocumentList {
-  flex: 1 1 15%; /* Adjusted basis to 15% */
-  box-sizing: border-box!important;
-  padding: 5px!important;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
 }

@@ -13,13 +13,17 @@ const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(45);
   const [projectType, setProjectType] = useState(ProjectType["response"]);
-  const [activeButton, setActiveButton] = useState(null);
+  const [activeButton, setActiveButton] = useState("button1");
   const [categories, setCategories] = useState([]);
   const [filteredResponse, setFilteredResponse] = useState([]);
   const [apiResponse, setApiResponse] = useState([]);
   const [graphResponse, setGraphResponse] = useState([]);
   const [categoryWiseResult, setCategoryWiseResult] = useState({});
   const [runTimer, setRunTimer] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [documentUrl, setDocumentUrl] = useState("");
+  const [filterType, setFilterType] = useState("all");
+
   
   const location = useLocation();
   const { doc_name, file } = location.state || {};
@@ -28,6 +32,7 @@ const Analysis = () => {
     const fetchData = async () => {
       const sample_doc_list = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"];
       if (doc_name && sample_doc_list.includes(doc_name)) {
+        setTotalQuestions(37);
         try {
           const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`);
           const data = await response.json();
@@ -93,7 +98,18 @@ const Analysis = () => {
       const updatedResponse = allResponses.filter((item) => {
         return item.type && item.type !== "AI";
       });
-      setFilteredResponse(updatedResponse);
+
+      changeProgressBar(updatedResponse);
+
+      let finalResponse;
+      if(filterType !== "all"){
+        finalResponse = updatedResponse.filter(item => item.type === filterType);
+      }
+      else{
+        finalResponse = updatedResponse;
+      }
+      
+      setFilteredResponse(finalResponse);
 
       setCategories((prev) => {
         const uniqueCategories = new Set();
@@ -103,14 +119,13 @@ const Analysis = () => {
         return Array.from(uniqueCategories);
       });
     }
-  }, [graphResponse]);
+  }, [graphResponse, filterType]);
 
   useEffect(() => {
     setApiResponse(filteredResponse);
   }, [filteredResponse]);
 
   useEffect(() => {
-    changeProgressBar(apiResponse);
     changeBarChart(apiResponse);
   }, [apiResponse]);
 
@@ -140,14 +155,37 @@ const Analysis = () => {
   
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleBackButtonClick = () => {
     navigate("/");
+  };
+
+  const handlePreviewButtonClick = () => {
+    if(file){
+      const url = URL.createObjectURL(file);
+      setDocumentUrl(url);
+    }
+    setShowPreview(!showPreview);
+  };
+
+  const handleAllButton = () => {
+    setFilterType("all");
+    setActiveButton("button1");
+  };
+
+  const handleWebButton = () => {
+    setFilterType("web");
+    setActiveButton("button2");
+  };
+
+  const handleCloudButton = () => {
+    setFilterType("cloud");
+    setActiveButton("button3");
   };
 
   return (
     <div className="analysis-container">
       <div className="analysis-header">
-        <button onClick={handleClick} className="analysis-back-button">Return</button>
+        <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer"><Timer/></div>}
       </div>
@@ -158,16 +196,17 @@ const Analysis = () => {
           categoryWiseResult={categoryWiseResult}
           apiResponse={apiResponse}
           />
+          <p>Click on the Pie Chart to see a full data breakdown.</p>
         </div>
         <div className="chart-tabs">
           <div className="projectTypeList">
-            <Button className="projectType" variant="contained">
+            <Button className="projectType" onClick={handleAllButton} variant={activeButton === 'button1' ? 'contained' : 'outlined'}>
               All
             </Button>
-            <Button className="projectType" variant="outlined">
+            <Button className="projectType" onClick={handleWebButton} variant={activeButton === 'button2' ? 'contained' : 'outlined'}>
               Web
             </Button>
-            <Button className="projectType" variant="outlined">
+            <Button className="projectType" onClick={handleCloudButton} variant={activeButton === 'button3' ? 'contained' : 'outlined'}>
               Cloud
             </Button>
           </div>
@@ -180,6 +219,11 @@ const Analysis = () => {
         </div>
       </div>
       <div className="results">
+        <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Submitted Document</button>
+        <button className="analysis-download-button" disabled>Download Results PDF</button>
+      </div>
+      <div className="document-preview">
+         {showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
       </div>
     </div>
   );

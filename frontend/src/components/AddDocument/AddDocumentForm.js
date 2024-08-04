@@ -25,15 +25,7 @@ function AddDocumentForm(){
     };
 
     const handleSubmit = async () => {
-        setSubmitBlocked(true);
-    
-        // const formData = new FormData();
-        // formData.append('file', file);
-        // const response = await fetch('', {
-        //   method: 'POST',
-        //   body: formData
-        // });
-        
+        setSubmitBlocked(true);   
         navigate('/analysis', { state: { doc_name: file.name, file: file } });
        
     };
