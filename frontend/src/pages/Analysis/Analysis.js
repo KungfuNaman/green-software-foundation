@@ -164,6 +164,9 @@ const Analysis = () => {
       const url = URL.createObjectURL(file);
       setDocumentUrl(url);
     }
+    else{
+      setDocumentUrl(`${process.env.PUBLIC_URL}/${doc_name}.pdf`)
+    }
     setShowPreview(!showPreview);
   };
 
