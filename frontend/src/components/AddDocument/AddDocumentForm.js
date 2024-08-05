@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Timer from './Timer';
+import { useNavigate } from "react-router-dom";
 
 function AddDocumentForm(){
     const[file, setFile] = useState(null); //stores uploaded file
     const[documentUrl, setDocumentUrl] = useState(null); // stores url for document preview
     const[submitBlocked, setSubmitBlocked] = useState(true); //to block analyse document button
-    const[isRunning, setIsRunning] = useState(false);  //starts and stops timer
     const[showPreview, setShowPreview] = useState(true); //shows document preview
+    const navigate = useNavigate();
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
@@ -25,25 +25,9 @@ function AddDocumentForm(){
     };
 
     const handleSubmit = async () => {
-        setSubmitBlocked(true);
-        setIsRunning(true);
-
-        const formData = new FormData();
-        formData.append('file', file);
-        const response = await fetch('', {
-          method: 'POST',
-          body: formData
-        });
-        if (response.ok) {
-          alert('File analysed successfully. Please check the output in the Analysis Output section.');
-        } 
-        else {
-          alert('File analysis unsuccessful. Please try again.');
-        }
-
-        setIsRunning(false);
-        setSubmitBlocked(false);
-        setShowPreview(false);
+        setSubmitBlocked(true);   
+        navigate('/analysis', { state: { doc_name: file.name, file: file } });
+       
     };
 
     const hidePreview = () => {
@@ -57,13 +41,15 @@ function AddDocumentForm(){
 
     return(
         <form className="submitForm" enctype='multipart/form-data'>
-            <input type="file" name="document" onChange={handleFileChange} className='fileUploadButton'/>
+            <div class="custom-file-upload">
+                <input type="file" id="fileInput" onChange={handleFileChange} />
+                <label for="fileInput">Upload File</label>
+            </div>
             <button type="submit" className='submitFileButton' disabled={submitBlocked} onClick={handleSubmit}>Analyse Document</button>
             <hr className='hr1'></hr>
-            {isRunning && <Timer/>}
-            {documentUrl != null && !isRunning && <h4>Document Viewer</h4>}
-            {documentUrl != null && !isRunning && <button type="button" className='previewButton' onClick={hidePreview}>Hide/Reveal Preview</button>}
-            {documentUrl != null && !isRunning && showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
+            {documentUrl != null && <h3>Document Viewer</h3>}
+            {documentUrl != null && <button type="button" className='previewButton' onClick={hidePreview}>Hide/Reveal Preview</button>}
+            {documentUrl != null && showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
         </form>
     );
 }

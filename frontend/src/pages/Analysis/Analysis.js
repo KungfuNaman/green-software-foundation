@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { Button } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import ProgressTimer from "../../components/ProgressTimer/ProgressTimer";
@@ -6,65 +6,110 @@ import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
 import ProjectType from "./../../api_results/projectType.json";
 import "./Analysis.css";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
-
-const jsonFiles = {
-  "CloudFare": import("./../../api_results/phi3_CloudFare_combined.json"),
-  "Cassandra": import("./../../api_results/phi3_Cassandra_combined.json"),
-  "Flink": import("./../../api_results/phi3_Flink_combined.json"),
-  "Hadoop": import("./../../api_results/phi3_Hadoop_combined.json"),
-  "Kafka": import("./../../api_results/phi3_Kafka_combined.json"),
-  "SkyWalking": import("./../../api_results/phi3_SkyWalking_combined.json"),
-  "Spark": import("./../../api_results/phi3_Spark_combined.json"),
-  "Airflow": import("./../../api_results/phi3_Airflow_combined.json"),
-  "TrafficServer": import("./../../api_results/phi3_TrafficServer_combined.json"),
-  "CloudFare_P2": import("./../../api_results/phi3_P2_CloudFare_combined.json"),
-  "Cassandra_P2": import("./../../api_results/phi3_P2_Cassandra_combined.json"),
-  "Flink_P2": import("./../../api_results/phi3_P2_Flink_combined.json"),
-  "Hadoop_P2": import("./../../api_results/phi3_P2_Hadoop_combined.json"),
-  "Kafka_P2": import("./../../api_results/phi3_P2_Kafka_combined.json"),
-  "SkyWalking_P2": import("./../../api_results/phi3_P2_SkyWalking_combined.json"),
-  "Spark_P2": import("./../../api_results/phi3_P2_Spark_combined.json"),
-  "Airflow_P2": import("./../../api_results/phi3_P2_Airflow_combined.json"),
-  "TrafficServer_P2": import("./../../api_results/phi3_P2_TrafficServer_combined.json"),
-  "Netflix_P2": import("./../../api_results/phi3_P2_QOld_Netflix_combined.json")
-
-};
+import { json, useLocation, useNavigate } from "react-router-dom";
+import Timer from "../../components/AddDocument/Timer";
 
 const Analysis = () => {
-  const [progressValue, setProgressValue] = useState(100);
-  const [totalQuestions, setTotalQuestions] = useState( 138);
+  const [progressValue, setProgressValue] = useState(0);
+  const [totalQuestions, setTotalQuestions] = useState(45);
   const [projectType, setProjectType] = useState(ProjectType["response"]);
-  const [activeButton, setActiveButton] = useState(null);
-
+  const [activeButton, setActiveButton] = useState("button1");
   const [categories, setCategories] = useState([]);
-
   const [filteredResponse, setFilteredResponse] = useState([]);
   const [apiResponse, setApiResponse] = useState([]);
   const [graphResponse, setGraphResponse] = useState([]);
-
   const [categoryWiseResult, setCategoryWiseResult] = useState({});
+  const [runTimer, setRunTimer] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [documentUrl, setDocumentUrl] = useState("");
+  const [filterType, setFilterType] = useState("all");
 
-  async function onFileClick(event,filePath) {
-    
-    try {
-      const module = await jsonFiles[filePath];
-      // Assign the default export from the module to the key
-      setActiveButton(filePath);
+  
+  const location = useLocation();
+  const { doc_name, file } = location.state || {};
 
-      setGraphResponse(module["default"]);
-
-    } catch (error) {
-      console.error(`Error loading JSON file ${filePath}:`, error);
-    }
-
-  }
   useEffect(() => {
-    if (graphResponse&& graphResponse["response"]) {
-      const updatedResponse = graphResponse["response"].filter((item) => {
+    const fetchData = async () => {
+      const sample_doc_list = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"];
+      if (doc_name && sample_doc_list.includes(doc_name)) {
+        setTotalQuestions(37);
+        try {
+          const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`);
+          const data = await response.json();
+          setGraphResponse(data); 
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+      else if(doc_name && file){
+        try {
+          setRunTimer(true);
+          const formData = new FormData();
+          formData.append('file', file);
+          const response = await fetch('http://localhost:8000/ask_ecodoc', {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json',
+            },
+          });
+          
+          const reader = response.body.getReader();
+          console.log("reached reader")
+          const decoder = new TextDecoder('utf-8');
+          console.log("reached decoder")
+          let receivedText = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            console.log("reached await reader")
+            receivedText += decoder.decode(value, { stream: true });
+            console.log(receivedText)
+            let boundary = receivedText.indexOf('\n');
+            while (boundary !== -1) {
+              const jsonString = receivedText.slice(0, boundary).trim();
+              console.log(receivedText);
+              if(jsonString){
+               try {
+                 const jsonObject = JSON.parse(jsonString);
+                 setGraphResponse(jsonObject); 
+               } catch (e) {
+                 console.error('Error parsing JSON:', e);
+               }
+              }
+              receivedText = receivedText.slice(boundary + 1);
+              boundary = receivedText.indexOf('\n');
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);  
+        }
+        setRunTimer(false);
+      }
+    };
+
+    fetchData(); 
+  }, [doc_name, file]);
+
+  useEffect(() => {
+    if (graphResponse && graphResponse.response) {
+      const allResponses = Object.values(graphResponse.response).flat();
+      const updatedResponse = allResponses.filter((item) => {
         return item.type && item.type !== "AI";
       });
 
-      setFilteredResponse(updatedResponse);
+      changeProgressBar(updatedResponse);
+
+      let finalResponse;
+      if(filterType !== "all"){
+        finalResponse = updatedResponse.filter(item => item.type === filterType);
+      }
+      else{
+        finalResponse = updatedResponse;
+      }
+      
+      setFilteredResponse(finalResponse);
 
       setCategories((prev) => {
         const uniqueCategories = new Set();
@@ -74,38 +119,20 @@ const Analysis = () => {
         return Array.from(uniqueCategories);
       });
     }
-  }, [graphResponse]);
+  }, [graphResponse, filterType]);
 
-  // use effect for streaming effect
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     if (filteredResponse.length > 0) {
-  //       const randomIndex = Math.floor(Math.random() * filteredResponse.length);
-  //       const randomItem = filteredResponse[randomIndex];
-
-  //       setApiResponse((prevApiResponse) => [...prevApiResponse, randomItem]);
-
-  //       setFilteredResponse((prevFilteredResponse) =>
-  //         prevFilteredResponse.filter((_, index) => index !== randomIndex)
-  //       );
-  //     }
-  //   }, 1000);
-
-  //   return () => clearInterval(interval);
-  // }, [filteredResponse]);
   useEffect(() => {
     setApiResponse(filteredResponse);
   }, [filteredResponse]);
 
   useEffect(() => {
-    changeProgressBar(apiResponse);
     changeBarChart(apiResponse);
   }, [apiResponse]);
 
   const changeProgressBar = (responseArr) => {
     const length = responseArr.length;
     const value = Math.round((length / totalQuestions) * 100);
-    // setProgressValue(value);
+    setProgressValue(value); // Uncomment this line if you want to update progressValue
   };
 
   const changeBarChart = (responseArr) => {
@@ -125,28 +152,65 @@ const Analysis = () => {
       return resultCount;
     });
   };
+  
+  const navigate = useNavigate();
+
+  const handleBackButtonClick = () => {
+    navigate("/");
+  };
+
+  const handlePreviewButtonClick = () => {
+    if(file){
+      const url = URL.createObjectURL(file);
+      setDocumentUrl(url);
+    }
+    else{
+      setDocumentUrl(`${process.env.PUBLIC_URL}/${doc_name}.pdf`)
+    }
+    setShowPreview(!showPreview);
+  };
+
+  const handleAllButton = () => {
+    setFilterType("all");
+    setActiveButton("button1");
+  };
+
+  const handleWebButton = () => {
+    setFilterType("web");
+    setActiveButton("button2");
+  };
+
+  const handleCloudButton = () => {
+    setFilterType("cloud");
+    setActiveButton("button3");
+  };
 
   return (
     <div className="analysis-container">
-      <div className="documents-container">
-        {Object.keys(jsonFiles).map(item=>{
-          return <Button className="DocumentList" variant={activeButton === item ?"contained":"text"}  onClick={(event) => onFileClick(event, item)}>{item}</Button>
-        })}
+      <div className="analysis-header">
+        <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
+        <h2 className="analysis-title">Results for: {doc_name}</h2>
+        {runTimer && <div className="analysis-timer"><Timer/></div>}
       </div>
       <div className="analysisContent">
-        <div className="progress-timer">
+        <div className="left-container">
           <ProgressTimer value={progressValue} />
+          <ResultPieChart
+          categoryWiseResult={categoryWiseResult}
+          apiResponse={apiResponse}
+          />
+          <p>Click on the Pie Chart to see a full data breakdown.</p>
         </div>
         <div className="chart-tabs">
           <div className="projectTypeList">
-            <Button className="projectType" variant="contained">
+            <Button className="projectType" onClick={handleAllButton} variant={activeButton === 'button1' ? 'contained' : 'outlined'}>
+              All
+            </Button>
+            <Button className="projectType" onClick={handleWebButton} variant={activeButton === 'button2' ? 'contained' : 'outlined'}>
               Web
             </Button>
-            <Button className="projectType" variant="outlined" disabled>
+            <Button className="projectType" onClick={handleCloudButton} variant={activeButton === 'button3' ? 'contained' : 'outlined'}>
               Cloud
-            </Button>
-            <Button className="projectType" variant="outlined" disabled>
-              AI
             </Button>
           </div>
           <div className="charts">
@@ -158,24 +222,11 @@ const Analysis = () => {
         </div>
       </div>
       <div className="results">
-        <ResultPieChart
-          categoryWiseResult={categoryWiseResult}
-          apiResponse={apiResponse}
-        />
-        <div className="ranking">
-          Ranking :
-          {progressValue === 100 && (
-            <>
-              <div>1/5</div>
-              <div sx={{ display: "flex" }}>
-                <StarIcon sx={{ color: "#f7c81e" }} />
-                {/* <StarIcon sx={{ color: "#f7c81e" }} />
-                <StarIcon sx={{ color: "#f7c81e" }} /> */}
-              </div>
-            </>
-          )}
-          {progressValue !== 100 && <div style={{ padding: "10px" }}>?</div>}
-        </div>
+        <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Submitted Document</button>
+        <button className="analysis-download-button" disabled>Download Results PDF</button>
+      </div>
+      <div className="document-preview">
+         {showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
       </div>
     </div>
   );

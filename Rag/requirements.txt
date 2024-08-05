@@ -28,7 +28,6 @@ openai
 
 pandas
 openpyxl
-pymongo
 trl
 requests
 
@@ -37,3 +36,4 @@ uvicorn
 
 matplotlib
 tabulate
+aiofiles

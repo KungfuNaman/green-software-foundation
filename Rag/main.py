@@ -2,7 +2,6 @@ import os
 import time
 import json
 from dotenv import load_dotenv
-
 from populate_database import setup_database, setup_database_after_clearance
 from query_data import query_rag, compare_retrieved_items, generate_result
 

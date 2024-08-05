@@ -47,7 +47,7 @@ export default function ResultBarChart({ xlabels, categoryWiseResult }) {
 
       }}
       series={series}
-      width={1000}
+      width={800}
       height={500}
     />
   );

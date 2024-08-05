@@ -4,8 +4,8 @@ import AddDocumentForm from './AddDocumentForm';
 const AddDocument = () => {
   return (
     <div>
-      <h3 className="UploadTitle">File Upload and Analysis Tool</h3>
       <div className="form-container">
+        <h4>Upload a New Document</h4>
         <AddDocumentForm />
       </div>
     </div>

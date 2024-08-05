@@ -5,7 +5,7 @@ import OutputViewer from './OutputViewer';
 const OutputContainer = () => {
   return (
     <div className="output-container">
-    <h4>Analysis Output</h4>
+    <h3>Analysis Output</h3>
     <OutputViewer/>
   </div>
   );

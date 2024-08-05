@@ -2,6 +2,7 @@
     width: fit-content;
     /* margin: 0 auto; Center the PieChart */
     display: flex;
+    justify-content: flex-start;
     /* transform: translateY(-20px); */
     /* justify-content: center; */
     /* align-items: center; */

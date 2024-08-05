@@ -6,16 +6,47 @@
   gap: 20px;
   justify-content: space-between;
   height: 100%;
+  width: 100%; /* Ensure it uses the full width of its container */
+}
+
+.analysis-header{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.analysis-back-button{
+  background-color: #aecc53;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.analysis-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.analysis-timer {
+  margin-left: auto;
 }
 
 .analysisContent {
   display: flex;
-  gap: 50px;
-  width: 100%;
-  padding: 0px 50px;
+  gap: 20px; /* Reduced gap to fit content better */
+  width: 100%; /* Ensure full width usage */
+  padding: 0px 20px; /* Reduced padding */
+  box-sizing: border-box; /* Ensure padding is included in width */
 }
-.progress-timer {
-  margin-right: 20px; /* Add some space between the timer and the charts/tabs */
+
+.left-container {
+  width: 45%; /* Fixed width for better control */
 }
 
 .chart-tabs {
@@ -25,56 +56,72 @@
   border-radius: 12px;
   box-shadow: 10px 5px 5px #cdd7e1;
   padding: 10px;
-}
-
-.projectType {
-  padding: 4px 20px !important;
-  font-weight: bold !important;
-  font-size: 30px !important;
-  border-radius: 10px !important;
+  flex: 1; /* Allow it to grow and fit space */
+  width: 55%;
 }
 
 .projectTypeList {
   display: flex;
-  gap: 10px;
+  gap: 5px; /* Reduced gap */
 }
 
-.ranking {
+.projectType {
+  padding: 4px 10px !important; /* Reduced padding */
+  font-weight: bold !important;
+  font-size: 20px !important; /* Reduced font size */
+  border-radius: 10px !important;
+}
+
+.charts {
   display: flex;
-  width: fit-content;
-  align-self: flex-end;
-  bottom: 10px;
-  right: 10px;
-  /* background-color: #ffeb3b; */
-  padding: 10px 20px;
-  /* border-radius: 10px; */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  font-weight: bolder;
-  font-size: 40px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
   justify-content: space-around;
+  align-items: center;
+  width: 100%; /* Ensure full width usage */
 }
 
-.charts{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-.results{
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    /* height: 100%; */
-    /* align-items: center; */
-}
-.documents-container{
+.results {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-evenly;
+  width: 100%; /* Ensure full width usage */
+  margin: 1.5em;
 }
-.DocumentList{
-  flex: 1 1 11%; /* Grow, shrink, and set basis to 10% */
-  box-sizing: border-box!important;
-  padding: 5px!important;
+
+.analysis-preview-button {
+  background-color: #aecc53;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.analysis-download-button {
+  background-color: #aecc53;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.analysis-download-button:disabled {
+  background: grey;
+  border-radius: 4px;
+  color: #0b161f;
+  font-weight: 700;
+  padding: 8px 16px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: not-allowed;
+}
+
+.document-preview{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
 }
