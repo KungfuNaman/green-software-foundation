@@ -15,19 +15,21 @@ def add_parsed_results(logger_file_path, combined_path, PROMPT_ID):
     conclusion_arr = []
     explanation_arr = []
     result_arr = []
+    suggestion_arr = []
     for item in records:
 
         generated_response = item["response_text"]
         if isinstance(generated_response, str):
-            explanation, final_answer, result = parse_generated_response(generated_response, PROMPT_ID)
+            explanation, final_answer, result, suggestion = parse_generated_response(generated_response, PROMPT_ID)
             explanation_arr.append(explanation)
             conclusion_arr.append(final_answer)
             result_arr.append(result)
+            suggestion_arr.append(suggestion)
         else:
             explanation_arr.append("")
             conclusion_arr.append("")
             result_arr.append("")
-    print("hello")
+            suggestion_arr.append("")
     # Add the new columns to the DataFrame
     df = pd.DataFrame(records)
 
@@ -35,6 +37,7 @@ def add_parsed_results(logger_file_path, combined_path, PROMPT_ID):
     df['explanation'] = explanation_arr
     df['conclusion'] = conclusion_arr
     df['result'] = result_arr
+    df['suggestion'] = suggestion_arr
 
     # Save the updated DataFrame to a CSV file
     df.to_csv(combined_path, index=False)
@@ -125,17 +128,21 @@ def parse_generated_response(generated_response, PROMPT_ID):
             end_index = generated_response.find("explan") + len("explanation:")
         else:
             end_index = len(" Judgement - Yes")
+        if "Suggestion" in generated_response:
+            end_index2 = generated_response.find("Suggestion")+len("Suggestion:")
 
         # Extract and strip any leading/trailing whitespace
         judgement = generated_response[start_index:end_index].strip()
         judgement = categorize_text(judgement)
 
-        explanation = generated_response[end_index:].strip()
+        explanation = generated_response[end_index:(end_index2-len("Suggestion:"))].strip()
+        
+        suggestion = generated_response[end_index2:].strip()
 
         judgement = judgement.replace(":", "").strip()
-        return explanation, judgement, judgement
+        return explanation,judgement,judgement,suggestion
 
-    return "", "", ""
+    return "", "", "", ""
 
 
 def categorize_text(text):
@@ -168,6 +175,7 @@ def export_combined_results_to_json_file(combined_results_path):
         obj["query"] = "" if pd.isna(item["query"]) else item["query"]
         obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
         obj["result"] = "" if pd.isna(item["result"]) else item["result"]
+        obj["suggestion"] = "" if pd.isna(item["suggestion"]) else item["suggestion"]
 
         for question in queries:
             if item["query"] in question["query"]:
@@ -197,6 +205,7 @@ def export_combined_results_to_json(combined_results_path):
         obj["query"] = "" if pd.isna(item["query"]) else item["query"]
         obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
         obj["result"] = "" if pd.isna(item["result"]) else item["result"]
+        obj["suggestion"] = "" if pd.isna(item["suggestion"]) else item["suggestion"]
 
         for question in queries:
             if item["query"] in question["query"]:
@@ -233,7 +242,7 @@ def addCategories():
         json.dump(result_arr, f)
     print("hello")
 
-# add_parsed_results("logger/phi3_P2_Netflix.csv","logger/phi3_P2_Netflix_combined.csv","P2")
+#add_parsed_results("logger/phi3_P3_Netflix_copy_suggestions.csv","logger/phi3_P3_Netflix_suggestions_combined.csv","P3")
 
 # files=["Netflix","Uber","Instagram","Whatsapp","Dropbox"]
 # for item in files:
