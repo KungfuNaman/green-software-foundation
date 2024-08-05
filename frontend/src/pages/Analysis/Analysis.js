@@ -8,6 +8,7 @@ import "./Analysis.css";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
 import { json, useLocation, useNavigate } from "react-router-dom";
 import Timer from "../../components/AddDocument/Timer";
+import { handleDownloadPDF } from "../../utils/pdfGenerator";
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
@@ -185,6 +186,22 @@ const Analysis = () => {
     setActiveButton("button3");
   };
 
+  const handleDownload = () => {
+    if (!doc_name) {
+      console.error("Document name is undefined");
+      return;
+    }
+
+    const analysisData = {
+      progressValue,
+      categoryWiseResult,
+      apiResponse,
+      docName: doc_name || 'Document',
+    };
+
+    handleDownloadPDF(analysisData);
+  };
+
   return (
     <div className="analysis-container">
       <div className="analysis-header">
@@ -223,7 +240,7 @@ const Analysis = () => {
       </div>
       <div className="results">
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Submitted Document</button>
-        <button className="analysis-download-button" disabled>Download Results PDF</button>
+        <button className="analysis-download-button" onClick={handleDownload}>Download Results PDF</button>
       </div>
       <div className="document-preview">
          {showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
