@@ -86,10 +86,13 @@ def modify_to_old_queries(ground_truth_path):
             json.dump(ground_truth_arr, file, indent=4)
 
 
-# documents=["Netflix","Whatsapp","Dropbox","Instagram","Uber"]
-# for doc in documents:
-#     ground_truth_path="documentsFromText/"+doc+"/ground_truth.json"
-#     combined_result_path="Rag/logger/Results_R-E_G/phi3_P3_"+doc+"_combined.csv"
-#     eval_path="frontend/src/api_results/evaluation/results.json"
-#     # modify_to_old_queries(ground_truth_path)
-#     generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
+documents=["Netflix","Whatsapp","Dropbox","Instagram","Uber"]
+folders=["Results_R-C_G","Results_R-C_G-FT1","Results_R-C_G-FT2","Results_R-C_G-FT3","Results_R-C_G-FT4","Results_R-C_G-FT5","Results_R-C_G-FT6","Results_R-C_G-FT7","Results_R-C_G-FT"]
+
+for doc in documents:
+    ground_truth_path="documentsFromText/"+doc+"/ground_truth.json"
+    combined_result_path="Rag/logger/Results_R-C_G-FT/ft_phi3_P3_"+doc+"_combined.csv"
+    eval_path="frontend/src/api_results/evaluation/results.json"
+    # modify_to_old_queries(ground_truth_path)
+    generate_eval_for_frontend(ground_truth_path,combined_result_path,eval_path)
+
