@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
@@ -7,6 +9,7 @@ import ProjectType from "./../../api_results/projectType.json";
 import "./Analysis.css";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
 import { useLocation } from "react-router-dom";
+import generatePDF from "../../utils/pdfGenerator";
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
@@ -18,9 +21,13 @@ const Analysis = () => {
   const [apiResponse, setApiResponse] = useState([]);
   const [graphResponse, setGraphResponse] = useState([]);
   const [categoryWiseResult, setCategoryWiseResult] = useState({});
-  
+
   const location = useLocation();
   const { doc_name } = location.state || {};
+
+  const progressRef = useRef(null);
+  const pieChartRef = useRef(null);
+  const barChartRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -92,15 +99,36 @@ const Analysis = () => {
     });
   };
 
+  const handleDownloadPDF = () => {
+    if (!doc_name) {
+      console.error("Document name is undefined");
+      return;
+    }
+
+    const analysisData = {
+      progressValue,
+      categoryWiseResult,
+      apiResponse,
+      docName: doc_name || 'Document',
+    };
+
+    const charts = [progressRef.current, pieChartRef.current, barChartRef.current];
+    generatePDF(analysisData, charts);
+  };
+
   return (
     <div className="analysis-container">
       <div className="analysisContent">
         <div className="left-container">
-          <ProgressTimer value={progressValue} />
-          <ResultPieChart
-          categoryWiseResult={categoryWiseResult}
-          apiResponse={apiResponse}
-          />
+          <div ref={progressRef}>
+            <ProgressTimer value={progressValue} />
+          </div>
+          <div ref={pieChartRef}>
+            <ResultPieChart
+              categoryWiseResult={categoryWiseResult}
+              apiResponse={apiResponse}
+            />
+          </div>
         </div>
         <div className="chart-tabs">
           <div className="projectTypeList">
@@ -114,7 +142,7 @@ const Analysis = () => {
               AI
             </Button>
           </div>
-          <div className="charts">
+          <div className="charts" ref={barChartRef}>
             <ResultBarChart
               xlabels={categories}
               categoryWiseResult={categoryWiseResult}
@@ -138,8 +166,27 @@ const Analysis = () => {
           {progressValue !== 100 && <div style={{ padding: "10px" }}>?</div>}
         </div>
       </div>
+      <Button variant="contained" color="primary" onClick={handleDownloadPDF}>
+        Download PDF
+      </Button>
     </div>
   );
 };
 
 export default Analysis;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
