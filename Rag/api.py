@@ -1,16 +1,17 @@
-from fastapi import FastAPI
-from components.Generator import Generator
+import os
 import json
-# from some_module import some_function  # Adjust the import according to your function location
+from fastapi import FastAPI
+from pydantic.dataclasses import dataclass
+
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
 from main import get_paths, init_embedder, prep_db_and_chunking, init_retriever
 from query_data import query_rag
-from pydantic.dataclasses import dataclass
 
 
 app = FastAPI()
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @app.get("/")
@@ -24,7 +25,7 @@ class EcodocRequest:
     q_question: str
 
 
-with open("Rag/prompts/prompt_templates.json", 'r') as file:
+with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
 
@@ -36,7 +37,7 @@ def ask_ecodoc(request: EcodocRequest):
     instruction = """
        Answer this question and give the response in the jsonFormat and fill in your response in place of output  
        Json format is { result : output }
-        """
+    """
     # ============================================    CONFIG    ============================================
 
     prompt_id = "P3"  # Choose From: P1, P2, P3, GROUND_TRUTH_PROMPT

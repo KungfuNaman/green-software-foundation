@@ -96,7 +96,7 @@ if __name__ == "__main__":
     embedder_obj = Embedder(run_local=True, model_name="llama2")
     embedder = embedder_obj.get_embedder()
 
-    # doc_path = "documentsFromText/" + "Netflix" + "/content.txt"
+    # doc_path = "doc_data/documentsFromText/" + "Netflix" + "/content.txt"
     # coll = "test_collection"
     # _, vecdb, doc_chunks = setup_database(embedder=embedder, document_path=doc_path, collection_name=coll)
 
