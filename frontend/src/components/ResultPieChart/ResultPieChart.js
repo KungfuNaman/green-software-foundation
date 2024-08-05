@@ -21,7 +21,7 @@ const style = {
 };
 
 export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([{ id: 0, value: 0, label: "Resource Optimization" }, { id: 1, value: 0, label: "Data Efficiency" }, { id: 2, value: 0, label: "Performance Management" }, {id: 3, value: 0, label: "Security"}, {id: 4, value: 0, label: "User Impact"}]);
   const [selectedSlice, setSelectedSlice] = useState();
   const [tabularData, setTabularData] = useState({});
   const [open, setOpen] = React.useState(false);
@@ -31,15 +31,21 @@ export default function ResultPieChart({ categoryWiseResult, apiResponse }) {
   };
   const handleClose = () => setOpen(false);
   useEffect(() => {
-    setData((prev) => {
-      return Object.keys(categoryWiseResult).map((category, index) => {
-        const sum = Object.values(categoryWiseResult[category]).reduce(
-          (acc, value) => acc + value,
-          0
-        );
-        return { id: index, value: sum, label: category };
-      });
+    let results = Object.keys(categoryWiseResult).map((category, index) => {
+      const sum = Object.values(categoryWiseResult[category]).reduce(
+        (acc, value) => acc + value,
+        0
+      );
+      return { id: index, value: sum, label: category };
     });
+    setData((prev) => {
+      return prev.map((item) => {
+        const index = results.findIndex((result) => result.label === item.label);
+        if (index !== -1) {
+          return results[index];
+        }
+        return item;
+    })});
   }, [categoryWiseResult]);
 
   useEffect(() => {
