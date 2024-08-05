@@ -20,7 +20,7 @@ def get_all_data_to_lst(combined_dict):
 def test_ollama_model(dataset_path, model):
     with open(dataset_path, 'r') as file:
         dataset = json.load(file)
-    with open("Rag/prompts/prompt.json", 'r') as file:
+    with open("Rag/prompts/prompt_templates.json", 'r') as file:
         prompts = json.load(file)
     count = 0
     dataset = get_all_data_to_lst(dataset)

@@ -19,7 +19,6 @@ class ImageExtractor:
     def __query_local(self, image_path):
         encoded_image = self.__encode_image_to_base64(image_path)
         api_url = 'http://localhost:11434/api/generate'
-        
         payload = {
             "model": self.model_name,
             "prompt": self.prompt,

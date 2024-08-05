@@ -1,16 +1,11 @@
-import sys
-
 import os
 import time
 import json
 from dotenv import load_dotenv
-import pymupdf4llm
-
 
 from populate_database import setup_database, setup_database_after_clearance
 from query_data import query_rag, compare_retrieved_items, generate_result
 
-# from parser import add_parsed_results
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Embedder import Embedder
@@ -19,7 +14,8 @@ from components.Generator import Generator
 
 load_dotenv()
 LLM_MODEL = os.getenv("LLM_MODEL")
-with open("Rag/prompts/prompt.json", 'r') as file:
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
 
@@ -37,10 +33,10 @@ def evaluate_docs_in_bulk(document_path):
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
-    alternate_query_file_path = "./Rag/prompts/old_queries.json"  # Query file to use when ground truth is not available
+    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_old.json"
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
-    logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
+    logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
 
     # ============================================    PIPELINE    ================================================
     
@@ -58,7 +54,7 @@ def evaluate_docs_in_bulk(document_path):
 
     # Load Query File
     try:
-        query_file_path = "./documentsFromText/" + doc_name + "/ground_truth.json"
+        query_file_path = CURRENT_DIR + "./doc_data/documentsFromText/" + doc_name + "/ground_truth.json"
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")
@@ -70,8 +66,8 @@ def evaluate_docs_in_bulk(document_path):
     # Iterative Querying
     retrieved_rec = {}
     for q_idx in range(truth_length):
-        # if q_idx > 0:
-        #     break
+        if q_idx > 0:
+            break
         q_question = ground_truth[q_idx].get("query", "")
         # ----------     Regular Invoke & Record to CSV     ----------
         prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
@@ -103,7 +99,7 @@ def prep_db_and_chunking(embedder, document_path, db_collection_name, fi_helper,
     """ Load database & document chunks """
     setup_database_start_time = time.time()
     new_doc_embed, db, doc_chunks = setup_database(embedder, document_path, db_collection_name, fi_helper, image_extract)
-    # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, collection_name, fi_helper)
+    # new_doc_embed, db, doc_chunks = setup_database_after_clearance(embedder, document_path, collection_name, fi_helper, image_extract)
     setup_database_end_time = time.time()
     setup_db_time = setup_database_end_time - setup_database_start_time if new_doc_embed else "0"
     
@@ -151,8 +147,8 @@ def get_retriever(retriever_type, db, doc_chunks, embedder):
 
 def get_paths(doc_name, pid, gen_model):
     """ Get all paths needed in the pipeline """
-    log_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + ".csv"
-    combined_path = "./Rag/logger/" + gen_model + "_" + pid + "_" + doc_name + "_combined.csv"
+    log_path = "./logger/" + gen_model + "_" + pid + "_" + doc_name + ".csv"
+    combined_path = "./logger/" + gen_model + "_" + pid + "_" + doc_name + "_combined.csv"
 
     return log_path, combined_path
 
@@ -165,7 +161,8 @@ def parse_doc_path(doc_path):
 
 
 def main():
-    documents = ["./documents/Netflix.pdf", "./documents/2.pdf"]  # specify whole document path(s) here
+    documents = ["/doc_data/documents/Netflix.pdf", "/doc_data/documents/2.pdf"]
+    documents = [CURRENT_DIR + fpath for fpath in documents]
     for doc in documents:
         evaluate_docs_in_bulk(doc)
 
