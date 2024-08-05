@@ -26,9 +26,9 @@ def setup_database(embedder, document_path, collection_name: str, fi_helper, ima
     return new_doc_embed, db, chunks
 
 
-def setup_database_after_clearance(embedder, document_path, collection_name: str, fi_helper):
+def setup_database_after_clearance(embedder, document_path, collection_name: str, fi_helper, image_extract):
     clear_database(embedder, collection_name)
-    new_doc_embed, db, chunks = setup_database(embedder, document_path, collection_name, fi_helper)
+    new_doc_embed, db, chunks = setup_database(embedder, document_path, collection_name, fi_helper, image_extract)
     return new_doc_embed, db, chunks
 
 
@@ -67,10 +67,10 @@ def clear_database(embedder, collection_name):
 
 
 if __name__ == "__main__":
-    doc_path = "documentsFromText/Netflix/content.txt"
+    doc_path = "doc_data/documentsFromText/Netflix/content.txt"
     embedder_obj = Embedder(run_local=True, model_name="llama2")
     embedder1 = embedder_obj.get_embedder()
     fi_helper1 = FileInputHelper(create_doc=True)
-    setup_database(embedder1, doc_path, "collection_name", fi_helper1)
+    setup_database(embedder1, doc_path, "collection_name", fi_helper1, True)
     
 

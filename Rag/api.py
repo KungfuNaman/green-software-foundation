@@ -1,21 +1,19 @@
-
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
-from components.Generator import Generator
-import json
 from fastapi.middleware.cors import CORSMiddleware
+import os
+import json
+import asyncio
 import aiofiles
 from pathlib import Path
-import asyncio
+from pydantic.dataclasses import dataclass
 
-# from some_module import some_function  # Adjust the import according to your function location
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
 from main import get_paths, init_embedder, prep_db_and_chunking, init_retriever, parse_doc_path, generate_result
 from query_data import query_rag
 from parser import export_combined_results_to_json, add_parsed_results
-from pydantic.dataclasses import dataclass
 
 
 app = FastAPI()
@@ -26,18 +24,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-with open("Rag/prompts/prompt.json", 'r') as file:
+with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the API"}
 
+
 @app.post("/ask_ecodoc")
 async def ask_ecodoc(file: UploadFile):
-    document_path = "Rag/uploaded_docs/" + file.filename 
-    destination = Path(document_path) 
+    document_path = CURRENT_DIR + "/doc_data/uploaded_docs/" + file.filename
+    destination = Path(document_path)
 
     try:
         async with aiofiles.open(destination, "wb") as buffer:
@@ -50,7 +50,7 @@ async def ask_ecodoc(file: UploadFile):
 
     # ============================================    CONFIG    ============================================
 
-    image_extract = False
+    image_extract = True
     prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
 
     prompt_template_text = prompts_file[prompt_id]
@@ -58,10 +58,10 @@ async def ask_ecodoc(file: UploadFile):
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
-    alternate_query_file_path = "./Rag/prompts/old_queries.json"  # Query file to use when ground truth is not available
+    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_old.json"
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
-    logger_file_path, combined_path = get_paths(doc_name, prompt_id, generator_name)
+    logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
 
     # ============================================    PIPELINE    ================================================
     
@@ -79,7 +79,7 @@ async def ask_ecodoc(file: UploadFile):
 
     # Load Query File
     try:
-        query_file_path = "./documentsFromText/" + doc_name + "/ground_truth.json"
+        query_file_path = CURRENT_DIR + "./doc_data/documentsFromText/" + doc_name + "/ground_truth.json"
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")
@@ -105,6 +105,7 @@ async def ask_ecodoc(file: UploadFile):
 
     return StreamingResponse(generate_results(), media_type="application/json")
 
+
 @app.post("/ask_ecodoctest")
 async def ask_ecodoctest(file: UploadFile):
     async def generate():
@@ -123,17 +124,17 @@ async def ask_ecodoctest(file: UploadFile):
     return StreamingResponse(generate(), media_type="application/json")
     
 
-
 @app.get("/get_sample_results/{doc_name}")
 def get_sample_results(doc_name: str):
-    sample_results_path = "Rag/results/modified_results.json"
+    sample_results_path = CURRENT_DIR + "/doc_data/sample_file_data/modified_results.json"
     try:
         with open(sample_results_path, 'r') as file:
             sample_results = json.load(file)
         return {"response": sample_results[doc_name]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-    
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

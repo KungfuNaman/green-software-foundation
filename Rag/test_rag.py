@@ -1,7 +1,6 @@
 from query_data import query_rag
 from langchain_community.llms.ollama import Ollama
-from hf_model import Generator
-
+from components.Generator import Generator
 
 EVAL_PROMPT = """
 Expected Response: {expected_response}

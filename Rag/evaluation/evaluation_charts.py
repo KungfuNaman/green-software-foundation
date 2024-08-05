@@ -4,10 +4,35 @@ import pandas as pd
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 from tabulate import tabulate
 from sklearn.metrics import confusion_matrix
-
+import math
+from collections import defaultdict
 
 RESULTS_JSON_PATH = "frontend/src/api_results/evaluation/results.json"
 
+ # List of relevant prefixes
+PREFIXE = [
+    'Results_R-C_G_phi3_P2',
+    'Results_R-C_G-FT1_phi-3-3.0_P3',
+    'Results_R-C_G-FT2_phi-3-4.0_P3',
+    'Results_R-C_G-FT3_phi-3-5.0_P3',
+    'Results_R-C_G-FT4_phi-3-6.0_P3',
+    'Results_R-C_G-FT5_phi-3-7.0-10epoch_P3',
+    'Results_R-C_G-FT6_phi-3-30epoch_P3',
+    'Results_R-C_G-FT7_phi-3-10epoch_sum_P3',
+    'Results_R-C_G-FT'
+]
+
+LABELS = [
+        'phi3_P2',
+        'phi3-3.0_P3',
+        'phi3-4.0_P3',
+        'phi3-5.0_P3',
+        'phi3-6.0_P3',
+        'phi3-7.0-10epoch_P3',
+        'phi3-30epoch_P3',
+        'phi3-10epoch_sum_P3',
+        'phi3-10epoch_P3'
+    ]
 
 def preprocess_data(data):
     for key, value in data.items():
@@ -33,59 +58,25 @@ def ragSettings_accuracyChart():
         )
         return (correct_predictions / total) * 100 if total > 0 else 0
 
-    # Separate Results_R-C* and Results_R-M*
-    results_r_c_g_ft = []
-    results_r_m_g_ft = []
-    results_r_e_g_ft = []
-    results_r_c_g = []
-    results_r_m_g = []
-    results_r_e_g = []
-
-
+    # Dynamically create a dictionary to hold aggregated results
+    results_dict = defaultdict(list)
+    
     for key, value in data.items():
-        if key.startswith("Results_R-C_G-FT"):
-            results_r_c_g_ft.extend(value)
-        elif key.startswith("Results_R-M_G-FT"):
-            results_r_m_g_ft.extend(value)
-        elif key.startswith("Results_R-E_G-FT"):
-            results_r_e_g_ft.extend(value)
-        elif key.startswith("Results_R-C_G"):
-            results_r_c_g.extend(value)
-        elif key.startswith("Results_R-M_G"):
-            results_r_m_g.extend(value)
-        elif key.startswith("Results_R-E_G"):
-            results_r_e_g.extend(value)
+        for prefix in PREFIXE:
+            if key.startswith(prefix):
+                results_dict[prefix].extend(value)
+                break
 
-    # Calculate accuracy
-    accuracy_r_c_g_ft = calculate_accuracy(results_r_c_g_ft)
-    accuracy_r_m_g_ft = calculate_accuracy(results_r_m_g_ft)
-    accuracy_r_e_g_ft = calculate_accuracy(results_r_e_g_ft)
-    accuracy_r_c_g = calculate_accuracy(results_r_c_g)
-    accuracy_r_m_g = calculate_accuracy(results_r_m_g)
-    accuracy_r_e_g = calculate_accuracy(results_r_e_g)
-
+    # Calculate accuracies
+    accuracies = []
+    for prefix in PREFIXE:
+        accuracy = calculate_accuracy(results_dict[prefix])
+        accuracies.append(accuracy)
+        print(f"Accuracy for {prefix}: {accuracy:.2f}%")
 
     # Plotting the bar graph
-    labels = [
-        "Results_R-C_G-FT",
-        "Results_R-M_G-FT",
-        "Results_R-E_G-FT",
-        "Results_R-C_G",
-        "Results_R-M_G",
-        "Results_R-E_G"
-
-    ]
-    accuracies = [
-        accuracy_r_c_g_ft,
-        accuracy_r_m_g_ft,
-        accuracy_r_e_g_ft,
-        accuracy_r_c_g,
-        accuracy_r_m_g,
-        accuracy_r_e_g
-    ]
-
     plt.figure(figsize=(10, 5))
-    plt.bar(labels, accuracies, color=["blue", "green", "yellow", "red","orange","pink"],width=0.4)
+    plt.bar(PREFIXE, accuracies, color=["blue", "green", "yellow", "red", "orange", "pink", "black", "purple", "cyan"], width=0.4)
     plt.xlabel("Results")
     plt.ylabel("Accuracy (%)")
     plt.title("Accuracy Comparison")
@@ -94,8 +85,30 @@ def ragSettings_accuracyChart():
     for i, acc in enumerate(accuracies):
         plt.text(i, acc + 1, f"{acc:.2f}%", ha="center")
 
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.show()
+    # Save the figure
+    plt.savefig('Charts/accuracy_barchart.png', format='png')
+    plt.clf()
+
+    x = range(len(PREFIXE))
+
+    # Plotting the line chart
+    plt.plot(x, accuracies, marker='o', label='F1 Score')
+
+    plt.xlabel('Configuration')
+    plt.ylabel('Percentage (%)')
+    plt.title('Accuracy Comparison')
+    plt.xticks(x, LABELS, rotation=45, ha='right')
+    plt.ylim(0, 100)
+    plt.legend()
+
+    plt.tight_layout()
     plt.show()
 
+    # Save the figure
+    plt.savefig('Charts/accuracy_linechart.png', format='png')
 
 def f1_score_rag_pipeline():
 
@@ -117,51 +130,30 @@ def f1_score_rag_pipeline():
 
         return precision, recall, f1
 
-    results_r_c_g_ft = []
-    results_r_m_g_ft = []
-    results_r_e_g_ft = []
-    results_r_c_g = []
-    results_r_m_g = []
-    results_r_e_g = []
 
+    # Dynamically create a dictionary to hold aggregated results
+    results_dict = defaultdict(list)
+    
     for key, value in data.items():
-        if key.startswith("Results_R-C_G-FT"):
-            results_r_c_g_ft.extend(value)
-        elif key.startswith("Results_R-M_G-FT"):
-            results_r_m_g_ft.extend(value)
-        elif key.startswith("Results_R-E_G-FT"):
-            results_r_e_g_ft.extend(value)
-        elif key.startswith("Results_R-C_G"):
-            results_r_c_g.extend(value)
-        elif key.startswith("Results_R-M_G"):
-            results_r_m_g.extend(value)
-        elif key.startswith("Results_R-E_G"):
-            results_r_e_g.extend(value)
+        for prefix in PREFIXE:
+            if key.startswith(prefix):
+                results_dict[prefix].extend(value)
+                break
 
     # Calculate metrics
-    precision_r_c_g_ft, recall_r_c_g_ft, f1_r_c_g_ft = calculate_metrics(
-        results_r_c_g_ft
-    )
-    precision_r_m_g_ft, recall_r_m_g_ft, f1_r_m_g_ft = calculate_metrics(
-        results_r_m_g_ft
-    )
-    precision_r_e_g_ft, recall_r_e_g_ft, f1_r_e_g_ft = calculate_metrics(
-        results_r_e_g_ft
-    )
-    precision_r_c_g, recall_r_c_g, f1_r_c_g = calculate_metrics(results_r_c_g)
-    precision_r_m_g, recall_r_m_g, f1_r_m_g = calculate_metrics(results_r_m_g)
-    precision_r_e_g, recall_r_e_g, f1_r_e_g = calculate_metrics(results_r_e_g)
+    metrics = {}
+    for prefix in PREFIXE:
+        precision, recall, f1 = calculate_metrics(results_dict[prefix])
+        metrics[prefix] = (precision, recall, f1)
+        print(f"Metrics for {prefix}: Precision={precision:.2f}%, Recall={recall:.2f}%, F1 Score={f1:.2f}%")
 
     # Create a table using tabulate
-    table = [
-        ["Results_R-C_G-FT", precision_r_c_g_ft, recall_r_c_g_ft, f1_r_c_g_ft],
-        ["Results_R-M_G-FT", precision_r_m_g_ft, recall_r_m_g_ft, f1_r_m_g_ft],
-        ["Results_R-E_G-FT", precision_r_e_g_ft, recall_r_e_g_ft, f1_r_e_g_ft],
-        ["Results_R-C_G", precision_r_c_g, recall_r_c_g, f1_r_c_g],
-                ["Results_R-M_G", precision_r_m_g, recall_r_m_g, f1_r_m_g],
-        ["Results_R-E_G", precision_r_e_g, recall_r_e_g, f1_r_e_g],
-
-    ]
+    table = []
+    f1_scores = []
+    for prefix in PREFIXE:
+        precision, recall, f1 = metrics[prefix]
+        table.append([prefix, precision, recall, f1])
+        f1_scores.append(f1)
 
     headers = ["Configuration", "Precision (%)", "Recall (%)", "F1 Score (%)"]
     table_str = tabulate(table, headers, tablefmt="grid")
@@ -169,6 +161,26 @@ def f1_score_rag_pipeline():
     # Display the table
     print(table_str)
 
+    plt.figure(figsize=(12, 6))
+
+    x = range(len(PREFIXE))
+
+    # Plotting the line chart
+    plt.plot(x, f1_scores, marker='o', label='F1 Score')
+
+    plt.xlabel('Configuration')
+    plt.ylabel('Percentage (%)')
+    plt.title('F1 Score Comparison')
+    plt.xticks(x, LABELS, rotation=45, ha='right')
+    plt.ylim(0, 100)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    # Save the figure
+    plt.savefig('Charts/F1_chart.png', format='png')
+    plt.clf()
 
 def confusion_matrix_rag_settings():
     
@@ -186,77 +198,197 @@ def confusion_matrix_rag_settings():
         cm = confusion_matrix(y_true, y_pred)
         return cm, y_true, y_pred
 
-    results_r_c_g_ft = []
-    results_r_m_g_ft = []
-    results_r_e_g_ft = []
-    results_r_c_g = []
-    results_r_m_g = []
-    results_r_e_g = []
-
+     # Dynamically identify the unique prefixes
+    results_dict = {}
+    
+     # Dynamically create a dictionary to hold aggregated results
+    results_dict = defaultdict(list)
+    
     for key, value in data.items():
-        if key.startswith("Results_R-C_G-FT"):
-            results_r_c_g_ft.extend(value)
-        elif key.startswith("Results_R-M_G-FT"):
-            results_r_m_g_ft.extend(value)
-        elif key.startswith("Results_R-E_G-FT"):
-            results_r_e_g_ft.extend(value)
-        elif key.startswith("Results_R-C_G"):
-            results_r_c_g.extend(value)
-        elif key.startswith("Results_R-M_G"):
-            results_r_m_g.extend(value)
-        elif key.startswith("Results_R-E_G"):
-            results_r_e_g.extend(value)
+        for prefix in PREFIXE:
+            if key.startswith(prefix):
+                results_dict[prefix].extend(value)
+                break
 
     # Calculate confusion matrices
-    confusion_matrix_r_c_g_ft, y_true_r_c_g_ft, y_pred_r_c_g_ft = calculate_confusion_matrix(results_r_c_g_ft)
-    confusion_matrix_r_m_g_ft, y_true_r_m_g_ft, y_pred_r_m_g_ft = calculate_confusion_matrix(results_r_m_g_ft)
-    confusion_matrix_r_e_g_ft, y_true_r_e_g_ft, y_pred_r_e_g_ft = calculate_confusion_matrix(results_r_e_g_ft)
-    confusion_matrix_r_c_g, y_true_r_c_g, y_pred_r_c_g = calculate_confusion_matrix(results_r_c_g)
-    confusion_matrix_r_m_g, y_true_r_m_g, y_pred_r_m_g = calculate_confusion_matrix(results_r_m_g)
-    confusion_matrix_r_e_g, y_true_r_e_g, y_pred_r_e_g = calculate_confusion_matrix(results_r_e_g)
-
-
-
-    # Get the unique labels for dynamic indexing
-    labels_r_c_g_ft = sorted(set(y_true_r_c_g_ft + y_pred_r_c_g_ft))
-    labels_r_m_g_ft = sorted(set(y_true_r_m_g_ft + y_pred_r_m_g_ft))
-    labels_r_e_g_ft = sorted(set(y_true_r_e_g_ft + y_pred_r_e_g_ft))
-    labels_r_c_g = sorted(set(y_true_r_c_g + y_pred_r_c_g))
-    labels_r_m_g = sorted(set(y_true_r_m_g + y_pred_r_m_g))
-    labels_r_e_g = sorted(set(y_true_r_e_g + y_pred_r_e_g))
-
+    confusion_matrices = {}
+    y_trues = {}
+    y_preds = {}
+    for result_key, results in results_dict.items():
+        cm, y_true, y_pred = calculate_confusion_matrix(results)
+        confusion_matrices[result_key] = cm
+        y_trues[result_key] = y_true
+        y_preds[result_key] = y_pred
 
     # Convert confusion matrices to DataFrame for better visualization
-    df_confusion_matrix_r_c_g_ft = pd.DataFrame(confusion_matrix_r_c_g_ft, index=[f"True {label}" for label in labels_r_c_g_ft], columns=[f"Predicted {label}" for label in labels_r_c_g_ft])
-    df_confusion_matrix_r_m_g_ft = pd.DataFrame(confusion_matrix_r_m_g_ft, index=[f"True {label}" for label in labels_r_m_g_ft], columns=[f"Predicted {label}" for label in labels_r_m_g_ft])
-    df_confusion_matrix_r_e_g_ft = pd.DataFrame(confusion_matrix_r_e_g_ft, index=[f"True {label}" for label in labels_r_e_g_ft], columns=[f"Predicted {label}" for label in labels_r_e_g_ft])
-    df_confusion_matrix_r_c_g = pd.DataFrame(confusion_matrix_r_c_g, index=[f"True {label}" for label in labels_r_c_g], columns=[f"Predicted {label}" for label in labels_r_c_g])
-    df_confusion_matrix_r_m_g = pd.DataFrame(confusion_matrix_r_m_g, index=[f"True {label}" for label in labels_r_m_g], columns=[f"Predicted {label}" for label in labels_r_m_g])
-    df_confusion_matrix_r_e_g  = pd.DataFrame(confusion_matrix_r_e_g , index=[f"True {label}" for label in labels_r_e_g ], columns=[f"Predicted {label}" for label in labels_r_e_g ])
+    df_confusion_matrices = {}
+    for result_key, cm in confusion_matrices.items():
+        labels = sorted(set(y_trues[result_key] + y_preds[result_key]))
+        df_confusion_matrices[result_key] = pd.DataFrame(
+            cm, 
+            index=[f"True {label}" for label in labels], 
+            columns=[f"Predicted {label}" for label in labels]
+        )
 
     # Display the confusion matrices using tabulate
-    print("Confusion Matrix for Results_R-C_G-FT:")
-    print(tabulate(df_confusion_matrix_r_c_g_ft, headers='keys', tablefmt='grid'))
+    for result_key, df_cm in df_confusion_matrices.items():
+        print(f"Confusion Matrix for {result_key}:")
+        print(tabulate(df_cm, headers='keys', tablefmt='grid'))
+        print()
 
-    print("\nConfusion Matrix for Results_R-M_G-FT:")
-    print(tabulate(df_confusion_matrix_r_m_g_ft, headers='keys', tablefmt='grid'))
+def g_mean_rag():
 
-    print("\nConfusion Matrix for Results_R-E_G-FT:")
-    print(tabulate(df_confusion_matrix_r_e_g_ft, headers='keys', tablefmt='grid'))
+    # Load the JSON data
+    with open(RESULTS_JSON_PATH) as f:
+        data = json.load(f)
+    # Preprocess the data
+    data = preprocess_data(data)
 
-    print("\nConfusion Matrix for Results_R-C_G:")
-    print(tabulate(df_confusion_matrix_r_c_g, headers='keys', tablefmt='grid'))
+    def calculate_metrics(results):
+        y_true = [item["humanJudgement"] for item in results]
+        y_pred = [item["llmJudgement"] for item in results]
 
-    print("\nConfusion Matrix for Results_R-M_G:")
-    print(tabulate(df_confusion_matrix_r_c_g, headers='keys', tablefmt='grid'))
+        cm = confusion_matrix(y_true, y_pred)
+        TN = cm[0][0]
+        FP = cm[0][1]
+        FN = cm[1][0]
+        TP = cm[1][1]
+        sensitivity = (TP / (TP + FN))
+        specificity = (TN / (TN + FP))
+        g_mean = (math.sqrt(sensitivity * specificity)) *100
 
-    print("\nConfusion Matrix for Results_R-E_G:")
-    print(tabulate(df_confusion_matrix_r_c_g, headers='keys', tablefmt='grid'))
+        sensitivity = sensitivity * 100
+        specificity = specificity * 100
+
+        return sensitivity, specificity, g_mean
+
+    # Dynamically create a dictionary to hold aggregated results
+    results_dict = defaultdict(list)
+    
+    for key, value in data.items():
+        for prefix in PREFIXE:
+            if key.startswith(prefix):
+                results_dict[prefix].extend(value)
+                break
+
+    # Calculate metrics
+    metrics = {}
+    for prefix in PREFIXE:
+        sensitivity, specificity, g_mean = calculate_metrics(results_dict[prefix])
+        metrics[prefix] = (sensitivity, specificity, g_mean)
+
+    # Create a table using tabulate
+    table = []
+    gmean_scores = []
+    for prefix in PREFIXE:
+        sensitivity, specificity, g_mean = metrics[prefix]
+        table.append([prefix, sensitivity, specificity, g_mean])
+        gmean_scores.append(g_mean)
+    
+    headers = ["Configuration", "Sensitivity (%)", "Specificity (%)", "G-mean (%)"]
+    table_str = tabulate(table, headers, tablefmt="grid")
+
+    # Display the table
+    print(table_str)
+
+    plt.figure(figsize=(12, 6))
+
+    x = range(len(PREFIXE))
+
+    # Plotting the line chart
+    plt.plot(x, gmean_scores, marker='o', label='g_mean')
+
+    plt.xlabel('Configuration')
+    plt.ylabel('Percentage (%)')
+    plt.title('G-mean Comparison')
+    plt.xticks(x, LABELS, rotation=45, ha='right')
+    plt.ylim(0, 100)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    # Save the figure
+    plt.savefig('Charts/g_mean_line.png', format='png')
+    plt.clf()
+
+def mcc_rag():
+    # Load the JSON data
+    with open(RESULTS_JSON_PATH) as f:
+        data = json.load(f)
+    # Preprocess the data
+    data = preprocess_data(data)
+
+    def calculate_metrics(results):
+        y_true = [item["humanJudgement"] for item in results]
+        y_pred = [item["llmJudgement"] for item in results]
+
+        cm = confusion_matrix(y_true, y_pred)
+        TN = cm[0][0]
+        FP = cm[0][1]
+        FN = cm[1][0]
+        TP = cm[1][1]
+        
+        # Calculate MCC
+        numerator = (TP * TN) - (FP * FN)
+        denominator = math.sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
+        mcc = numerator / denominator if denominator != 0 else 0
+        mcc = mcc * 100
+        return numerator, denominator, mcc
 
 
+    # Dynamically create a dictionary to hold aggregated results
+    results_dict = defaultdict(list)
+    
+    for key, value in data.items():
+        for prefix in PREFIXE:
+            if key.startswith(prefix):
+                results_dict[prefix].extend(value)
+                break
+
+    # Calculate metrics
+    table = []
+    mcc_scores = []
+    for prefix in PREFIXE:
+        numerator, denominator, mcc = calculate_metrics(results_dict[prefix])
+        table.append([prefix, numerator, denominator, mcc])
+        mcc_scores.append(mcc)
+
+    
+    headers = ["Configuration", "Numerator (%)", "Denominator (%)", "MCC (%)"]
+    table_str = tabulate(table, headers, tablefmt="grid")
+
+    # Display the table
+    print(table_str)
+
+    plt.figure(figsize=(12, 6))
+
+    x = range(len(PREFIXE))
+
+    # Plotting the line chart
+    plt.plot(x, mcc_scores, marker='o', label='g_mean')
+
+    plt.xlabel('Configuration')
+    plt.ylabel('Percentage (%)')
+    plt.title('MCC Comparison')
+    plt.xticks(x, LABELS, rotation=45, ha='right')
+    plt.ylim(0, 100)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+    # Save the figure
+    plt.savefig('Charts/MCC_line.png', format='png')
+    plt.clf()
 
 
-# f1_score_rag_pipeline()
-confusion_matrix_rag_settings()
-# ragSettings_accuracyChart()
+# Enable interactive mode
+plt.ion()
+
+f1_score_rag_pipeline()
+# confusion_matrix_rag_settings()
+ragSettings_accuracyChart()
+g_mean_rag()
+mcc_rag()
 
