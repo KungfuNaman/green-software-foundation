@@ -58,7 +58,7 @@ async def ask_ecodoc(file: UploadFile):
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
-    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_old.json"
+    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_final.json"
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
     logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
@@ -79,7 +79,7 @@ async def ask_ecodoc(file: UploadFile):
 
     # Load Query File
     try:
-        query_file_path = CURRENT_DIR + "./doc_data/documentsFromText/" + doc_name + "/ground_truth.json"
+        query_file_path = CURRENT_DIR + "/doc_data/documentsFromText/" + doc_name + "/ground_truth.json"
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")

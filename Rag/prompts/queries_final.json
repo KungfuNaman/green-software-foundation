@@ -1,0 +1,274 @@
+{
+  "queries": [
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Minimize the total number of deployed environments",
+      "query": "Is there any mention of minimizing the total number of deployed environments?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Optimize storage utilization",
+      "query": "Is there any mention of optimizing storage utilization?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Optimize average CPU utilization",
+      "query": "Is there any mention of optimizing average CPU utilization?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Optimize peak CPU utilization",
+      "query": "Is there any mention of managing peak CPU utilization?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Remove unused assets",
+      "query": "Is there any mention of removing unused assets?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Scale down Kubernetes applications when not in use",
+      "query": "Is there any mention of scaling down Kubernetes applications when not in use?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Scale down applications when not in use",
+      "query": "Is there any mention of scaling down applications during idle periods?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Scale infrastructure with user load",
+      "query": "Is there any mention of scaling infrastructure based on real-time user demand?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Scale Kubernetes workloads based on relevant demand metrics",
+      "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Scale logical components independently",
+      "query": "Is there any mention of allowing independent scaling of logical components?"
+    },
+    {
+      "type": "web",
+      "category": "Resource Optimization",
+      "practice": "Use serverless cloud services",
+      "query": "Is there any mention of adopting serverless cloud services?"
+    },
+    {
+      "type": "web",
+      "category": "Data Efficiency",
+      "practice": "Reduce transmitted data",
+      "query": "Is there any mention of reducing transmitted data?"
+    },
+    {
+      "type": "web",
+      "category": "Data Efficiency",
+      "practice": "Set storage retention policies",
+      "query": "Is there any mention of setting storage retention policies?"
+    },
+    {
+      "type": "web",
+      "category": "Performance Management",
+      "practice": "Queue non-urgent processing requests",
+      "query": "Is there any mention of queuing non-urgent processing requests"
+    },
+    {
+      "type": "web",
+      "category": "Performance Management",
+      "practice": "Shed lower priority traffic",
+      "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic?"
+    },
+    {
+      "type": "web",
+      "category": "Performance Management",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?"
+    },
+    {
+      "type": "web",
+      "category": "Performance Management",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Is there any mention of using asynchronous network calls instead of synchronous ones?"
+    },
+    {
+      "type": "web",
+      "category": "Performance Management",
+      "practice": "Use circuit breaker patterns",
+      "query": "Is there any mention of implementing circuit breaker patterns?"
+    },
+    {
+      "type": "web",
+      "category": "Security",
+      "practice": "Scan for vulnerabilities",
+      "query": "Is there any mention of regularly scanning for and fixing vulnerabilities?"
+    },
+    {
+      "type": "web",
+      "category": "Security",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Is there any mention of adopting cloud-native network security tools and controls?"
+    },
+    {
+      "type": "web",
+      "category": "Security",
+      "practice": "Use DDoS protection",
+      "query": "Is there any mention of using DDoS protection?"
+    },
+    {
+      "type": "web",
+      "category": "User Impact",
+      "practice": "Optimize impact on customer devices and equipment",
+      "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Choose the region that is closest to users",
+      "query": "Is there any mention of choosing server regions that are closest to users?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Containerize your workloads",
+      "query": "Is there any mention of containerizing workloads?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Delete unused storage resources",
+      "query": "Is there any mention of deleting unused storage resources?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Evaluate other CPU architectures",
+      "query": "Is there any mention of evaluating other CPU architectures?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Match utilization requirements of virtual machines (VMs)",
+      "query": "Is there any mention of ensuring VMs are right-sized for their workloads?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Match utilization requirements with pre-configured servers",
+      "query": "Is there any mention of using pre-configured servers that match workload requirements?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Use cloud native processor VMs",
+      "query": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?"
+    },
+    {
+      "type": "cloud",
+      "category": "Resource Optimization",
+      "practice": "Use serverless cloud services",
+      "query": "Is there any mention of adopting serverless cloud services?"
+    },
+    {
+      "type": "cloud",
+      "category": "Data Efficiency",
+      "practice": "Set storage retention policies",
+      "query": "Is there any mention of setting storage retention policies?"
+    },
+    {
+      "type": "cloud",
+      "category": "Data Efficiency",
+      "practice": "Cache static data",
+      "query": "Is there any mention of caching static data?"
+    },
+    {
+      "type": "cloud",
+      "category": "Data Efficiency",
+      "practice": "Compress stored data",
+      "query": "Is there any mention of compressing stored data?"
+    },
+    {
+      "type": "cloud",
+      "category": "Data Efficiency",
+      "practice": "Compress transmitted data",
+      "query": "Is there any mention of compressing data transmitted over networks?"
+    },
+    {
+      "type": "cloud",
+      "category": "Security",
+      "practice": "Encrypt what is necessary",
+      "query": "Is there any mention of encrypting only necessary data?"
+    },
+    {
+      "type": "cloud",
+      "category": "Security",
+      "practice": "Terminate TLS at border gateway",
+      "query": "Is there any mention of terminating TLS at the border gateway ?"
+    },
+    {
+      "type": "cloud",
+      "category": "Security",
+      "practice": "Use cloud native network security tools and controls",
+      "query": "Is there any mention of adopting cloud-native network security tools and controls?"
+    },
+    {
+      "type": "cloud",
+      "category": "Security",
+      "practice": "Use DDoS protection",
+      "query": "Is there any mention of using DDoS protection?"
+    },
+    {
+      "type": "cloud",
+      "category": "Performance Management",
+      "practice": "Use a service mesh only if needed",
+      "query": "Is there any mention of using a service mesh only if needed ?"
+    },
+    {
+      "type": "cloud",
+      "category": "Performance Management",
+      "practice": "Implement stateless design",
+      "query": "Is there any mention of implementing a stateless design?"
+    },
+    {
+      "type": "cloud",
+      "category": "Performance Management",
+      "practice": "Match your service level objectives to business needs",
+      "query": "Is there any mention of matching service level objectives to business needs?"
+    },
+    {
+      "type": "cloud",
+      "category": "Performance Management",
+      "practice": "Shed lower priority traffic",
+      "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic?"
+    },
+    {
+      "type": "cloud",
+      "category": "Performance Management",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?"
+    },
+    {
+      "type": "cloud",
+      "category": "Performance Management",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "query": "Is there any mention of using asynchronous network calls instead of synchronous ones?"
+    },
+    {
+      "type": "cloud",
+      "category": "Performance Management",
+      "practice": "Use circuit breaker patterns",
+      "query": "Is there any mention of implementing circuit breaker patterns?"
+    }
+  ]
+}
