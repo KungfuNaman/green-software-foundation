@@ -89,19 +89,29 @@ async def ask_ecodoc(file: UploadFile):
     truth_length = len(ground_truth)
 
      # Iterative Querying
-    def generate_results(): 
-        for q_idx in range(truth_length):
-            q_question = ground_truth[q_idx].get("query", "")
-            # ----------     Regular Invoke & Record to CSV     ----------
-            prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
-            response_text, response_info = generate_result(generator, prompt, response_info)
-            response_info["query"] = q_question
-            response_info["setup_db_time"] = setup_db_time
-            response_info["logger_file_path"] = logger_file_path
-            fo_helper.append_to_csv(response_info) 
-            add_parsed_results(logger_file_path, combined_path, prompt_id)
-            json_response = export_combined_results_to_json(combined_path) 
-            yield json.dumps(json_response) + "\n"
+    def generate_results():
+        try: 
+            for q_idx in range(truth_length):
+                q_question = ground_truth[q_idx].get("query", "")
+                # ----------     Regular Invoke & Record to CSV     ----------
+                prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
+                response_text, response_info = generate_result(generator, prompt, response_info)
+                response_info["query"] = q_question
+                response_info["setup_db_time"] = setup_db_time
+                response_info["logger_file_path"] = logger_file_path
+                fo_helper.append_to_csv(response_info) 
+                add_parsed_results(logger_file_path, combined_path, prompt_id)
+                json_response = export_combined_results_to_json(combined_path) 
+                yield json.dumps(json_response) + "\n"
+        finally:
+            #cleanup files
+            if os.path.exists(logger_file_path):
+                os.remove(logger_file_path)
+            if os.path.exists(combined_path):
+                os.remove(combined_path)
+            if os.path.exists(document_path):
+                os.remove(document_path)
+            db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")
 
