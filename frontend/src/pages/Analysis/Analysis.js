@@ -216,7 +216,7 @@ const Analysis = () => {
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
-        <button className="analysis-download-button" onClick={handleDownload}>Download Results PDF</button>
+        <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer"><Timer/></div>}
       </div>
