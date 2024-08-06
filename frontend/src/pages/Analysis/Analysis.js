@@ -4,8 +4,9 @@ import ProgressTimer from "../../components/ProgressTimer/ProgressTimer";
 import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
 import "./Analysis.css";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
-import { useLocation, useNavigate } from "react-router-dom";
+import { json, useLocation, useNavigate } from "react-router-dom";
 import Timer from "../../components/AddDocument/Timer";
+import { handleDownloadPDF } from "../../utils/pdfGenerator";
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
@@ -194,12 +195,28 @@ const Analysis = () => {
     setActiveButton("button3");
   };
 
+  const handleDownload = () => {
+    if (!doc_name) {
+      console.error("Document name is undefined");
+      return;
+    }
+
+    const analysisData = {
+      progressValue,
+      categoryWiseResult,
+      apiResponse,
+      docName: doc_name || 'Document',
+    };
+
+    handleDownloadPDF(analysisData);
+  };
+
   return (
     <div className="analysis-container">
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
-        <button className="analysis-download-button" disabled>Download Results PDF</button>
+        <button className="analysis-download-button" onClick={handleDownload}>Download Results PDF</button>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer"><Timer/></div>}
       </div>
