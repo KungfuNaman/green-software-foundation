@@ -45,7 +45,7 @@ class Generator:
     def get_instruction():
         instruction = """
         Act as a professional assistant in the field of software development, you need to give precise and short answers 
-        to respond to the question that I gave.\n 
+        to respond to the question that I gave, beside, also give a suggestion that describe the benefits of using this technic mentioned in the question in this software project.\n 
         I will take the corresponding text snippet from the design file of the software development, and you need to use 
         a certain format and \"yes/no/not applicable\" to answer the question.
         \n\n My Input would be:\n\"\"\n
@@ -56,13 +56,15 @@ class Generator:
         <question>: I'll ask you if this uses a certain technology to support a certain green practice. 
         \n\n Your Answer must adhere to this format:\n\"\"\n
         Response:\nJudgement: Print <Yes> / <No> / <Not Applicable> only.\n
-        Explanation: <The description of the reason for the judgement above>\n\"\"\n\n
+        Explanation: <The description of the reason for the judgement above>\n\
+        Suggestion: <The benefits of using this technic in this software projects>"\"\n\n
         For Your Answer:\n
         In judgement,\n
         <Yes> means that in the context of my question, there exists a technology or green practice that is relevant to the question.\n
         <No> means that in the context of my question, there is no technology or green practice that is relevant to the question.\n
         <Not Applicable> means that in the context of my question, this application is not applicable to this technique or to the green practice, e.g., applications that need to focus on real-time feedback, such as online games, are not applicable to the green practice of \"cache static data\".\n\n
         In Explanation, you need to explain the judgment you made above in less than 3 sentences.\n\n
+		In Suggestion, you need to give suggestion about using this technic in less than 5 sentences.\n\n
         """
         return instruction
 
