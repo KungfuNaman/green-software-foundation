@@ -16,6 +16,10 @@ function AddDocumentForm(){
             setSubmitBlocked(true);
             return;
         }
+        if(!selectedFile.name.endsWith('.pdf') && !selectedFile.name.endsWith('.txt')){
+            alert('Please upload a .pdf or .txt file only');
+            return;
+        }
 
         setFile(selectedFile);
         const url = URL.createObjectURL(selectedFile);
