@@ -30,7 +30,7 @@ export default function ResultBarChart({ xlabels, categoryWiseResult }) {
       xAxis={[
         {
           scaleType: "band",
-          data: xlabels,
+          data: ["Resource Optimization", "Data Efficiency", "Performance Management", "Security", "User Impact"],
           label: "Categories of Green Practices",
         },
       ]}

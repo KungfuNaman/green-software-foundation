@@ -1,10 +1,10 @@
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile, Depends
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import json
-import asyncio
 import aiofiles
+import re
 from pathlib import Path
 from pydantic.dataclasses import dataclass
 
@@ -19,7 +19,7 @@ from parser import export_combined_results_to_json, add_parsed_results
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,14 +29,19 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
+def get_alternate_query_file_path():
+    return CURRENT_DIR + "/prompts/queries_final.json"
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the API"}
 
 
 @app.post("/ask_ecodoc")
-async def ask_ecodoc(file: UploadFile):
-    document_path = CURRENT_DIR + "/doc_data/uploaded_docs/" + file.filename
+async def ask_ecodoc(file: UploadFile, alternate_query_path: str = Depends(get_alternate_query_file_path)):
+
+    cleaned_filename = re.sub(r'[^\w\-.]', '_', file.filename)
+    document_path = CURRENT_DIR + "/doc_data/uploaded_docs/" + cleaned_filename
     destination = Path(document_path)
 
     try:
@@ -50,15 +55,15 @@ async def ask_ecodoc(file: UploadFile):
 
     # ============================================    CONFIG    ============================================
 
-    image_extract = True
+    image_extract = False
     prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
 
     prompt_template_text = prompts_file[prompt_id]
     embedder_name, generator_name = "llama2", "phi3"
     db_collection_name = doc_name + "_" + embedder_name
-    retriever_type = "multiquery"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
-    retriever_type_lst = ["chroma", "multiquery", "ensemble"]  # For comparing the retrievers
-    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_old.json"
+    retriever_type = "chroma"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
+    retriever_type_lst = []  # For comparing the retrievers
+    alternate_query_file_path = alternate_query_path
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
     logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
@@ -79,7 +84,7 @@ async def ask_ecodoc(file: UploadFile):
 
     # Load Query File
     try:
-        query_file_path = CURRENT_DIR + "./doc_data/documentsFromText/" + doc_name + "/ground_truth.json"
+        query_file_path = CURRENT_DIR + "/doc_data/documentsFromText/" + doc_name + "/ground_truth.json"
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")
@@ -89,40 +94,31 @@ async def ask_ecodoc(file: UploadFile):
     truth_length = len(ground_truth)
 
      # Iterative Querying
-    def generate_results(): 
-        for q_idx in range(truth_length):
-            q_question = ground_truth[q_idx].get("query", "")
-            # ----------     Regular Invoke & Record to CSV     ----------
-            prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
-            response_text, response_info = generate_result(generator, prompt, response_info)
-            response_info["query"] = q_question
-            response_info["setup_db_time"] = setup_db_time
-            response_info["logger_file_path"] = logger_file_path
-            fo_helper.append_to_csv(response_info) 
-            add_parsed_results(logger_file_path, combined_path, prompt_id)
-            json_response = export_combined_results_to_json(combined_path) 
-            yield json.dumps(json_response) + "\n"
+    def generate_results():
+        try: 
+            for q_idx in range(truth_length):
+                q_question = ground_truth[q_idx].get("query", "")
+                # ----------     Regular Invoke & Record to CSV     ----------
+                prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
+                response_text, response_info = generate_result(generator, prompt, response_info)
+                response_info["query"] = q_question
+                response_info["setup_db_time"] = setup_db_time
+                response_info["logger_file_path"] = logger_file_path
+                fo_helper.append_to_csv(response_info) 
+                add_parsed_results(logger_file_path, combined_path, prompt_id)
+                json_response = export_combined_results_to_json(combined_path) 
+                yield json.dumps(json_response) + "\n"
+        finally:
+            #cleanup files
+            if os.path.exists(logger_file_path):
+                os.remove(logger_file_path)
+            if os.path.exists(combined_path):
+                os.remove(combined_path)
+            if os.path.exists(document_path):
+                os.remove(document_path)
+            db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")
-
-
-@app.post("/ask_ecodoctest")
-async def ask_ecodoctest(file: UploadFile):
-    async def generate():
-        yield json.dumps({"response": [{"query": "Is there any mention of minimizing the total number of deployed environments?", "explanation": "The context provided does not discuss minimizing the total number of deployed environments, as it focuses on Git's features and benefits within software development processes.", "result": "Not Applicable", "category": "Resource Optimization", "practice": "Minimize the total number of deployed environments", "type": "web"}]}) + "\n"
-        await asyncio.sleep(10)
-        yield json.dumps({"response": [{"query": "Is there any mention of minimizing the total number of deployed environments?", "explanation": "The context provided does not discuss minimizing the total number of deployed environments, as it focuses on Git's features and benefits within software development processes.", "result": "Not Applicable", "category": "Resource Optimization", "practice": "Minimize the total number of deployed environments", "type": "web"} ,
-        {
-            "query": "Is there any mention of optimizing storage utilization?",
-            "category": "Resource Optimization",
-            "practice": "Optimize storage utilization",
-            "result": "Yes",
-            "explanation": "The context mentions the use of Amazon's large EC2 instances with InnoDB, which is known for its efficient space and performance characteristics. This choice indicates an optimization strategy to reduce latency by reducing network calls between services while improving storage utilization efficiency.",
-            "type": "web"
-        }]}) + "\n"
-    
-    return StreamingResponse(generate(), media_type="application/json")
-    
 
 @app.get("/get_sample_results/{doc_name}")
 def get_sample_results(doc_name: str):

@@ -1,9 +1,7 @@
 import React, { useState, useEffect} from "react";
 import { Button } from "@mui/material";
-import StarIcon from "@mui/icons-material/Star";
 import ProgressTimer from "../../components/ProgressTimer/ProgressTimer";
 import ResultBarChart from "../../components/ResultBarChart/ResultBarChart";
-import ProjectType from "./../../api_results/projectType.json";
 import "./Analysis.css";
 import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
 import { json, useLocation, useNavigate } from "react-router-dom";
@@ -13,7 +11,6 @@ import { handleDownloadPDF } from "../../utils/pdfGenerator";
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(45);
-  const [projectType, setProjectType] = useState(ProjectType["response"]);
   const [activeButton, setActiveButton] = useState("button1");
   const [categories, setCategories] = useState([]);
   const [filteredResponse, setFilteredResponse] = useState([]);
@@ -168,8 +165,20 @@ const Analysis = () => {
     else{
       setDocumentUrl(`${process.env.PUBLIC_URL}/${doc_name}.pdf`)
     }
-    setShowPreview(!showPreview);
+    setShowPreview(!showPreview);    
   };
+
+  useEffect(() => {
+    if (showPreview) {
+      const element = document.getElementById('doc-preview-holder');
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+  }, [showPreview]);
 
   const handleAllButton = () => {
     setFilterType("all");
@@ -206,6 +215,8 @@ const Analysis = () => {
     <div className="analysis-container">
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
+        <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
+        <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer"><Timer/></div>}
       </div>
@@ -238,11 +249,7 @@ const Analysis = () => {
           </div>
         </div>
       </div>
-      <div className="results">
-        <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Submitted Document</button>
-        <button className="analysis-download-button" onClick={handleDownload}>Download Results PDF</button>
-      </div>
-      <div className="document-preview">
+      <div className="document-preview" id="doc-preview-holder">
          {showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
       </div>
     </div>

@@ -2,6 +2,7 @@ import base64
 import requests
 import json
 import re
+import os
 
 
 class ImageExtractor:
@@ -57,6 +58,7 @@ class ImageExtractor:
             text_response = response['response']
             no += 1
             markdown_content = markdown_content.replace(f"![{image_alt}]({image_path})", f"Image {no}: {text_response}")
+            os.remove(image_path)
         print("Image Extraction Complete!")
         return markdown_content
     

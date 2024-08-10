@@ -50,6 +50,21 @@ export default function ResultTabs({ tabularData }) {
     },
   }));
 
+  const formatSuggestion = (row) => {
+    if(row.result === "Yes"){
+      return "Practice is being followed";
+    }
+    else if (row.result === "Not Applicable"){
+      return "Not Applicable";
+    }
+    else if (row.result === "No" && row.suggestion){
+      return row.suggestion;
+    }
+    else{
+      return "Suggestion not available";
+    }
+  };
+
 
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>
@@ -68,6 +83,7 @@ export default function ResultTabs({ tabularData }) {
               <StyledTableCell sx={{ fontSize: '1.25rem' }} align="left">Query</StyledTableCell>
               <StyledTableCell sx={{ fontSize: '1.25rem' }} align="left">Explanation</StyledTableCell>
               <StyledTableCell sx={{ fontSize: '1.25rem' }} align="left">Result</StyledTableCell>
+              <StyledTableCell sx={{ fontSize: '1.25rem' }} align="left">Suggestion</StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
@@ -82,6 +98,7 @@ export default function ResultTabs({ tabularData }) {
                 <StyledTableCell sx={{ fontSize: '1.25rem'}} align="left">{row.query}</StyledTableCell>
                 <StyledTableCell sx={{ fontSize: '1.25rem'}} align="left">{row.explanation}</StyledTableCell>
                 <StyledTableCell sx={{ fontSize: '1.25rem'}} align="left">{row.result}</StyledTableCell>
+                <StyledTableCell sx={{ fontSize: '1.25rem'}} align="left">{formatSuggestion(row)}</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
