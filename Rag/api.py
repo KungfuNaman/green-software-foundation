@@ -38,7 +38,7 @@ def read_root():
 
 
 @app.post("/ask_ecodoc")
-async def ask_ecodoc(file: UploadFile, alternate_query_path: str = Depends(get_alternate_query_file_path)):
+async def ask_ecodoc(file: UploadFile):
 
     cleaned_filename = re.sub(r'[^\w\-.]', '_', file.filename)
     document_path = CURRENT_DIR + "/doc_data/uploaded_docs/" + cleaned_filename
@@ -63,7 +63,7 @@ async def ask_ecodoc(file: UploadFile, alternate_query_path: str = Depends(get_a
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "chroma"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = []  # For comparing the retrievers
-    alternate_query_file_path = alternate_query_path
+    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_final.json"
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
     logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
