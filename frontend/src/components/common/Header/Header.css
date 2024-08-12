@@ -4,12 +4,31 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     font-size: calc(5px + 2vmin);
     color: white;
     font-weight: 700;
   }
   .GSFLogo{
     height: 7vmin;
+    margin-left: 1em;
     margin-right: 0.5em;
+  }
+
+  .header-link{
+    color: #aecc53;
+    text-decoration: none;
+    margin-left: 3em;
+    margin-right: 1em;
+    font-size: 0.9em;
+  }
+
+  .github-link {
+    margin-left: auto; 
+    margin-right: 1em; 
+  }
+
+  .github-icon {
+    color: #aecc53;
+
   }
