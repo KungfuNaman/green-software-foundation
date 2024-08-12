@@ -1,15 +1,18 @@
 # Base image
 FROM ollama/ollama
 
-# Install curl
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Install required packages
+RUN apt-get update && \
+    apt-get install -y curl python3-pip && \
+    pip3 install gdown && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+    # Set working directory
 WORKDIR /root/.ollama
 
 # Copy the model file and gguf file into the container
 COPY Modelfile /root/Modelfile
-COPY fineTunedModels/fineTunedModel.gguf /root/fineTunedModel.gguf
+RUN gdown --id 101grZBeyvPng_kW03uZLUVboW2fvakrj -O /root/fineTunedModel.gguf
 
 # Copy the startup script into the container
 COPY startup.sh /root/startup.sh
@@ -17,5 +20,5 @@ COPY startup.sh /root/startup.sh
 # Make sure the script is executable
 RUN chmod +x /root/startup.sh
 
-# Set the script as the entrypoint
+# Set the script as the entrypoint~
 ENTRYPOINT ["bash", "/root/startup.sh"]

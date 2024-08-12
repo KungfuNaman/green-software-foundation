@@ -25,5 +25,7 @@ ollama pull llama2
 echo "Creating a new model with the name 'fineTunedModel'..."
 ollama create "fineTunedModel" -f /root/Modelfile
 
+echo "Fine tuned model up and running in ollama"
+
 # Keep the service running
 wait
