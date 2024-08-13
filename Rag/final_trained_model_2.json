@@ -1,0 +1,130 @@
+{
+  "retrieve": {
+    "k": 3
+  },
+  "generate_answer": {
+    "lm": null,
+    "traces": [],
+    "train": [],
+    "demos": [
+      {
+        "augmented": true,
+        "dspy_uuid": "bce41915-6ca6-44cf-a093-8f9f61153c78",
+        "context": [
+          "When the user loads the Netflix app on his\/her device firstly AWS instances come into the picture and\nhandle some tasks such as login, recommendations, search, user history, the home page, billing,\ncustomer support, etc.\nAfter that, when the user hits the play button on a video, Netflix analyzes the network speed or connection\nstability, and then it figures out the best Open Connect server near to the user.\nDepending on the device and screen size, the right video format is streamed into the user\u2019s device. While\nwatching a video, you might have noticed that the video appears pixelated and snaps back to HD after a\nwhile.\nThis happens because the application keeps checking the best streaming open connect server and\nswitches between formats (for the best viewing experience) when it\u2019s needed.",
+          "3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier\nload-balancing scheme where the load is balanced over zones first and then instances (servers).",
+          "headers. After that, the response is sent back to the Netty server and then it is received by the client.\nAdvantages of using ZUUL:"
+        ],
+        "question": "Is there any mention of caching static data?",
+        "rationale": "Answer: No\n\nExplanation: The provided context does not contain information about caching static data, so the answer is no.",
+        "answer": "No"
+      },
+      {
+        "augmented": true,
+        "dspy_uuid": "477bbf75-a06c-4a3e-8507-68dae65a09fc",
+        "context": [
+          "switches between formats (for the best viewing experience) when it\u2019s needed.\nUser data is saved in AWS such as searches, viewing, location, device, reviews, and likes, Netflix uses it\nto build the movie recommendation for users using the Machine learning model or Hadoop.",
+          "3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier\nload-balancing scheme where the load is balanced over zones first and then instances (servers).",
+          "ev-cache\n\nTo solve this problem Netflix has built its own custom caching layer called EV cache. EV cache is based\non Memcached and it is actually a wrapper around Memcached.\n\nNetflix has deployed a lot of clusters in a number of AWS EC2 instances and these clusters have so\nmany nodes of Memcached and they also have cache clients."
+        ],
+        "question": "Is there any mention of implementing a stateless design?",
+        "rationale": "Answer: No\n\nExplanation: The context provided does not discuss or mention anything about Netflix adopting a stateless design. Stateless designs are typically associated with scalability and reliability, but there is no information given that suggests this approach has been implemented at Netflix based on the available text snippets.",
+        "answer": "No"
+      },
+      {
+        "augmented": true,
+        "dspy_uuid": "c0fa9b27-a1c5-42cc-9f58-c31b5aca58ef",
+        "context": [
+          "3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier\nload-balancing scheme where the load is balanced over zones first and then instances (servers).",
+          "switches between formats (for the best viewing experience) when it\u2019s needed.\nUser data is saved in AWS such as searches, viewing, location, device, reviews, and likes, Netflix uses it\nto build the movie recommendation for users using the Machine learning model or Hadoop.",
+          "headers. After that, the response is sent back to the Netty server and then it is received by the client.\nAdvantages of using ZUUL:"
+        ],
+        "question": "Is there any mention of compressing data transmitted over networks?",
+        "rationale": "Answer: No\n\nExplanation: The context provided does not contain information about compressing data transmitted over networks. It discusses Netflix using AWS for storing user data and balancing high traffic load with an Elastic Load Balancer (ELB). ZUUL is mentioned as a way to route requests, but there's no mention of compression in the provided context.",
+        "answer": "No"
+      },
+      {
+        "augmented": true,
+        "dspy_uuid": "1f5247e4-e1ea-489d-ae6b-02f102c16884",
+        "context": [
+          "switches between formats (for the best viewing experience) when it\u2019s needed.\nUser data is saved in AWS such as searches, viewing, location, device, reviews, and likes, Netflix uses it\nto build the movie recommendation for users using the Machine learning model or Hadoop.",
+          "3.2. How Netflix balance the high traffic load\n1. Elastic Load Balancer\nelastic-load-balancer\n\nELB in Netflix is responsible for routing the traffic to front-end services. ELB performs a two-tier\nload-balancing scheme where the load is balanced over zones first and then instances (servers).",
+          "ev-cache\n\nTo solve this problem Netflix has built its own custom caching layer called EV cache. EV cache is based\non Memcached and it is actually a wrapper around Memcached.\n\nNetflix has deployed a lot of clusters in a number of AWS EC2 instances and these clusters have so\nmany nodes of Memcached and they also have cache clients."
+        ],
+        "question": "Is there any mention of using DDoS protection to maintain service availability?",
+        "rationale": "Answer: No\n\nExplanation: The context provided does not contain information about the use of DDoS protection. It discusses Netflix's load balancing, caching layer (EV cache), and data storage practices but nothing related to protecting against Distributed Denial-of-Service attacks or maintaining service availability in that way.",
+        "answer": "No"
+      },
+      {
+        "question": "Is there any mention of implementing circuit breaker patterns?",
+        "answer": "Not Applicable",
+        "dspy_uuid": "da8fa29e-b295-4240-bfdd-33229d987fe3",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of setting storage retention policies?",
+        "answer": "No",
+        "dspy_uuid": "c2e085b3-a0c6-4831-a997-0aa34562cf83",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
+        "answer": "No",
+        "dspy_uuid": "3e3409e7-179a-46ba-8e73-52e6698eb966",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of encrypting only necessary data to save energy?",
+        "answer": "No",
+        "dspy_uuid": "e10705f9-5d1e-4ddd-b942-df7ace9eabc6",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of using a service mesh only if needed ?",
+        "answer": "Yes",
+        "dspy_uuid": "99470621-5210-4f93-bf13-c4b3f6d776ba",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic?",
+        "answer": "Not Applicable",
+        "dspy_uuid": "b1b2aa5a-097e-43ec-9bf2-ba70422dba6f",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of compressing stored data?",
+        "answer": "Yes",
+        "dspy_uuid": "8118ca59-0397-439f-9cf4-54bfc276fa6f",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of terminating TLS at the border gateway ?",
+        "answer": "No",
+        "dspy_uuid": "69a0b60d-251b-49c9-a74b-d4052800dddd",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of adopting cloud-native network security tools and controls?",
+        "answer": "No",
+        "dspy_uuid": "46d30229-93a1-49d1-8e4c-6cb7892bf611",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of using asynchronous network calls instead of synchronous ones?",
+        "answer": "Yes",
+        "dspy_uuid": "a5617ed0-a9c1-4ba5-b179-52534f56cbf3",
+        "dspy_split": "train"
+      },
+      {
+        "question": "Is there any mention of matching service level objectives to business needs?",
+        "answer": "No",
+        "dspy_uuid": "492c2452-27cc-4a49-bf65-822525bf7854",
+        "dspy_split": "train"
+      }
+    ],
+    "signature_instructions": "Give a concrete yes or no or not applicable answer to a question based on the retrieved context.",
+    "signature_prefix": "Answer:",
+    "extended_signature_instructions": "Give a concrete yes or no or not applicable answer to a question based on the retrieved context.",
+    "extended_signature_prefix": "Answer:"
+  }
+}
