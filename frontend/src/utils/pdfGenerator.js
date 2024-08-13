@@ -87,6 +87,185 @@ const addSummaryPage = (doc) => {
   doc.text(lines, 20, 40);
 };
 
+// Function to add the Overview page
+const addOverviewPage = (doc, practicesSummary) => {
+  doc.addPage();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 10;
+  let yOffset = 25;
+
+  // Heading for the page
+  doc.setFont('Arial', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(0, 0, 0);
+  doc.text('Overview', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
+
+  yOffset += 15;
+
+  // Green practices followed
+  doc.setFontSize(14);
+  doc.text('Green practices followed', margin, yOffset);
+
+  yOffset += 10;
+  doc.setFontSize(14);
+  doc.text(`${practicesSummary.totalFollowed}/${practicesSummary.totalPractices}`, margin, yOffset);
+
+  yOffset += 15;
+
+  // Table headers
+  doc.setFont('Arial', 'bold');
+  doc.text('Categories', margin, yOffset);
+  doc.text('Practices followed', pageWidth / 2, yOffset);
+
+  yOffset += 10;
+
+  // Table rows
+  doc.setFont('Arial', 'normal');
+  practicesSummary.data.forEach((item, index) => {
+    doc.text(item.pillar, margin, yOffset);
+    doc.text(item.followed, pageWidth / 2, yOffset);
+    
+    // Draw a line after each row
+    if (index < practicesSummary.data.length - 1) {  // Avoid drawing line after the last row
+      doc.line(margin, yOffset + 3, pageWidth - margin, yOffset + 3);
+    }
+    
+    yOffset += 10;
+  });
+};
+
+// Function to add the Green Practices for Sustainable Software page
+const addGreenPracticesPage = (doc) => {
+    doc.addPage();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 10;
+    const boxWidth = pageWidth - 2 * margin;
+    const headingHeight = 12;
+    const contentHeight = 20; // Adjusted for the new content size
+    const boxHeight = headingHeight + contentHeight + 5; // Adjusted box height for both rows
+    let yOffset = 25; // Initial Y offset for the first box
+
+    // Heading for the page
+    doc.setFont('Arial', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Categorization of Green Practices', pageWidth / 2, yOffset, { align: 'center' });
+    yOffset += 15; // Space after page heading
+
+    // Content for each box
+    const practices = [
+        {
+            title: 'Resource Optimization',
+            text: 'This refers to using computational resources efficiently, minimizing waste, and reducing energy consumption, which is crucial in green software patterns to lower environmental impact.'
+        },
+        {
+            title: 'Data Efficiency',
+            text: 'Data efficiency focuses on minimizing the amount of data processed and stored, reducing the energy required for data handling, and contributing to the overall sustainability of software.'
+        },
+        {
+            title: 'Performance Management',
+            text: 'This involves optimizing software to perform tasks quickly and efficiently, which reduces energy usage and enhances sustainability by ensuring that resources are not unnecessarily consumed.'
+        },
+        {
+            title: 'Security',
+            text: 'Ensuring robust security in software prevents energy-intensive breaches or inefficiencies caused by vulnerabilities, aligning with green software practices by maintaining system integrity without excessive resource use.'
+        },
+        {
+            title: 'User Impact',
+            text: 'This category considers how software design affects user behavior and energy use, promoting designs that encourage energy-efficient usage patterns, thus supporting overall sustainability goals.'
+        }
+    ];
+
+    // Draw each practice as a full-width box with two rows
+    practices.forEach((practice) => {
+        // Draw box border
+        doc.setLineWidth(0.5);
+        doc.rect(margin, yOffset, boxWidth, boxHeight);
+
+        // Draw heading row
+        doc.setFont('Arial', 'bold');
+        doc.setFontSize(12);
+        doc.text(practice.title, margin + 5, yOffset + headingHeight - 2);
+
+        // Draw a line between the heading and content
+        doc.line(margin, yOffset + headingHeight + 1, margin + boxWidth, yOffset + headingHeight + 1);
+
+        // Draw content row
+        doc.setFont('Arial', 'normal');
+        doc.setFontSize(14);
+        const textLines = doc.splitTextToSize(practice.text, boxWidth - 10); // Adjust text wrapping
+        doc.text(textLines, margin + 5, yOffset + headingHeight + 10);
+
+        yOffset += boxHeight + 10; // Space after each box
+    });
+};
+
+// Function to add the Improvement Plan page
+const addImprovementPlanPage = (doc, apiResponse) => {
+    doc.addPage();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 10;
+    const boxWidth = pageWidth - 2 * margin;
+    const headingHeight = 12;
+    const contentHeight = 20; // Adjusted for the new content size
+    const boxHeight = headingHeight + contentHeight + 5; // Adjusted box height for both rows
+    let yOffset = 25; // Initial Y offset for the first box
+
+    // Heading for the page
+    doc.setFont('Arial', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Improvement Plan', pageWidth / 2, yOffset, { align: 'center' });
+    yOffset += 15; // Space after page heading
+
+    // Calculate the number of improvements needed per category
+    const improvementsSummary = {
+        'Resource Optimization': 0,
+        'Data Efficiency': 0,
+        'Performance Management': 0,
+        'Security': 0,
+        'User Impact': 0
+    };
+
+    apiResponse.forEach(practice => {
+        if (practice.result === 'No' || practice.result === 'Not Applicable') {
+            improvementsSummary[practice.category] += 1;
+        }
+    });
+
+    // Content for each box
+    const practices = [
+        { title: 'Resource Optimization', improvements: improvementsSummary['Resource Optimization'] },
+        { title: 'Data Efficiency', improvements: improvementsSummary['Data Efficiency'] },
+        { title: 'Performance Management', improvements: improvementsSummary['Performance Management'] },
+        { title: 'Security', improvements: improvementsSummary['Security'] },
+        { title: 'User Impact', improvements: improvementsSummary['User Impact'] }
+    ];
+
+    practices.forEach((practice) => {
+        // Draw box border
+        doc.setLineWidth(0.5);
+        doc.rect(margin, yOffset, boxWidth, boxHeight);
+
+        // Draw heading row
+        doc.setFont('Arial', 'bold');
+        doc.setFontSize(14);
+        doc.text(practice.title, margin + 5, yOffset + headingHeight - 2);
+
+        // Draw a line between the heading and content
+        doc.line(margin, yOffset + headingHeight + 1, margin + boxWidth, yOffset + headingHeight + 1);
+
+        // Draw content row
+        doc.setFont('Arial', 'normal');
+        doc.setFontSize(14);
+        const improvementText = `${practice.improvements} improvements needed.`;
+        const textLines = doc.splitTextToSize(improvementText, boxWidth - 10); // Adjust text wrapping
+        doc.text(textLines, margin + 5, yOffset + headingHeight + 10);
+
+        yOffset += boxHeight + 10; // Space after each box
+    });
+};
+
 // Function to add table of contents page
 const addTableOfContentsPage = (doc, pageNumbers) => {
   doc.addPage();
@@ -99,8 +278,11 @@ const addTableOfContentsPage = (doc, pageNumbers) => {
   doc.setFontSize(12);
   doc.setTextColor(0, 0, 0); // Black text color
   const tocContent = [
-    { title: 'About the Sustainability Report', page: pageNumbers.summary },
+  
+    { title: 'Categorization of Green Practices ', page: pageNumbers.greenPractices },
+    { title: 'Overview', page: pageNumbers.overview },
     { title: 'Graphical Evaluation', page: pageNumbers.graphicalEvaluation },
+    { title: 'Improvement Plan', page: pageNumbers.improvementPlan },
     { title: 'Ranking of Document', page: pageNumbers.ranking },
     { title: 'Evaluation', page: pageNumbers.evaluation }
   ];
@@ -117,7 +299,7 @@ const generatePDF = async (analysisData) => {
   let pageNumber = 1;
 
   // Calculate total pages for footer
-  const totalPages = apiResponse.length + 3; // 1 for title page, 1 for summary, 1 for table of contents, 1 for graphical evaluation, 1 for ranking, and 1 for each query
+  const totalPages = apiResponse.length + 6; // 1 for title page, 1 for summary, 1 for table of contents, 1 for green practices, 1 for overview, 1 for graphical evaluation, 1 for improvement plan, 1 for ranking, and 1 for each query
 
   // Draw the title page with a dark green box and white text
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -142,10 +324,34 @@ const generatePDF = async (analysisData) => {
   // Add table of contents page
   addTableOfContentsPage(doc, {
     summary: summaryPageNumber,
-    graphicalEvaluation: summaryPageNumber + 2,
-    ranking: summaryPageNumber + 3,
-    evaluation: summaryPageNumber + 4
+    greenPractices: summaryPageNumber + 1,
+    overview: summaryPageNumber + 2,
+    graphicalEvaluation: summaryPageNumber + 3,
+    improvementPlan: summaryPageNumber + 4,
+    ranking: summaryPageNumber + 5,
+    evaluation: summaryPageNumber + 6
   });
+  pageNumber++;
+  drawFooter(doc, pageNumber, totalPages);
+
+  // Add Green Practices for Sustainable Software page
+  addGreenPracticesPage(doc);
+  pageNumber++;
+  drawFooter(doc, pageNumber, totalPages);
+
+  // Add Overview page
+  const practicesSummary = {
+    totalFollowed: apiResponse.filter(practice => practice.result === 'Yes').length,
+    totalPractices: apiResponse.length,
+    data: [
+      { pillar: 'Resource Optimization', followed: '5/18' },
+      { pillar: 'Data Efficiency', followed: '0/5' },
+      { pillar: 'Performance Management', followed: '2/8' },
+      { pillar: 'Security', followed: '2/5' },
+      { pillar: 'User Impact', followed: '0/1' }
+    ]
+  };
+  addOverviewPage(doc, practicesSummary);
   pageNumber++;
   drawFooter(doc, pageNumber, totalPages);
 
@@ -165,6 +371,11 @@ const generatePDF = async (analysisData) => {
   const imgData = UberFront;
   doc.addImage(imgData, 'JPEG', 10, yOffset, 180, 160); // Adjust the size of the image
   yOffset += 170;
+
+  // Add Improvement Plan page
+  addImprovementPlanPage(doc, apiResponse);
+  pageNumber++;
+  drawFooter(doc, pageNumber, totalPages);
 
   // Add Ranking of document based on Sustainability
   doc.addPage();
