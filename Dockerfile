@@ -1,5 +1,5 @@
 # Base image
-FROM ollama/ollama
+FROM ollama/ollama:0.1.32
 
 # Install required packages
 RUN apt-get update && \
