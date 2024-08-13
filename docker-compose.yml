@@ -10,6 +10,8 @@ services:
     ports:
       - "11434:11434"
     mem_limit: 10g  # Allocate 10 GiB of memory to the container
+    networks:
+      - app-network
 
   frontend:
     build:
@@ -21,6 +23,8 @@ services:
       - REACT_APP_BACKEND_URL=http://backend:8000
     depends_on:
       - backend
+    networks:
+      - app-network
 
   backend:
     build:
@@ -35,6 +39,11 @@ services:
       - ./.env:/app/.env
     depends_on:
       - ollama
+    networks:
+      - app-network
 
 volumes:
   ollama:
+
+networks:
+  app-network:

@@ -4,6 +4,7 @@ FROM ollama/ollama
 # Install required packages
 RUN apt-get update && \
     apt-get install -y curl python3-pip && \
+    apt-get install -y iputils-ping && \
     pip3 install gdown && \
     rm -rf /var/lib/apt/lists/*
 

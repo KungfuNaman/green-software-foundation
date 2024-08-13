@@ -38,7 +38,8 @@ class Generator:
             top_p=0.9,                  # Default = 0.9
             verbose=False,
             template=template,
-            system=instruction
+            system=instruction,
+            base_url="http://ollama:11434"
         )
 
     @staticmethod

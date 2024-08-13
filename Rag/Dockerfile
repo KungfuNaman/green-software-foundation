@@ -8,6 +8,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     build-essential \
     libhdf5-dev \
+    iputils-ping \
     pkg-config \
     curl \
     && rm -rf /var/lib/apt/lists/*
