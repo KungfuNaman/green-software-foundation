@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, Depends
+from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -8,6 +8,7 @@ import re
 from pathlib import Path
 from pydantic.dataclasses import dataclass
 import asyncio
+
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
@@ -26,6 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+ALTERNATE_QUERY_FILE_PATH = CURRENT_DIR + "/prompts/queries_final.json" #Query file when ground truth is not available
 
 with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
@@ -62,7 +64,6 @@ async def ask_ecodoc(file: UploadFile):
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "chroma"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = []  # For comparing the retrievers
-    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_final.json"
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
     logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
@@ -87,7 +88,7 @@ async def ask_ecodoc(file: UploadFile):
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")
-        query_file_path = alternate_query_file_path
+        query_file_path = ALTERNATE_QUERY_FILE_PATH
         ground_truth = fi_helper.load_json_file(query_file_path)["queries"]
 
     truth_length = len(ground_truth)
