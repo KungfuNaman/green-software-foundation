@@ -93,10 +93,12 @@ async def ask_ecodoc(file: UploadFile):
 
     truth_length = len(ground_truth)
 
-     # Iterative Querying
+    # Iterative Querying
     def generate_results():
         try: 
             for q_idx in range(truth_length):
+                if q_idx > 0:
+                    break
                 q_question = ground_truth[q_idx].get("query", "")
                 # ----------     Regular Invoke & Record to CSV     ----------
                 prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
@@ -104,12 +106,13 @@ async def ask_ecodoc(file: UploadFile):
                 response_info["query"] = q_question
                 response_info["setup_db_time"] = setup_db_time
                 response_info["logger_file_path"] = logger_file_path
-                fo_helper.append_to_csv(response_info) 
+                fo_helper.append_to_csv(response_info)
+                print("query " + str(q_idx) + " completed")
                 add_parsed_results(logger_file_path, combined_path, prompt_id)
                 json_response = export_combined_results_to_json(combined_path) 
                 yield json.dumps(json_response) + "\n"
         finally:
-            #cleanup files
+            # cleanup files
             if os.path.exists(logger_file_path):
                 os.remove(logger_file_path)
             if os.path.exists(combined_path):
