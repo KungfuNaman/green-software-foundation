@@ -21,6 +21,11 @@
     margin-left: 3em;
     margin-right: 1em;
     font-size: 0.9em;
+    font-weight: 500;
+  }
+
+  .header-link:hover{
+    color: #006d69;
   }
 
   .github-link {
@@ -30,5 +35,8 @@
 
   .github-icon {
     color: #aecc53;
+  }
 
+  .github-icon:hover {
+    color: #006d69;
   }
