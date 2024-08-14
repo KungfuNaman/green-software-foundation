@@ -1,9 +1,9 @@
 import os
 import pytest
-from fastapi.testclient import TestClient
 import json
-
-from api import app, get_alternate_query_file_path
+from api import app
+from fastapi.testclient import TestClient
+from unittest.mock import patch
 
 client = TestClient(app)
 
@@ -349,14 +349,9 @@ def test_ask_ecodoc_standard_file():
     with open(query_file_path, 'w') as file:
         json.dump(mock_queries, file, indent=4)
     
-     # Override the get_alternate_query_file_path function to return the mock query file path
-    def get_alternate_query_file_path_override():
-        return 'temp_queries.json'
-
-    app.dependency_overrides[get_alternate_query_file_path] = get_alternate_query_file_path_override
-    
-    with open(document_file_path, "rb") as f:
-        response = client.post("/ask_ecodoc", files={"file": f})
+    with patch("api.ALTERNATE_QUERY_FILE_PATH", new=query_file_path):
+        with open(document_file_path, "rb") as f:
+            response = client.post("/ask_ecodoc", files={"file": f})
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
@@ -383,8 +378,6 @@ def test_ask_ecodoc_standard_file():
 
     os.remove(document_file_path)
     os.remove(query_file_path)
-
-    app.dependency_overrides = {}
 
 def test_ask_ecodoc_no_file():
     response = client.post("/ask_ecodoc")
@@ -419,14 +412,9 @@ def test_ask_ecodoc_variant_file_path():
     with open(query_file_path, 'w') as file:
         json.dump(mock_queries, file, indent=4)
     
-     # Override the get_alternate_query_file_path function to return the mock query file path
-    def get_alternate_query_file_path_override():
-        return 'temp_queries.json'
-
-    app.dependency_overrides[get_alternate_query_file_path] = get_alternate_query_file_path_override
-    
-    with open(document_file_path, "rb") as f:
-        response = client.post("/ask_ecodoc", files={"file": f})
+    with patch("api.ALTERNATE_QUERY_FILE_PATH", new=query_file_path):
+        with open(document_file_path, "rb") as f:
+            response = client.post("/ask_ecodoc", files={"file": f})
 
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
@@ -453,9 +441,6 @@ def test_ask_ecodoc_variant_file_path():
 
     os.remove(document_file_path)
     os.remove(query_file_path)
-
-    app.dependency_overrides = {}
-
 
 if __name__ == "__main__":
     pytest.main()
