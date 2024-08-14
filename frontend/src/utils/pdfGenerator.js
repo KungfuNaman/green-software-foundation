@@ -21,7 +21,10 @@ const drawFooter = (doc, pageNumber, totalPages) => {
   doc.text(date, 10, footerY + 10);
   doc.addImage(logo, 'JPEG', 45, footerY + 2, 15, 11); // Adjust logo size and position
   doc.text(footerText, 65, footerY + 10);
-  doc.text(`Page ${pageNumber} of ${totalPages}`, pageWidth - 30, footerY + 10); // Adjust page number position
+
+  if (pageNumber > 2) { // Skip page number on the first two pages
+    doc.text(`Page ${pageNumber} of ${totalPages}`, pageWidth - 30, footerY + 10); // Adjust page number position
+  }
 };
 
 // Function to draw a box around the content
@@ -34,7 +37,7 @@ const drawBox = (doc, yOffset) => {
 };
 
 // Function to draw a single query
-const drawQuery = (doc, data, yOffset) => {
+const drawQuery = (doc, data, yOffset, queryNumber) => {
   const pageWidth = doc.internal.pageSize.getWidth();
   const lineHeight = 10;
   const margin = 20;
@@ -42,7 +45,8 @@ const drawQuery = (doc, data, yOffset) => {
 
   // Define content
   const content = [
-    { title: 'Query:', text: data.query },
+    { title: `Query ${queryNumber}:`, text: data.query },
+    { title: 'Category:', text: data.category },  // Adding category information
     { title: 'Practice:', text: data.practice },
     { title: 'Result:', text: data.result },
     { title: 'Suggestion:', text: data.result === 'No' ? `Please ${data.practice}` : '-' },
@@ -66,26 +70,30 @@ const drawQuery = (doc, data, yOffset) => {
   return yOffset;
 };
 
+
 // Function to add summary page
 const addSummaryPage = (doc) => {
-  const summaryText = `The project, EcoDoc Sense, is focused on incorporating sustainability into the software design phase to address the significant environmental impact of software development and usage. Traditionally, the environmental impact of software is assessed after development and deployment, using metrics such as CPU utilization and memory usage. This project aims to shift this assessment to the design phase, allowing developers to consider sustainability alongside other factors like cost and performance.
+    const summaryText = `The EcoDoc Sense project focuses on integrating sustainability into the software design phase, aiming to assess environmental impact early on. Traditionally, sustainability is evaluated after software deployment, which can lead to inefficient designs. By considering environmental factors during design, developers can make decisions that contribute to greener software from the start.
   
-  To achieve this, the project employs a methodology that involves ranking software architecture documents based on their adherence to green practices. These practices are categorized into different areas, including resource optimization, data efficiency, performance management, security, and user impact. Specific examples of green practices include minimizing the number of deployed environments, optimizing storage utilization, and optimizing average CPU utilization.
+    This project is motivated by the growing environmental footprint of the software industry, which is expected to significantly increase global carbon emissions. Current frameworks lack tools to evaluate sustainability based on design documents. EcoDoc Sense addresses this gap, helping developers prioritize sustainability alongside other design considerations.
   
-  The ranking of documents is based on the identified green practices. This project ultimately aims to guide software developers in integrating sustainable practices into their designs, contributing to greener software solutions.`;
-
-  doc.addPage();
-  doc.setFont('Arial', 'bold');
-  doc.setFontSize(16);
-  doc.setTextColor(0, 0, 0); // Black text color
-  doc.text('About the Sustainability Report', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
-
-  doc.setFont('Arial', 'normal');
-  doc.setFontSize(12);
-  doc.setTextColor(0, 0, 0); // Black text color
-  const lines = doc.splitTextToSize(summaryText, doc.internal.pageSize.getWidth() - 40);
-  doc.text(lines, 20, 40);
-};
+    The methodology involves analyzing software architecture documents to rank their adherence to green practices. These practices are categorized into areas like resource optimization, data efficiency, performance management, security, and user impact. The project provides developers with insights to optimize designs for sustainability.
+  
+    To rank the documents, EcoDoc Sense uses Large Language Models (LLMs) and a structured retrieval process. The system identifies relevant green practices in documents and generates a report evaluating the design’s sustainability. This approach highlights improvement areas and guides developers in implementing sustainable practices effectively.`;
+  
+    doc.addPage();
+    doc.setFont('Arial', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0); // Black text color
+    doc.text('About the Sustainability Report', doc.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+  
+    doc.setFont('Arial', 'normal');
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0); // Black text color
+    const lines = doc.splitTextToSize(summaryText, doc.internal.pageSize.getWidth() - 40);
+    doc.text(lines, 20, 40);
+  };
+  
 
 // Function to add the Overview page
 const addOverviewPage = (doc, practicesSummary) => {
@@ -278,7 +286,6 @@ const addTableOfContentsPage = (doc, pageNumbers) => {
   doc.setFontSize(12);
   doc.setTextColor(0, 0, 0); // Black text color
   const tocContent = [
-  
     { title: 'Categorization of Green Practices ', page: pageNumbers.greenPractices },
     { title: 'Overview', page: pageNumbers.overview },
     { title: 'Graphical Evaluation', page: pageNumbers.graphicalEvaluation },
@@ -301,15 +308,26 @@ const generatePDF = async (analysisData) => {
   // Calculate total pages for footer
   const totalPages = apiResponse.length + 6; // 1 for title page, 1 for summary, 1 for table of contents, 1 for green practices, 1 for overview, 1 for graphical evaluation, 1 for improvement plan, 1 for ranking, and 1 for each query
 
-  // Draw the title page with a dark green box and white text
+  // Draw the title page with light leaf green background and dark green title text
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  doc.setFillColor(0, 51, 51); // Dark green color for rectangle
-  doc.rect(10, pageHeight / 2 - 20, pageWidth - 20, 30, 'F');
-  doc.setTextColor(230, 255, 230); // Light green color for text
+
+  // Set background color to Bright, lightest shade of green
+  doc.setFillColor(224, 255, 224); // Bright, lightest shade of green
+
+
+  doc.rect(0, 0, pageWidth, pageHeight, 'F'); // Fill the entire first page with light leaf green
+
+  // Set text color for the title to dark green
+  doc.setTextColor(0, 51, 51); // Dark green color
   doc.setFont('Arial', 'bold');
   doc.setFontSize(22);
-  doc.text('Eco Doc Sustainability Report', pageWidth / 2, pageHeight / 2, { align: 'center' });
+  doc.text('Eco Doc Sustainability Report', pageWidth / 2, pageHeight / 2 - 10, { align: 'center' });
+
+  // Add "(Generated by AI)" text in italic and bold, just below the title
+  doc.setFontSize(14);
+  doc.setFont('Arial', 'bolditalic'); // Set bold and italic style for the text
+  doc.text('(Generated by AI)', pageWidth / 2, pageHeight / 2 + 10, { align: 'center' });
 
   // Ensure subsequent text is black
   doc.setTextColor(0, 0, 0);
@@ -472,7 +490,7 @@ const generatePDF = async (analysisData) => {
       drawFooter(doc, pageNumber, totalPages);
     }
     yOffset = 40;
-    yOffset = drawQuery(doc, item, yOffset);
+    yOffset = drawQuery(doc, item, yOffset, index + 1); // Pass the query number to drawQuery function
     drawBox(doc, yOffset);
   });
 
