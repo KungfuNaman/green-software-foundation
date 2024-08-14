@@ -32,6 +32,7 @@
 
 .concept-title{
     color: #028b12;
+    font-size: 1.7em;
 }
 
 .concept-card {
@@ -47,9 +48,9 @@
     transform: scale(1.05);
 }
 
-.concept-card h2 {
+.concept-card h3 {
     color: #006d69;
-    font-size: 1.8em;
+    font-size: 1.5em;
     margin-top: 0;
 }
 

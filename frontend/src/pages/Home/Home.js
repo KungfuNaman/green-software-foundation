@@ -15,27 +15,27 @@ const Home = () => {
      <AddDocument/>
      <div class="container">
         <div class = "container-header">
-          <h1 class="concept-title">Our Green Practice Categories</h1>
+          <h2 class="concept-title">Our Green Practice Categories</h2>
           <img class="GSFLogo" src={GSFLogo} alt="GSF Logo"/>
         </div>
         <div class="concept-card">
-            <h2>Resource Optimization</h2>
+            <h3>Resource Optimization</h3>
             <p>Maximizing the efficient use of resources to achieve the best performance and cost efficiency.</p>
         </div>
         <div class="concept-card">
-            <h2>Data Efficiency</h2>
+            <h3>Data Efficiency</h3>
             <p>Enhancing the effectiveness of data storage, retrieval, and processing to minimize redundancy and maximize utility.</p>
         </div>
         <div class="concept-card">
-            <h2>Performance Management</h2>
+            <h3>Performance Management</h3>
             <p>Monitoring and managing system performance to ensure optimal operation and user satisfaction.</p>
         </div>
         <div class="concept-card">
-            <h2>Security</h2>
+            <h3>Security</h3>
             <p>Implementing measures to protect systems and data from unauthorized access and cyber threats.</p>
         </div>
         <div class="concept-card">
-            <h2>User Impact</h2>
+            <h3>User Impact</h3>
             <p>Assessing and enhancing the effect of system changes and improvements on the end-users.</p>
         </div>
      </div>
