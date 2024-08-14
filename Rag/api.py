@@ -13,7 +13,8 @@ from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
 from main import get_paths, init_embedder, prep_db_and_chunking, init_retriever, parse_doc_path, generate_result
 from query_data import query_rag
-from parser import export_combined_results_to_json, add_parsed_results
+from parser import export_combined_results_to_json, add_parsed_results, export_combined_results_to_json_file
+from evaluation.summary_charts import generate_pie_chart, generate_bar_chart
 
 
 app = FastAPI()
@@ -29,8 +30,6 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
-def get_alternate_query_file_path():
-    return CURRENT_DIR + "/prompts/queries_final.json"
 
 @app.get("/")
 def read_root():
@@ -109,6 +108,11 @@ async def ask_ecodoc(file: UploadFile):
                 json_response = export_combined_results_to_json(combined_path) 
                 yield json.dumps(json_response) + "\n"
         finally:
+            # saving results to json file
+            result_path = export_combined_results_to_json_file(combined_path)
+            # generating charts
+            generate_pie_chart(result_path)
+            generate_bar_chart(result_path)
             #cleanup files
             if os.path.exists(logger_file_path):
                 os.remove(logger_file_path)
@@ -116,6 +120,8 @@ async def ask_ecodoc(file: UploadFile):
                 os.remove(combined_path)
             if os.path.exists(document_path):
                 os.remove(document_path)
+            if os.path.exists(result_path):
+                os.remove(result_path)
             db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")

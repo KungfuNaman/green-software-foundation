@@ -133,9 +133,9 @@ def parse_generated_response(generated_response, PROMPT_ID):
             end_index = len(" Judgement - Yes")
         
         if "Suggestion" in generated_response:
-            end_index2 = generated_response.find("Suggestion") + len("Suggestion:")
+            end_index2 = generated_response.find("Suggestion")+len("Suggestion:")
         else:
-            end_index2 = None  # Ensure end_index2 is defined
+            end_index2 = len(generated_response)
 
         # Extract and strip any leading/trailing whitespace
         judgement = generated_response[start_index:end_index].strip()
@@ -171,7 +171,7 @@ def categorize_text(text):
 
 
 def export_combined_results_to_json_file(combined_results_path):
-    with open("prompts/queries.json", "r", encoding="utf-8") as file:
+    with open("prompts/queries_final.json", "r", encoding="utf-8") as file:
         queries = json.load(file)["queries"]
 
     df = pd.read_csv(combined_results_path)
@@ -196,8 +196,9 @@ def export_combined_results_to_json_file(combined_results_path):
 
     json_file = {"response": result_arr}
     graphResponsePath = combined_results_path.split("/")[-1].replace(".csv", "") + ".json"
-    with open("frontend/src/api_results/" + graphResponsePath, "w") as f:
+    with open("logger/result_" + graphResponsePath, "w") as f:
         json.dump(json_file, f)
+    return "logger/result_" + graphResponsePath
 
 
 def export_combined_results_to_json(combined_results_path):
