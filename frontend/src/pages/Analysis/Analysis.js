@@ -7,7 +7,8 @@ import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
 import { json, useLocation, useNavigate } from "react-router-dom";
 import Timer from "../../components/AddDocument/Timer";
 import { handleDownloadPDF } from "../../utils/pdfGenerator";
-
+import Bubble from '../../components/Bubble/index'; // Import the Bubble component
+import loadingGif from '../../assets/loading.gif'
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(45);
@@ -21,6 +22,7 @@ const Analysis = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [documentUrl, setDocumentUrl] = useState("");
   const [filterType, setFilterType] = useState("all");
+  const [showBubble, setShowBubble] = useState(false); // State to control bubble visibility
 
   
   const location = useLocation();
@@ -32,14 +34,52 @@ const Analysis = () => {
       if (doc_name && sample_doc_list.includes(doc_name)) {
         setTotalQuestions(37);
         try {
-          const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`);
-          const data = await response.json();
-          setGraphResponse(data); 
+          setRunTimer(true);
+          const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+            },
+          });
+  
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder('utf-8');
+          let receivedText = '';
+  
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            receivedText += decoder.decode(value, { stream: true });
+            let boundary = receivedText.indexOf('\n');
+            while (boundary !== -1) {
+              const jsonString = receivedText.slice(0, boundary).trim();
+              if (jsonString) {
+                try {
+                  const jsonObject = JSON.parse(jsonString);
+                  setGraphResponse(prev => {
+                    // Create a new object by merging the previous state with the new data
+                    return {
+                      ...prev,
+                      response: [
+                        ...(prev.response || []),
+                        jsonObject, // Assuming each JSON object is an array item
+                      ]
+                    };
+                  });
+                } catch (e) {
+                  console.error('Error parsing JSON:', e);
+                }
+              }
+              receivedText = receivedText.slice(boundary + 1);
+              boundary = receivedText.indexOf('\n');
+            }
+          }
         } catch (error) {
           console.error("Error fetching data:", error);
+        } finally {
+          setRunTimer(false);
         }
-      }
-      else if(doc_name && file){
+      } else if (doc_name && file) {
         try {
           setRunTimer(true);
           const formData = new FormData();
@@ -51,44 +91,50 @@ const Analysis = () => {
               'Accept': 'application/json',
             },
           });
-          
+  
           const reader = response.body.getReader();
-          console.log("reached reader")
           const decoder = new TextDecoder('utf-8');
-          console.log("reached decoder")
           let receivedText = '';
-
+  
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            console.log("reached await reader")
             receivedText += decoder.decode(value, { stream: true });
-            console.log(receivedText)
             let boundary = receivedText.indexOf('\n');
             while (boundary !== -1) {
               const jsonString = receivedText.slice(0, boundary).trim();
-              console.log(receivedText);
-              if(jsonString){
-               try {
-                 const jsonObject = JSON.parse(jsonString);
-                 setGraphResponse(jsonObject); 
-               } catch (e) {
-                 console.error('Error parsing JSON:', e);
-               }
+              if (jsonString) {
+                try {
+                  const jsonObject = JSON.parse(jsonString);
+                  setGraphResponse(prev => {
+                    // Create a new object by merging the previous state with the new data
+                    return {
+                      ...prev,
+                      response: [
+                        ...(prev.response || []),
+                        ...Object.values(jsonObject.response || {}).flat()
+                      ]
+                    };
+                  });
+                } catch (e) {
+                  console.error('Error parsing JSON:', e);
+                }
               }
               receivedText = receivedText.slice(boundary + 1);
               boundary = receivedText.indexOf('\n');
             }
           }
         } catch (error) {
-          console.error("Error fetching data:", error);  
+          console.error("Error fetching data:", error);
+        } finally {
+          setRunTimer(false);
         }
-        setRunTimer(false);
       }
     };
-
-    fetchData(); 
+  
+    fetchData();
   }, [doc_name, file]);
+  
 
   useEffect(() => {
     if (graphResponse && graphResponse.response) {
@@ -131,6 +177,10 @@ const Analysis = () => {
     const length = responseArr.length;
     const value = Math.round((length / totalQuestions) * 100);
     setProgressValue(value); // Uncomment this line if you want to update progressValue
+    // if (value === 100) {
+      setShowBubble(true);
+      setTimeout(() => setShowBubble(false), 3000); // Hide the bubble after 3 seconds
+    // }
   };
 
   const changeBarChart = (responseArr) => {
@@ -218,11 +268,16 @@ const Analysis = () => {
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
         <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
-        {runTimer && <div className="analysis-timer"><Timer/></div>}
+        {runTimer && <div className="analysis-timer">
+          <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"5rem" }} alt="loading..." />
+          <Timer/>
+          </div>}
       </div>
       <div className="analysisContent">
         <div className="left-container">
           <ProgressTimer value={progressValue} />
+          {showBubble && <Bubble />} {/* Show the bubble animation */}
+
           <ResultPieChart
           categoryWiseResult={categoryWiseResult}
           apiResponse={apiResponse}

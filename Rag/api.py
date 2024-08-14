@@ -7,7 +7,7 @@ import aiofiles
 import re
 from pathlib import Path
 from pydantic.dataclasses import dataclass
-
+import asyncio
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
@@ -121,14 +121,21 @@ async def ask_ecodoc(file: UploadFile):
     return StreamingResponse(generate_results(), media_type="application/json")
 
 @app.get("/get_sample_results/{doc_name}")
-def get_sample_results(doc_name: str):
-    sample_results_path = CURRENT_DIR + "/doc_data/sample_file_data/modified_results.json"
-    try:
-        with open(sample_results_path, 'r') as file:
-            sample_results = json.load(file)
-        return {"response": sample_results[doc_name]}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+async def get_sample_results(doc_name: str):
+    sample_results_path = os.path.join(CURRENT_DIR, "doc_data/sample_file_data/modified_results.json")
+
+    async def result_generator():
+        try:
+            with open(sample_results_path, 'r') as file:
+                sample_results = json.load(file)
+                for row in sample_results.get(doc_name, []):
+                    yield json.dumps(row) + "\n"
+                    await asyncio.sleep(2)  # Add a 3-second delay between each row
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+    return StreamingResponse(result_generator(), media_type="application/json")
+
 
 
 if __name__ == "__main__":
