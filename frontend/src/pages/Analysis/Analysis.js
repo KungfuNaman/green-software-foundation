@@ -9,6 +9,8 @@ import Timer from "../../components/AddDocument/Timer";
 import { handleDownloadPDF } from "../../utils/pdfGenerator";
 import Bubble from '../../components/Bubble/index'; // Import the Bubble component
 import loadingGif from '../../assets/loading.gif'
+import ProgressSteps from '../../components/ProgressSteps/index'; // Import the Stepper component
+
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(45);
@@ -23,6 +25,7 @@ const Analysis = () => {
   const [documentUrl, setDocumentUrl] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [showBubble, setShowBubble] = useState(false); // State to control bubble visibility
+  const [currentStep, setCurrentStep] = useState(0);
 
   
   const location = useLocation();
@@ -106,16 +109,21 @@ const Analysis = () => {
               if (jsonString) {
                 try {
                   const jsonObject = JSON.parse(jsonString);
-                  setGraphResponse(prev => {
-                    // Create a new object by merging the previous state with the new data
-                    return {
-                      ...prev,
-                      response: [
-                        ...(prev.response || []),
-                        ...Object.values(jsonObject.response || {}).flat()
-                      ]
-                    };
-                  });
+                  if (jsonObject.type === "data"){
+                    setGraphResponse(prev => {
+                      // Create a new object by merging the previous state with the new data
+                      return {
+                        ...prev,
+                        response: [
+                          ...(prev.response || []),
+                          ...Object.values(jsonObject.payload.response || {}).flat()
+                        ]
+                      };
+                    });
+                  }
+                  else if (jsonObject.type === "indicator"){
+                    setCurrentStep(jsonObject.payload.step);
+                  }
                 } catch (e) {
                   console.error('Error parsing JSON:', e);
                 }
@@ -266,6 +274,7 @@ const Analysis = () => {
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
+        <ProgressSteps activeStep={currentStep}/>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer">
           <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"5rem" }} alt="loading..." />
