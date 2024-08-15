@@ -34,7 +34,8 @@ class Retriever:
             raise ValueError("Invalid arguments")
 
     def init_multiquery_retriever(self, vectordb, llm, mq_prompt):
-        o_model = Ollama(model=llm,base_url="http://ollama:11434")
+        o_model = Ollama(model=llm, base_url="http://ollama:11434")
+        # o_model = Ollama(model=llm)
         self.retriever = MultiQueryRetriever.from_llm(
             retriever=vectordb.as_retriever(),
             llm=o_model,
