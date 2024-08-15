@@ -266,7 +266,6 @@ const Analysis = () => {
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
-        <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer">
           <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"5rem" }} alt="loading..." />
@@ -275,9 +274,11 @@ const Analysis = () => {
       </div>
       <div className="analysisContent">
         <div className="left-container">
-          <ProgressTimer value={progressValue} />
+          <h3>Progress Bar</h3>
+          {progressValue < 100 && <ProgressTimer value={progressValue} />}
+          {progressValue >= 100 && <p>All results generated! ~ Download your results PDF below after the final processing steps complete.</p>}
+          {progressValue >= 100 && <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>}
           {showBubble && <Bubble />} {/* Show the bubble animation */}
-
           <ResultPieChart
           categoryWiseResult={categoryWiseResult}
           apiResponse={apiResponse}

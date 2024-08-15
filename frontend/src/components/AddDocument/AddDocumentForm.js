@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEye } from '@fortawesome/free-solid-svg-icons'
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 function AddDocumentForm(){
     const[file, setFile] = useState(null); //stores uploaded file
@@ -50,9 +53,13 @@ function AddDocumentForm(){
                 <label for="fileInput">Upload File</label>
             </div>
             <button type="submit" className='submitFileButton' disabled={submitBlocked} onClick={handleSubmit}>Analyse Document</button>
+            {documentUrl != null && <p>Your document is ready for analysis. Click on « Analyse Document » to begin.</p>}
             <hr className='hr1'></hr>
-            {documentUrl != null && <h3>Document Viewer</h3>}
-            {documentUrl != null && <button type="button" className='previewButton' onClick={hidePreview}>Hide/Reveal Preview</button>}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {documentUrl != null && <h4>Document Viewer</h4>}
+                {documentUrl != null && !showPreview && <button type="button" className='previewButton' onClick={hidePreview}><FontAwesomeIcon icon={faEye} /></button>}
+                {documentUrl != null && showPreview && <button type="button" className='previewButton' onClick={hidePreview}><FontAwesomeIcon icon={faEyeSlash} /></button>}
+            </div>
             {documentUrl != null && showPreview && <iframe title='Document Viewer' src={documentUrl} width="100%" height="500px"></iframe>}
         </form>
     );
