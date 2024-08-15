@@ -97,8 +97,6 @@ async def ask_ecodoc(file: UploadFile):
     def generate_results():
         try: 
             for q_idx in range(truth_length):
-                if q_idx > 0:
-                    break
                 q_question = ground_truth[q_idx].get("query", "")
                 # ----------     Regular Invoke & Record to CSV     ----------
                 prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
@@ -122,6 +120,7 @@ async def ask_ecodoc(file: UploadFile):
             db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")
+
 
 @app.get("/get_sample_results/{doc_name}")
 def get_sample_results(doc_name: str):

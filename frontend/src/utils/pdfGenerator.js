@@ -48,7 +48,7 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
     { title: `Query ${queryNumber}:`, text: data.query },
     { title: 'Category:', text: data.category },  // Adding category information
     { title: 'Practice:', text: data.practice },
-    { title: 'Result:', text: data.result },
+    { title: 'If Followed:', text: data.result },
     { title: 'Suggestion:', text: data.result === 'No' ? `Please ${data.practice}` : '-' },
     { title: 'Explanation:', text: data.explanation }
   ];
@@ -228,16 +228,16 @@ const addImprovementPlanPage = (doc, apiResponse) => {
 
     // Calculate the number of improvements needed per category
     const improvementsSummary = {
-        'Resource Optimization': 0,
-        'Data Efficiency': 0,
-        'Performance Management': 0,
-        'Security': 0,
-        'User Impact': 0
+        'Resource Optimization': [],
+        'Data Efficiency': [],
+        'Performance Management': [],
+        'Security': [],
+        'User Impact': []
     };
 
-    apiResponse.forEach(practice => {
-        if (practice.result === 'No' || practice.result === 'Not Applicable') {
-            improvementsSummary[practice.category] += 1;
+    apiResponse.forEach(record => {
+        if (record.result === 'No' || record.result === 'Not Applicable') {
+            improvementsSummary[record.category].push(record.practice);
         }
     });
 
@@ -251,26 +251,39 @@ const addImprovementPlanPage = (doc, apiResponse) => {
     ];
 
     practices.forEach((practice) => {
-        // Draw box border
+        // calc box height
+        doc.setFont('Arial', 'normal');
+        doc.setFontSize(14);
+        const improvementText = practice.improvements.join("\n");
+        const textLines = doc.splitTextToSize(improvementText, boxWidth - 10);
+        const textHeight = textLines.length * 6;
+        const boxHeight = headingHeight + textHeight + 10;
+
+        // check if page space enough
+        if (yOffset + boxHeight > doc.internal.pageSize.getHeight() - margin) {
+            doc.addPage();
+            yOffset = margin;
+        }
+
+        // draw box border
         doc.setLineWidth(0.5);
         doc.rect(margin, yOffset, boxWidth, boxHeight);
 
-        // Draw heading row
+        // draw heading row
         doc.setFont('Arial', 'bold');
         doc.setFontSize(14);
         doc.text(practice.title, margin + 5, yOffset + headingHeight - 2);
 
-        // Draw a line between the heading and content
+        // draw a line between the heading and content
         doc.line(margin, yOffset + headingHeight + 1, margin + boxWidth, yOffset + headingHeight + 1);
 
-        // Draw content row
+        // draw content row
         doc.setFont('Arial', 'normal');
         doc.setFontSize(14);
-        const improvementText = `${practice.improvements} improvements needed.`;
-        const textLines = doc.splitTextToSize(improvementText, boxWidth - 10); // Adjust text wrapping
         doc.text(textLines, margin + 5, yOffset + headingHeight + 10);
 
-        yOffset += boxHeight + 10; // Space after each box
+        // space after each box
+        yOffset += boxHeight + 10;
     });
 };
 
