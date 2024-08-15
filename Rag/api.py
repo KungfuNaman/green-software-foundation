@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, Depends
+from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -7,13 +7,15 @@ import aiofiles
 import re
 from pathlib import Path
 from pydantic.dataclasses import dataclass
+import asyncio
 
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
 from components.Generator import Generator
 from main import get_paths, init_embedder, prep_db_and_chunking, init_retriever, parse_doc_path, generate_result
 from query_data import query_rag
-from parser import export_combined_results_to_json, add_parsed_results
+from parser import export_combined_results_to_json, add_parsed_results, export_combined_results_to_json_file
+from evaluation.summary_charts import generate_pie_chart, generate_bar_chart
 
 
 app = FastAPI()
@@ -25,12 +27,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+ALTERNATE_QUERY_FILE_PATH = CURRENT_DIR + "/prompts/queries_final.json"  # Query file when ground truth is not available
 
 with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
 
-def get_alternate_query_file_path():
-    return CURRENT_DIR + "/prompts/queries_final.json"
 
 @app.get("/")
 def read_root():
@@ -59,11 +60,10 @@ async def ask_ecodoc(file: UploadFile):
     prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
 
     prompt_template_text = prompts_file[prompt_id]
-    embedder_name, generator_name = "llama2", "phi3"
+    embedder_name, generator_name = "llama2", "fineTunedModel"
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "chroma"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = []  # For comparing the retrievers
-    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_final.json"
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
     logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
@@ -88,7 +88,7 @@ async def ask_ecodoc(file: UploadFile):
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")
-        query_file_path = alternate_query_file_path
+        query_file_path = ALTERNATE_QUERY_FILE_PATH
         ground_truth = fi_helper.load_json_file(query_file_path)["queries"]
 
     truth_length = len(ground_truth)
@@ -110,6 +110,11 @@ async def ask_ecodoc(file: UploadFile):
                 json_response = export_combined_results_to_json(combined_path) 
                 yield json.dumps(json_response) + "\n"
         finally:
+            # saving results to json file
+            result_path = export_combined_results_to_json_file(combined_path)
+            # generating charts
+            generate_pie_chart(result_path)
+            generate_bar_chart(result_path)
             # cleanup files
             if os.path.exists(logger_file_path):
                 os.remove(logger_file_path)
@@ -117,20 +122,28 @@ async def ask_ecodoc(file: UploadFile):
                 os.remove(combined_path)
             if os.path.exists(document_path):
                 os.remove(document_path)
+            if os.path.exists(result_path):
+                os.remove(result_path)
             db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")
 
 
 @app.get("/get_sample_results/{doc_name}")
-def get_sample_results(doc_name: str):
-    sample_results_path = CURRENT_DIR + "/doc_data/sample_file_data/modified_results.json"
-    try:
-        with open(sample_results_path, 'r') as file:
-            sample_results = json.load(file)
-        return {"response": sample_results[doc_name]}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+async def get_sample_results(doc_name: str):
+    sample_results_path = os.path.join(CURRENT_DIR, "doc_data/sample_file_data/modified_results.json")
+
+    async def result_generator():
+        try:
+            with open(sample_results_path, 'r') as file:
+                sample_results = json.load(file)
+                for row in sample_results.get(doc_name, []):
+                    yield json.dumps(row) + "\n"
+                    await asyncio.sleep(2)  # Add a 3-second delay between each row
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+    return StreamingResponse(result_generator(), media_type="application/json")
 
 
 if __name__ == "__main__":

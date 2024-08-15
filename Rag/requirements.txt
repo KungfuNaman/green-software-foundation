@@ -13,7 +13,7 @@ pymupdf
 pymupdf4llm==0.0.10
 
 boto3
-chromadb
+chromadb==0.5.3
 faiss-cpu
 
 sentence-transformers>=2.2.0
@@ -38,3 +38,4 @@ matplotlib
 tabulate
 aiofiles
 pytest
+python-multipart

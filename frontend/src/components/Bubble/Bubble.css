@@ -1,0 +1,24 @@
+.bubble {
+    position: fixed;
+    top: 10%;
+    right: 10%;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 255, 0, 0.7);
+    border-radius: 50%;
+    animation: moveToProgressBar 3s ease-in-out forwards;
+    z-index: 1000; /* Ensure the bubble is above other elements */
+  }
+  
+  @keyframes moveToProgressBar {
+    0% {
+      top: 10%;
+      right: 10%;
+    }
+    100% {
+      top: 50%; /* Adjust these values based on your ProgressTimer position */
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
+  
