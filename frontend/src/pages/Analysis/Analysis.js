@@ -26,6 +26,7 @@ const Analysis = () => {
   const [filterType, setFilterType] = useState("all");
   const [showBubble, setShowBubble] = useState(false); // State to control bubble visibility
   const [currentStep, setCurrentStep] = useState(0);
+  const [showProgressSteps, setShowProgressSteps] = useState(true);
 
   
   const location = useLocation();
@@ -36,6 +37,7 @@ const Analysis = () => {
       const sample_doc_list = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"];
       if (doc_name && sample_doc_list.includes(doc_name)) {
         setTotalQuestions(37);
+        setShowProgressSteps(false);
         try {
           setRunTimer(true);
           const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`, {
@@ -274,7 +276,7 @@ const Analysis = () => {
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
-        <ProgressSteps activeStep={currentStep}/>
+        {showProgressSteps && <ProgressSteps activeStep={currentStep}/>}
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer">
           <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"5rem" }} alt="loading..." />
