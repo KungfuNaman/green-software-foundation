@@ -202,7 +202,7 @@ def export_combined_results_to_json_file(combined_results_path):
 
 
 def export_combined_results_to_json(combined_results_path):
-    with open("prompts/queries_old.json", "r", encoding="utf-8") as file:
+    with open("prompts/queries_final.json", "r", encoding="utf-8") as file:
         queries = json.load(file)["queries"]
 
     df = pd.read_csv(combined_results_path)
