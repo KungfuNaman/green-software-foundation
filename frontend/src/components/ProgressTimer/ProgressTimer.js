@@ -12,7 +12,6 @@ export default function ProgressTimer({value}) {
   return (
     <>
     
-<h3>Progress Bar</h3>
 <Gauge className='gauge'
 {...settings}
   value={value}
