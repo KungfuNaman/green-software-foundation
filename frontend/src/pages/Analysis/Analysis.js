@@ -9,6 +9,8 @@ import Timer from "../../components/AddDocument/Timer";
 import { handleDownloadPDF } from "../../utils/pdfGenerator";
 import Bubble from '../../components/Bubble/index'; // Import the Bubble component
 import loadingGif from '../../assets/loading.gif'
+import ProgressSteps from '../../components/ProgressSteps/index'; // Import the Stepper component
+
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(45);
@@ -23,6 +25,8 @@ const Analysis = () => {
   const [documentUrl, setDocumentUrl] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [showBubble, setShowBubble] = useState(false); // State to control bubble visibility
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showProgressSteps, setShowProgressSteps] = useState(true);
 
   
   const location = useLocation();
@@ -33,6 +37,7 @@ const Analysis = () => {
       const sample_doc_list = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"];
       if (doc_name && sample_doc_list.includes(doc_name)) {
         setTotalQuestions(37);
+        setShowProgressSteps(false);
         try {
           setRunTimer(true);
           const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`, {
@@ -106,16 +111,21 @@ const Analysis = () => {
               if (jsonString) {
                 try {
                   const jsonObject = JSON.parse(jsonString);
-                  setGraphResponse(prev => {
-                    // Create a new object by merging the previous state with the new data
-                    return {
-                      ...prev,
-                      response: [
-                        ...(prev.response || []),
-                        ...Object.values(jsonObject.response || {}).flat()
-                      ]
-                    };
-                  });
+                  if (jsonObject.type === "data"){
+                    setGraphResponse(prev => {
+                      // Create a new object by merging the previous state with the new data
+                      return {
+                        ...prev,
+                        response: [
+                          ...(prev.response || []),
+                          ...Object.values(jsonObject.payload.response || {}).flat()
+                        ]
+                      };
+                    });
+                  }
+                  else if (jsonObject.type === "indicator"){
+                    setCurrentStep(jsonObject.payload.step);
+                  }
                 } catch (e) {
                   console.error('Error parsing JSON:', e);
                 }
@@ -266,7 +276,7 @@ const Analysis = () => {
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
-        <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>
+        {showProgressSteps && <ProgressSteps activeStep={currentStep}/>}
         <h2 className="analysis-title">Results for: {doc_name}</h2>
         {runTimer && <div className="analysis-timer">
           <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"5rem" }} alt="loading..." />
@@ -275,9 +285,11 @@ const Analysis = () => {
       </div>
       <div className="analysisContent">
         <div className="left-container">
-          <ProgressTimer value={progressValue} />
+          <h3>Progress Bar</h3>
+          {progressValue < 100 && <ProgressTimer value={progressValue} />}
+          {progressValue >= 100 && <p>All results generated! ~ Download your results PDF below after the final processing steps complete.</p>}
+          {progressValue >= 100 && <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>}
           {showBubble && <Bubble />} {/* Show the bubble animation */}
-
           <ResultPieChart
           categoryWiseResult={categoryWiseResult}
           apiResponse={apiResponse}

@@ -96,10 +96,12 @@ async def ask_ecodoc(file: UploadFile):
     # Iterative Querying
     def generate_results():
         try: 
+            yield json.dumps({"type": "indicator", "payload": {"step": 1}}) + "\n"
             for q_idx in range(truth_length):
                 q_question = ground_truth[q_idx].get("query", "")
                 # ----------     Regular Invoke & Record to CSV     ----------
                 prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
+                yield json.dumps({"type": "indicator", "payload": {"step": 2}}) + "\n"
                 response_text, response_info = generate_result(generator, prompt, response_info)
                 response_info["query"] = q_question
                 response_info["setup_db_time"] = setup_db_time
@@ -107,9 +109,11 @@ async def ask_ecodoc(file: UploadFile):
                 fo_helper.append_to_csv(response_info)
                 print("query " + str(q_idx) + " completed")
                 add_parsed_results(logger_file_path, combined_path, prompt_id)
-                json_response = export_combined_results_to_json(combined_path) 
-                yield json.dumps(json_response) + "\n"
+                json_response = export_combined_results_to_json(combined_path, q_idx) 
+                yield json.dumps({"type": "data", "payload": json_response}) + "\n"
+                yield json.dumps({"type": "indicator", "payload": {"step": 1}}) + "\n"
         finally:
+            yield json.dumps({"type": "indicator", "payload": {"step": 3}}) + "\n"
             # saving results to json file
             result_path = export_combined_results_to_json_file(combined_path)
             # generating charts

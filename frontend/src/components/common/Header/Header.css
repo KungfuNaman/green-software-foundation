@@ -15,6 +15,11 @@
     margin-right: 0.5em;
   }
 
+  #header-title{
+    text-decoration: none;
+    color: white;
+  }
+
   .header-link{
     color: #aecc53;
     text-decoration: none;
