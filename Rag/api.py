@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import json
@@ -143,11 +143,22 @@ async def get_sample_results(doc_name: str):
                 sample_results = json.load(file)
                 for row in sample_results.get(doc_name, []):
                     yield json.dumps(row) + "\n"
-                    await asyncio.sleep(2)  # Add a 3-second delay between each row
+                    await asyncio.sleep(1)  # Add a 3-second delay between each row
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
     return StreamingResponse(result_generator(), media_type="application/json")
+
+
+@app.get("/getEvaCharts")
+async def get_eva_charts():
+    bar_chart_path = os.path.join('Charts', "BarChart.png")
+    pie_chart_path = os.path.join('Charts', "PieChart.png")
+
+    if not os.path.exists(bar_chart_path) or not os.path.exists(pie_chart_path):
+        return JSONResponse(status_code=404, content={"message": "Charts not found"})
+
+    return {"barChartPath": f"/{bar_chart_path}", "pieChartPath": f"/{pie_chart_path}"}
 
 
 if __name__ == "__main__":
