@@ -1,9 +1,9 @@
+import os
 from langchain.retrievers import EnsembleRetriever, MultiQueryRetriever
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
 from langchain_community.llms.ollama import Ollama
 from langchain_core.prompts.prompt import PromptTemplate
-
 
 class Retriever:
     def __init__(self, retriever_type, vectordb=None, doc_chunks=None, llm_name=None, ebr1=None, ebr2=None, embedder=None):
@@ -34,7 +34,8 @@ class Retriever:
             raise ValueError("Invalid arguments")
 
     def init_multiquery_retriever(self, vectordb, llm, mq_prompt):
-        o_model = Ollama(model=llm,base_url="http://ollama:11434")
+        OLLAMA_URL = os.getenv("OLLAMA_URL")
+        o_model = Ollama(model=llm,base_url=OLLAMA_URL)
         self.retriever = MultiQueryRetriever.from_llm(
             retriever=vectordb.as_retriever(),
             llm=o_model,
