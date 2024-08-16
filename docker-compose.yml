@@ -1,15 +1,17 @@
 version: '3.8'
+
 services:
-  backend:
-    build:
-      context: ./Rag
-      dockerfile: Dockerfile
+  ollama:
+    build: 
+      context: .  # assuming Dockerfile is in the current directory
+    container_name: ollama
+    volumes:
+      - ollama:/root/.ollama
     ports:
-      - "8000:8000"
-    environment:
-      - SOME_ENV_VAR=value
-#    command: /start_backend.sh
-#    command: /main.py
+      - "11434:11434"
+    mem_limit: 10g  # Allocate 10 GiB of memory to the container
+    networks:
+      - app-network
 
   frontend:
     build:
@@ -21,3 +23,27 @@ services:
       - REACT_APP_BACKEND_URL=http://backend:8000
     depends_on:
       - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Rag/Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      - BASE_URL=http://ollama:11434
+    volumes:
+      - ./.env:/app/.env
+    depends_on:
+      - ollama
+    networks:
+      - app-network
+
+volumes:
+  ollama:
+
+networks:
+  app-network:

@@ -52,17 +52,17 @@ def parse_generated_response(generated_response, PROMPT_ID):
 
         if "Response:" in generated_response:
             response_start = generated_response.find("Response:") + len("Response:")
-        elif "**Response**:" in generated_response:
-            response_start = generated_response.find("**Response**:") + len("**Response**:")
+        elif "*Response*:" in generated_response:
+            response_start = generated_response.find("*Response:") + len("Response*:")
         elif "Answer:" in generated_response:
             response_start = generated_response.find("Answer:") + len("Answer:")
-        elif "**Answer**:" in generated_response:
-            response_start = generated_response.find("**Answer**:") + len("**Answer**:")
+        elif "*Answer*:" in generated_response:
+            response_start = generated_response.find("*Answer:") + len("Answer*:")
 
         if response_start is not None:
             response_end = generated_response.find("Conclusion:")
-            if response_end == -1:  # if "**Conclusion**:" is not found
-                response_end = generated_response.find("**Conclusion**")
+            if response_end == -1:  # if "*Conclusion*:" is not found
+                response_end = generated_response.find("*Conclusion*")
             if response_end == -1:  # if "Conclusion:" is not found
                 response = generated_response[response_start:].strip()
             else:
@@ -74,18 +74,19 @@ def parse_generated_response(generated_response, PROMPT_ID):
         conclusion_start = None
         if "Conclusion:" in generated_response:
             conclusion_start = generated_response.find("Conclusion:") + len("Conclusion:")
-        elif "**Conclusion**:" in generated_response:
-            conclusion_start = generated_response.find("**Conclusion**:") + len("**Conclusion**:")
+        elif "*Conclusion*:" in generated_response:
+            conclusion_start = generated_response.find("*Conclusion:") + len("Conclusion*:")
 
         if conclusion_start is not None:
             conclusion = generated_response[conclusion_start:].strip()
         else:
             conclusion = ""
 
-            # Extract the result
+        # Extract the result
         result = categorize_text(conclusion)
 
         return response, conclusion, result
+    
     elif PROMPT_ID == "P2":
         if "Judgement:" in generated_response:
             start_keyword = "Judgement:"
@@ -104,6 +105,7 @@ def parse_generated_response(generated_response, PROMPT_ID):
 
         start_index = generated_response.find(start_keyword) + len(start_keyword)
         end_index = generated_response.find(end_keyword)
+
         explanation = generated_response[start_index:].strip()
 
         judgement = judgement.replace(":", "").strip()
@@ -122,12 +124,14 @@ def parse_generated_response(generated_response, PROMPT_ID):
             start_index = generated_response.find("Answer") + len("Answer:")
         else:
             start_index = 0
+
         if "Explan" in generated_response or "Explan_ment:" in generated_response or "Explan_ation:" in generated_response:
             end_index = generated_response.find("Explan") + len("Explanation:")
         elif "explan" in generated_response.lower():
             end_index = generated_response.find("explan") + len("explanation:")
         else:
             end_index = len(" Judgement - Yes")
+        
         if "Suggestion" in generated_response:
             end_index2 = generated_response.find("Suggestion")+len("Suggestion:")
         else:
@@ -137,15 +141,17 @@ def parse_generated_response(generated_response, PROMPT_ID):
         judgement = generated_response[start_index:end_index].strip()
         judgement = categorize_text(judgement)
 
-        explanation = generated_response[end_index:(end_index2-len("Suggestion:"))].strip()
-        
-        suggestion = generated_response[end_index2:].strip()
+        if end_index2 is not None:
+            explanation = generated_response[end_index:(end_index2-len("Suggestion:"))].strip()
+            suggestion = generated_response[end_index2:].strip()
+        else:
+            explanation = generated_response[end_index:].strip()
+            suggestion = ""
 
         judgement = judgement.replace(":", "").strip()
-        return explanation,judgement,judgement,suggestion
+        return explanation, judgement, judgement, suggestion
 
     return "", "", "", ""
-
 
 def categorize_text(text):
     # Convert text to lowercase to ensure case-insensitive matching
@@ -195,29 +201,30 @@ def export_combined_results_to_json_file(combined_results_path):
     return "logger/result_" + graphResponsePath
 
 
-def export_combined_results_to_json(combined_results_path):
-    with open("prompts/queries_old.json", "r", encoding="utf-8") as file:
+def export_combined_results_to_json(combined_results_path, q_idx):
+    with open("prompts/queries_final.json", "r", encoding="utf-8") as file:
         queries = json.load(file)["queries"]
 
     df = pd.read_csv(combined_results_path)
 
     records = df.to_dict(orient="records")
     result_arr = []
-    for item in records:
-        obj = {}
-        obj["query"] = "" if pd.isna(item["query"]) else item["query"]
-        obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
-        obj["result"] = "" if pd.isna(item["result"]) else item["result"]
-        obj["suggestion"] = "" if pd.isna(item["suggestion"]) else item["suggestion"]
+    item = records.pop(q_idx)
+   
+    obj = {}
+    obj["query"] = "" if pd.isna(item["query"]) else item["query"]
+    obj["explanation"] = "" if pd.isna(item["explanation"]) else item["explanation"]
+    obj["result"] = "" if pd.isna(item["result"]) else item["result"]
+    obj["suggestion"] = "" if pd.isna(item["suggestion"]) else item["suggestion"]
 
-        for question in queries:
-            if item["query"] in question["query"]:
-                obj["category"] = question["category"]
-                obj["practice"] = question["practice"]
-                obj["type"] = question["type"]
+    for question in queries:
+        if item["query"] in question["query"]:
+            obj["category"] = question["category"]
+            obj["practice"] = question["practice"]
+            obj["type"] = question["type"]
 
-        if "type" in obj and obj["type"] is not None:
-            result_arr.append(obj)
+    if "type" in obj and obj["type"] is not None:
+        result_arr.append(obj)
 
     json_response = {"response": result_arr}
     return json_response

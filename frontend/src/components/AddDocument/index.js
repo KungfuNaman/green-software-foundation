@@ -5,7 +5,7 @@ const AddDocument = () => {
   return (
     <div>
       <div className="form-container">
-        <h4>Upload a New Document</h4>
+        <h4>Analyse a New Document</h4>
         <AddDocumentForm />
       </div>
     </div>

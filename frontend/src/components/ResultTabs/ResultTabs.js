@@ -52,7 +52,7 @@ export default function ResultTabs({ tabularData }) {
 
   const formatSuggestion = (row) => {
     if(row.result === "Yes"){
-      return "Practice is being followed";
+      return row.suggestion;
     }
     else if (row.result === "Not Applicable"){
       return "Not Applicable";

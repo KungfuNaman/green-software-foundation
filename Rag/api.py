@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, Depends
+from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -7,6 +7,7 @@ import aiofiles
 import re
 from pathlib import Path
 from pydantic.dataclasses import dataclass
+import asyncio
 
 from components.FileInputHelper import FileInputHelper
 from components.FileOutputHelper import FileOutputHelper
@@ -26,6 +27,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+ALTERNATE_QUERY_FILE_PATH = CURRENT_DIR + "/prompts/queries_final.json" #Query file when ground truth is not available
 
 with open(CURRENT_DIR + "/prompts/prompt_templates.json", 'r') as file:
     prompts_file = json.load(file)
@@ -58,11 +60,10 @@ async def ask_ecodoc(file: UploadFile):
     prompt_id = "P3"  # Choose From: P1, P2, P3, P4, GROUND_TRUTH_PROMPT
 
     prompt_template_text = prompts_file[prompt_id]
-    embedder_name, generator_name = "llama2", "phi3"
+    embedder_name, generator_name = "llama2", "fineTunedModel"
     db_collection_name = doc_name + "_" + embedder_name
     retriever_type = "chroma"  # Choose From: chroma, multiquery, ensemble, bm25, faiss
     retriever_type_lst = []  # For comparing the retrievers
-    alternate_query_file_path = CURRENT_DIR + "/prompts/queries_final.json"
 
     fi_helper, fo_helper = FileInputHelper(create_doc=True if extension == "txt" else False), FileOutputHelper()
     logger_file_path, combined_path = (CURRENT_DIR + p for p in get_paths(doc_name, prompt_id, generator_name))
@@ -87,7 +88,7 @@ async def ask_ecodoc(file: UploadFile):
         ground_truth = fi_helper.load_json_file(query_file_path)
     except FileNotFoundError:
         print("Using general queries file as do not have a ground truth for this doc.")
-        query_file_path = alternate_query_file_path
+        query_file_path = ALTERNATE_QUERY_FILE_PATH
         ground_truth = fi_helper.load_json_file(query_file_path)["queries"]
 
     truth_length = len(ground_truth)
@@ -95,19 +96,23 @@ async def ask_ecodoc(file: UploadFile):
      # Iterative Querying
     def generate_results():
         try: 
+            yield json.dumps({"type": "indicator", "payload": {"step": 1}}) + "\n"
             for q_idx in range(truth_length):
                 q_question = ground_truth[q_idx].get("query", "")
                 # ----------     Regular Invoke & Record to CSV     ----------
                 prompt, response_info = query_rag(retriever, prompt_template_text, q_question)
+                yield json.dumps({"type": "indicator", "payload": {"step": 2}}) + "\n"
                 response_text, response_info = generate_result(generator, prompt, response_info)
                 response_info["query"] = q_question
                 response_info["setup_db_time"] = setup_db_time
                 response_info["logger_file_path"] = logger_file_path
                 fo_helper.append_to_csv(response_info) 
                 add_parsed_results(logger_file_path, combined_path, prompt_id)
-                json_response = export_combined_results_to_json(combined_path) 
-                yield json.dumps(json_response) + "\n"
+                json_response = export_combined_results_to_json(combined_path, q_idx) 
+                yield json.dumps({"type": "data", "payload": json_response}) + "\n"
+                yield json.dumps({"type": "indicator", "payload": {"step": 1}}) + "\n"
         finally:
+            yield json.dumps({"type": "indicator", "payload": {"step": 3}}) + "\n"
             # saving results to json file
             result_path = export_combined_results_to_json_file(combined_path)
             # generating charts
@@ -127,14 +132,21 @@ async def ask_ecodoc(file: UploadFile):
     return StreamingResponse(generate_results(), media_type="application/json")
 
 @app.get("/get_sample_results/{doc_name}")
-def get_sample_results(doc_name: str):
-    sample_results_path = CURRENT_DIR + "/doc_data/sample_file_data/modified_results.json"
-    try:
-        with open(sample_results_path, 'r') as file:
-            sample_results = json.load(file)
-        return {"response": sample_results[doc_name]}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+async def get_sample_results(doc_name: str):
+    sample_results_path = os.path.join(CURRENT_DIR, "doc_data/sample_file_data/modified_results.json")
+
+    async def result_generator():
+        try:
+            with open(sample_results_path, 'r') as file:
+                sample_results = json.load(file)
+                for row in sample_results.get(doc_name, []):
+                    yield json.dumps(row) + "\n"
+                    await asyncio.sleep(2)  # Add a 3-second delay between each row
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+    
+    return StreamingResponse(result_generator(), media_type="application/json")
+
 
 
 if __name__ == "__main__":

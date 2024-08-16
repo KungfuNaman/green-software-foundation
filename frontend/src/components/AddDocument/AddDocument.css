@@ -43,7 +43,8 @@
     border-radius: 4px;
     color: #0b161f;
     font-weight: 700;
-    padding: 8px 16px;
+    font-size: 0.9em;
+    padding: 12px 20px;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
@@ -68,13 +69,16 @@
   }
   
   .previewButton{
-    background: #aecc53;
+    background: #002d2a;
     border-radius: 4px;
-    color: #0b161f;
+    color: #aecc53;
     font-weight: 700;
     padding: 8px 16px;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
     margin-bottom: 1em;
+    margin-left: 1em;
+    margin-top: 1em;
   }
+
