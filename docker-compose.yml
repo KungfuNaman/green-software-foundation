@@ -34,7 +34,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - BASE_URL=http://ollama:11434
+      - OLLAMA_URL=http://ollama:11434
     volumes:
       - ./.env:/app/.env
     depends_on:
