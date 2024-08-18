@@ -73,9 +73,11 @@ const Analysis = () => {
                 } catch (e) {
                   console.error('Error parsing JSON:', e);
                   const errorContainer = document.getElementById('error-container');
-                  const newMessage = document.createElement('p');
-                  newMessage.textContent = `Error parsing JSON: '${e}'`;
-                  errorContainer.appendChild(newMessage);
+                  if (errorContainer) {
+                    const newMessage = document.createElement('p');
+                    newMessage.textContent = `Error parsing JSON: '${e}'`;
+                    errorContainer.appendChild(newMessage);
+                  }
                 }
               }
               receivedText = receivedText.slice(boundary + 1);
@@ -85,9 +87,11 @@ const Analysis = () => {
         } catch (error) {
           console.error("Error fetching data:", error);
           const errorContainer = document.getElementById('error-container');
-          const newMessage = document.createElement('p');
-          newMessage.textContent = `Error fetching data: '${error}'`;
-          errorContainer.appendChild(newMessage);
+          if (errorContainer) {
+            const newMessage = document.createElement('p');
+            newMessage.textContent = `Error fetching data: '${error}'`;
+            errorContainer.appendChild(newMessage);
+          }
         } finally {
           setRunTimer(false);
         }
@@ -135,16 +139,20 @@ const Analysis = () => {
                   }
                   else if (jsonObject.type === "error"){
                     const errorContainer = document.getElementById('error-container');
-                    const newMessage = document.createElement('p');
-                    newMessage.textContent = jsonObject.payload.message;
-                    errorContainer.appendChild(newMessage);
+                    if (errorContainer) {
+                      const newMessage = document.createElement('p');
+                      newMessage.textContent = jsonObject.payload.message;
+                      errorContainer.appendChild(newMessage);
+                    }
                   }
                 } catch (e) {
                   console.error('Error parsing JSON:', e);
                   const errorContainer = document.getElementById('error-container');
-                  const newMessage = document.createElement('p');
-                  newMessage.textContent = `Error parsing JSON: '${e}'`;
-                  errorContainer.appendChild(newMessage);
+                  if (errorContainer) {
+                    const newMessage = document.createElement('p');
+                    newMessage.textContent = `Error parsing JSON: '${e}'`;
+                    errorContainer.appendChild(newMessage);
+                  }
                 }
               }
               receivedText = receivedText.slice(boundary + 1);
@@ -154,9 +162,11 @@ const Analysis = () => {
         } catch (error) {
           console.error("Error fetching data:", error);
           const errorContainer = document.getElementById('error-container');
-          const newMessage = document.createElement('p');
-          newMessage.textContent = `Error fetching data: '${error}'`;
-          errorContainer.appendChild(newMessage);
+          if (errorContainer) {
+            const newMessage = document.createElement('p');
+            newMessage.textContent = `Error fetching data: '${error}'`;
+            errorContainer.appendChild(newMessage);
+          }
         } finally {
           setRunTimer(false);
         }
