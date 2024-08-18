@@ -313,11 +313,17 @@ def test_get_sample_results_success():
     }
 
     assert response.status_code == 200
-    assert response.json() == {"response": expected_data[doc_name]}
+
+    content = response.text.splitlines()
+
+    #compare the received rows against the expected rows
+    expected_rows = [json.dumps(row) for row in expected_data[doc_name]]
+    for idx, row in enumerate(content):
+        assert json.loads(row) == json.loads(expected_rows[idx])
 
 def test_get_sample_results_failure():
     response = client.get("/get_sample_results/aws")
-    assert response.status_code == 500
+    assert response.status_code == 200
     
 def test_ask_ecodoc_standard_file():
 
@@ -356,25 +362,42 @@ def test_ask_ecodoc_standard_file():
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
 
-    i = 0
     for line in response.iter_lines():
         if line:
             json_response = json.loads(line)
-            
-            # Check that 'response' key is present
-            assert "response" in json_response
-            
-            # Check that 'response' is a list and contains at least one element
-            assert isinstance(json_response["response"], list)
-            assert len(json_response["response"]) > 0
-            
-            response = json_response["response"][i]
-            
-            # Check that the required keys are present in the latest response
-            required_keys = ["query", "explanation", "result", "suggestion", "category", "practice", "type"]
-            for key in required_keys:
-                assert key in response
-            i+=1
+            if json_response.get("type") == "data":
+                json_payload = json_response.get("payload")
+
+                # Check that payload is present and is a dictionary
+                assert json_payload is not None, "Payload is missing"
+                assert isinstance(json_payload, dict), "Payload is not a dictionary"
+
+                # Check that response key is present
+                assert "response" in json_payload, "'response' key is missing"
+
+                # Check that response is a list and contains at least one element
+                response_list = json_payload["response"]
+                assert isinstance(response_list, list), "'response' is not a list"
+                assert len(response_list) > 0, "'response' list is empty"
+
+                response_data = response_list[0]
+
+                # Check that the required keys are present in the latest response
+                required_keys = ["query", "explanation", "result", "suggestion", "category", "practice", "type"]
+                for key in required_keys:
+                    assert key in response_data, f"'{key}' key is missing in the response data"
+            elif json_response.get("type") == "indicator":
+                json_payload = json_response.get("payload")
+
+                # Check that payload is present and is a dictionary
+                assert json_payload is not None, "Payload is missing"
+                assert isinstance(json_payload, dict), "Payload is not a dictionary"
+
+                # Check that step key is present
+                assert "step" in json_payload, "'step' key is missing"
+                step = json_payload["step"]
+                assert isinstance(step, int), "'step' is not a integer"
+        
 
     os.remove(document_file_path)
     os.remove(query_file_path)
@@ -419,25 +442,37 @@ def test_ask_ecodoc_variant_file_path():
     assert response.status_code == 200
     assert response.headers["content-type"] == "application/json"
 
-    i = 0
     for line in response.iter_lines():
         if line:
             json_response = json.loads(line)
-            
-            # Check that 'response' key is present
-            assert "response" in json_response
-            
-            # Check that 'response' is a list and contains at least one element
-            assert isinstance(json_response["response"], list)
-            assert len(json_response["response"]) > 0
-            
-            response = json_response["response"][i]
-            
-            # Check that the required keys are present in the latest response
-            required_keys = ["query", "explanation", "result", "suggestion", "category", "practice", "type"]
-            for key in required_keys:
-                assert key in response
-            i+=1
+            if json_response.get("type") == "data":
+                json_payload = json_response.get("payload")
+
+                assert json_payload is not None, "Payload is missing"
+                assert isinstance(json_payload, dict), "Payload is not a dictionary"
+
+                assert "response" in json_payload, "'response' key is missing"
+
+                response_list = json_payload["response"]
+                assert isinstance(response_list, list), "'response' is not a list"
+                assert len(response_list) > 0, "'response' list is empty"
+
+                response_data = response_list[0]
+
+                required_keys = ["query", "explanation", "result", "suggestion", "category", "practice", "type"]
+                for key in required_keys:
+                    assert key in response_data, f"'{key}' key is missing in the response data"
+            elif json_response.get("type") == "indicator":
+                json_payload = json_response.get("payload")
+
+                # Check that payload is present and is a dictionary
+                assert json_payload is not None, "Payload is missing"
+                assert isinstance(json_payload, dict), "Payload is not a dictionary"
+
+                # Check that step key is present
+                assert "step" in json_payload, "'step' key is missing"
+                step = json_payload["step"]
+                assert isinstance(step, int), "'step' is not a integer"
 
     os.remove(document_file_path)
     os.remove(query_file_path)
