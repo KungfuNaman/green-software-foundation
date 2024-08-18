@@ -113,12 +113,14 @@ async def ask_ecodoc(file: UploadFile):
                 yield json.dumps({"type": "indicator", "payload": {"step": 1}}) + "\n"
         finally:
             yield json.dumps({"type": "indicator", "payload": {"step": 3}}) + "\n"
-            # saving results to json file
-            result_path = export_combined_results_to_json_file(combined_path)
-            # generating charts
-            generate_pie_chart(result_path)
-            generate_bar_chart(result_path)
-            #cleanup files
+            result_path = ""
+            if os.path.exists(combined_path):
+                # saving results to json file
+                result_path = export_combined_results_to_json_file(combined_path)
+                # generating charts
+                generate_pie_chart(result_path)
+                generate_bar_chart(result_path)
+            # cleanup files
             if os.path.exists(logger_file_path):
                 os.remove(logger_file_path)
             if os.path.exists(combined_path):
