@@ -19,14 +19,19 @@ def generate_pie_chart(result_path):
     category_counts = Counter(categories)
 
     # Define custom colors
-    colors = ['#B4DCB4','#ECF2D7','#AEC564','#2E6B68','#0D2528']
+    colors = ['#B4DCB4','#ECF2D7','#AEC564','#2E6B68','#507878']
+    
+    # Define custom function，change percentage to absolute value
+    def func(pct, allvals):
+        absolute = int(np.round(pct/100.*np.sum(allvals)))
+        return "{:d}".format(absolute)
 
     # Creating a pie chart
     plt.figure(figsize=(8, 6))
     wedges, texts, autotexts = plt.pie(
         category_counts.values(), 
         colors=colors, 
-        autopct='%1.1f%%', 
+        autopct=lambda pct: func(pct, list(category_counts.values())), 
         startangle=140, 
         textprops=dict(color="black")
     )
@@ -36,8 +41,8 @@ def generate_pie_chart(result_path):
         text.set_fontsize(12)
         text.set_color('black')
     for autotext in autotexts:
-        autotext.set_fontsize(10)
-        autotext.set_color('black')
+        autotext.set_fontsize(15)
+        autotext.set_color('white')
 
     # Position the legend on the right
     plt.legend(
@@ -79,10 +84,10 @@ def generate_bar_chart(result_path):
     width = 0.2  # Width of the bars
 
     # Creating the bar chart
-    plt.figure(figsize=(10, 7))
-    plt.bar(x - width, yes_counts, width, label='Yes', color='#BEC8A9')
-    plt.bar(x, no_counts, width, label='No', color='#AEC564')
-    plt.bar(x + width, na_counts, width, label='Not Applicable', color='#0D2528')
+    fig, ax = plt.subplots(figsize=(10, 7))
+    bars_yes = ax.bar(x - width, yes_counts, width, label='Yes', color='#BEC8A9')
+    bars_no = ax.bar(x, no_counts, width, label='No', color='#AEC564')
+    bars_na = ax.bar(x + width, na_counts, width, label='Not Applicable', color='#0D2528')
 
     # Adding labels and title
     plt.xlabel('Categories of Green Practices')
@@ -90,6 +95,22 @@ def generate_bar_chart(result_path):
     plt.title('Judgement Distribution by Category')
     plt.xticks(x, categories, ha="center")
     plt.legend()
+    
+    # Add numbers at the top of each bar
+    def add_labels(bars):
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(
+                bar.get_x() + bar.get_width() / 2, 
+                height, 
+                f'{height}', 
+                ha='center', 
+                va='bottom'
+            )
+            
+    add_labels(bars_yes)
+    add_labels(bars_no)
+    add_labels(bars_na)
 
     # Displaying the bar chart
     plt.tight_layout()
@@ -101,5 +122,5 @@ def generate_bar_chart(result_path):
 #plt.ion()
 
 
-# generate_pie_chart('frontend/src/api_results/evaluation/Phi3_results.json', "Results_R-C_G_phi3_P2_Netflix")
-# generate_bar_chart('frontend/src/api_results/evaluation/Phi3_results.json', "Results_R-C_G_phi3_P2_Netflix")
+# generate_pie_chart('logger/test.json')
+# generate_bar_chart('logger/test.json')
