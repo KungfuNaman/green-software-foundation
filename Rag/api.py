@@ -111,6 +111,9 @@ async def ask_ecodoc(file: UploadFile):
                 json_response = export_combined_results_to_json(combined_path, q_idx) 
                 yield json.dumps({"type": "data", "payload": json_response}) + "\n"
                 yield json.dumps({"type": "indicator", "payload": {"step": 1}}) + "\n"
+        except Exception as e:
+            yield json.dumps({"type": "error", "payload": {"message": f"Error: {str(e)}"}}) + "\n"
+            raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
         finally:
             yield json.dumps({"type": "indicator", "payload": {"step": 3}}) + "\n"
             result_path = ""
