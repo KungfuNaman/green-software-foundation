@@ -3,7 +3,7 @@ import "./Footer.css"
 const Footer = () => {
   return (
     <footer className="App-footer">
-      By the Eco Doc Sense team
+      By the EcoDoc Sense team
     </footer>
   );
 };
