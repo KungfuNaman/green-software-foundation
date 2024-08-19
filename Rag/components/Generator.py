@@ -32,7 +32,7 @@ class Generator:
             model=model_name,
             mirostat_tau=5,             # Default = 5.0
             num_ctx=2048,               # Default = 2048
-            repeat_last_n=64,          # Default = 64, 0 = disabled, -1 = num_ctx
+            repeat_last_n=64,           # Default = 64, 0 = disabled, -1 = num_ctx
             repeat_penalty=1.1,         # Default = 1.1
             temperature=0.8,            # Default = 0.8
             top_k=40,                   # Default = 40

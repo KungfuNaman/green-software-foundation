@@ -153,6 +153,7 @@ def parse_generated_response(generated_response, PROMPT_ID):
 
     return "", "", "", ""
 
+
 def categorize_text(text):
     # Convert text to lowercase to ensure case-insensitive matching
     text_lower = text.lower()
