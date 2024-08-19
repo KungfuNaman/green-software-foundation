@@ -1075,375 +1075,412 @@
         }
     ],
     "Instagram": [
-        {
-            "query": "Is there any mention of minimizing the total number of deployed environments?",
-            "category": "Resource Optimization",
-            "practice": "Minimize the total number of deployed environments",
-            "result": "Not Applicable",
-            "explanation": "Does your system design include practices or technologies aimed at reducing the overall count of hosted servers? \n         Judgement: Not Applicable. The context provided does not address server reduction techniques, focusing instead on other aspects such as scalability and reliability to handle a large user base.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of optimizing storage utilization?",
-            "category": "Resource Optimization",
-            "practice": "Optimize storage utilization",
-            "result": "Not Applicable",
-            "explanation": "nt,\n        Not Applicable. The context provided does not discuss specific techniques or technologies aimed at reducing the size of data stored in databases for better performance and cost efficiency. It mentions a variety of other design considerations such as microservices architecture, durability without loss of content, consistency levels acceptable to users, reliability against failures, capacity estimation based on user activity metrics like photos and videos shared per day, search functionality using APIs from the Instagram Photos Library for media items.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of optimizing average CPU utilization?",
-            "category": "Resource Optimization",
-            "practice": "Optimize average CPU utilization",
-            "result": "Not Applicable",
-            "explanation": "The provided context does not discuss or reference strategies for managing or improving the system's average CPU utilization; it focuses on scalability, latency, availability, durability, consistency, and capacity estimation within a microservices architecture framework without explicit mention of specific green practices.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of managing peak CPU utilization?",
-            "category": "Resource Optimization",
-            "practice": "Optimize peak CPU utilization",
-            "result": "Not Applicable",
-            "explanation": "ed on given context in YAML format. Just Transform it to JSON \n\"\"\"\nResponse: Not Applicable\nJudgement Explan - No information about the management or prediction related to Peak Utilization (CPU) was provided within this design document excerpt. The focus appears instead to be on scalability, latency reduction and system reliability among other things in Instagram's service requirements without specific mention of CPU utilization handling.\n\"\"",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of removing unused assets?",
-            "category": "Resource Optimization",
-            "practice": "Remove unused assets",
-            "result": "No",
-            "explanation": "The provided context from Instagram's design document does not include a strategy or method for identifying, analyzing the importance of, storing, and deleting data that is no longer used to save resources. Therefore, we can conclude there are currently unused assets remaining in use without explicit mention of their removal process within this system architecture excerpt.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of scaling down Kubernetes applications when not in use?",
-            "category": "Resource Optimization",
-            "practice": "Scale down Kubernetes applications when not in use",
-            "result": "Not Applicable",
-            "explanation": "There is no mention of techniques like Docker Swarm's 'docker-compose down -volumes --remove', Kubernetes cron job, HAProxy for load balancing and scaling in the context given; therefore it does not discuss reducing power consumption by shutting off unused containers or nodes.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of scaling down applications during idle periods?",
-            "category": "Resource Optimization",
-            "practice": "Scale down applications when not in use",
-            "result": "No",
-            "explanation": "The design document does not discuss implementing auto-scaling features. It emphasizes the necessity for high availability, durability and reliability but doesn't address how to manage resources or scale down applications during idle periods.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of scaling infrastructure based on real-time user demand?",
-            "category": "Resource Optimization",
-            "practice": "Scale infrastructure with user load",
-            "result": "Yes",
-            "explanation": "The design file mentions that the system should be scalable and handle millions of users with appropriate computational resources and storage, implying dynamic scaling based on real-time user demand to manage this volume efficiently.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
-            "category": "Resource Optimization",
-            "practice": "Scale Kubernetes workloads based on relevant demand metrics",
-            "result": "Not Applicable",
-            "explanation": "The context provided focuses on Instagram's frontend design, API endpoints for liking and disliking posts, data storage considerations (photos and videos), active user count statistics without explicit mention of any practices such as the use of metrics to dynamically adjust Kubernetes workloads.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of allowing independent scaling of logical components?",
-            "category": "Resource Optimization",
-            "practice": "Scale logical components independently",
-            "result": "No",
-            "explanation": "The context provided does not include specific information about implementing separate instances or containers for individual services. This is crucial to ensure that each service can be scaled independently without impacting the performance and scalability of other parts, which Instagram requires given its massive user base.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of adopting serverless cloud services?",
-            "category": "Resource Optimization",
-            "practice": "Use serverless cloud services",
-            "result": "Not Applicable",
-            "explanation": "The context provided focuses on various aspects like storage estimation, bandwidth requirements for a social media platform with billions of photos and videos but does not discuss the use or adoption of serverless cloud services specifically.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of reducing transmitted data?",
-            "category": "Data Efficiency",
-            "practice": "Reduce transmitted data",
-            "result": "No",
-            "explanation": "text here.\n             \"\"\" \n    Context: The design document mentions that caching is used to handle millions of reads, which improves user experience by speeding up the fetch process and opt for lazy loading minimizes waiting time. There's no explicit mention about reducing transmitted data beyond these practices.\n    \n    Answer this question 'Is there any mention of Reducing Transmitted Data?'",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of setting storage retention policies?",
-            "category": "Data Efficiency",
-            "practice": "Set storage retention policies",
-            "result": "Not Applicable",
-            "explanation": "The context provided discusses various aspects such as notifications, analytics, login/signup pages, and searching functionalities but does not cover the topic of data lifecycle management or setting storage retention policies for stored media items like photos and videos on Instagram's servers.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of queuing non-urgent processing requests",
-            "category": "Performance Management",
-            "practice": "Queue non-urgent processing requests",
-            "result": "No",
-            "explanation": "The provided context does not discuss the implementation of a system for handling and prioritizing queueing for delayed or low priority tasks such as background data transfers. Instagram\u2019s focus seems to be on real-time content interaction rather than batch processing with queuing systems for non-urgent requests.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic?",
-            "category": "Performance Management",
-            "practice": "Shed lower priority traffic",
-            "result": "Not Applicable",
-            "explanation": "swer the question based only on the following context:\n\"\"\n\n        Response: Not Applicable. \n\n        Explan_ation The design document does not specifically address the concept of prioritizing or shifting different types of user requests, such as critical versus lower priority traffic within Instagram's architecture",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
-            "category": "Performance Management",
-            "practice": "Time-shift Kubernetes cron jobs",
-            "result": "No",
-            "explanation": "No. \n         Explan) There is no information in context about using or planning to use a specific technology like Chronicle Job Scheduler for managing service requests (or other types of tasks). The focus instead seems on designing the system based on principles such as microservices, scalability, and low latency which are general practices rather than targeted at any particular scheduling strategy.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of using asynchronous network calls instead of synchronous ones?",
-            "category": "Performance Management",
-            "practice": "Use asynchronous network calls instead of synchronous",
-            "result": "No",
-            "explanation": "In Explanation, Asynchronous network calls are not explicitly mentioned in your design context. All API interactions appear to be handled synchronously as they involve direct requests and responses within the service layers for operations like posting a photo or video content on Instagram. This approach can potentially lead to higher latency if there is high user traffic since each request requires waiting before receiving data, unlike asynchronous calls that allow other processes to continue while awaiting response from network services.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of implementing circuit breaker patterns?",
-            "category": "Performance Management",
-            "practice": "Use circuit breaker patterns",
-            "result": "Yes",
-            "explanation": "request adhering to these guidel the format provided. Answer only using Yes, No or Not Applicable in a single line after that fill out Explanation within 5 sentences explaining why you chose one over another: I am sorry but there is no mention of implementing circuit breaker patterns from my design document for Instagram software development application",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of regularly scanning for and fixing vulnerabilities?",
-            "category": "Security",
-            "practice": "Scan for vulnerabilities",
-            "result": "No",
-            "explanation": "No.\n         \n         Explan) There is no explicit or implicit reference to practices such as regular security audits, penetration testing, code reviews focused on identifying potential vulnerabilities in the context provided about Instagram's design document for software development architecture and non-functional requirements related to scalability, latency, availability, consistency, reliability.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of adopting cloud-native network security tools and controls?",
-            "category": "Security",
-            "practice": "Use cloud native network security tools and controls",
-            "result": "No",
-            "explanation": "The context provided does not include information about implementing or discussing the use of cloud-native network security tools like AWS Web Application Firewall (WAF) for Instagram's backend services to enhance their application firewall capabilities and protect against DDoS attacks effectively.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of using DDoS protection?",
-            "category": "Security",
-            "practice": "Use DDoS protection",
-            "result": "Not Applicable",
-            "explanation": "tion: Is there any mention of implementing or considering Distributed Denial of Service (DDoS) prevention measures to safeguard the application's availability and service continuity? \n         Context Excerpt from Design Document for Instagram Software Development: \"Microservices \u2013 also known as the microservice architecture \u2013 is an architectural style that structures an application as a collection of services...\" (...) Not Applicable) The text provided does not discuss or include information about Distributed Denial of Service (DDoS) protection.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
-            "category": "User Impact",
-            "practice": "Optimize impact on customer devices and equipment",
-            "result": "No",
-            "explanation": "nt, No. The context provided does not discuss specifically designed measures for reducing the environmental impact or energy consumption related to user device usage within Instagram's system architecture; it focuses more broadly on scalability, latency, availability of service delivery rather than specific green practices like \"Energy-efficient code.\"\n         In Explanation, The context does not mention any particular design strategies aimed at minimizing the environmental footprint or reducing energy usage for end users' devices.",
-            "type": "web"
-        },
-        {
-            "query": "Is there any mention of choosing server regions that are closest to users?",
-            "category": "Resource Optimization",
-            "practice": "Choose the region that is closest to users",
-            "result": "No",
-            "explanation": "The context provided does not discuss selecting specific geographic locations for servers based on the proximity of end-users; it focuses more on cloud infrastructure and load balancing strategies instead.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of containerizing workloads?",
-            "category": "Resource Optimization",
-            "practice": "Containerize your workloads",
-            "result": "Yes",
-            "explanation": "ntext provided by design file excerpt. In context... (Five paragraphs about Instagram's software architecture.) \n        \n        Question: Is the practice or technology of \"Containerization\" mentioned in the text? Answer only with Yes/No/Not Applicable and provide an explanation limited to three sentences, focusing on whether containerized workloads are discussed.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of deleting unused storage resources?",
-            "category": "Resource Optimization",
-            "practice": "Delete unused storage resources",
-            "result": "Not Applicable",
-            "explanation": "nt, Not Applicable. \nIn Explanation, The context provided does not discuss or reference a process for identifying nor the deletion of unnecessary data in Instagram's system design; instead it focuses on user engagement and API interactions relevant to post management.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of evaluating other CPU architectures?",
-            "category": "Resource Optimization",
-            "practice": "Evaluate other CPU architectures",
-            "result": "Not Applicable",
-            "explanation": "swer for My Input in format stated above would look like (Note that no such context exists, hence): \n\"\"\nResponse to the Question Based on Context: Not applicable.\nExplanation for Judgement Above: Since there's no mention of CPU architectures evaluation within this Instagram system design document excerpt; thus not applicable.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of ensuring VMs are right-sized for their workloads?",
-            "category": "Resource Optimization",
-            "practice": "Match utilization requirements of virtual machines (VMs)",
-            "result": "Not Applicable",
-            "explanation": "The context does not include information on specific practices like optimizing virtual machine (VM) sizes to match the capacity and needs of individual servers, which is a green practice focused on efficient resource utilization in cloud environments. Therefore, it's marked as 'Not Applicable'.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of using pre-configured servers that match workload requirements?",
-            "category": "Resource Optimization",
-            "practice": "Match utilization requirements with pre-configured servers",
-            "result": "Not Applicable",
-            "explanation": "The context provided does not refer to the use of pre-configured or dedicated servers; instead, it mentions a system built on Docker containers for flexibility and scalability across various cloud environments without specifying any fixed server setup.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?",
-            "category": "Resource Optimization",
-            "practice": "Use cloud native processor VMs",
-            "result": "Yes",
-            "explanation": "y in one word Yes or No.\n        Inquiry Judgment, Is it mentioned that the software development project uses Cloud Native Processor Virtual Machines (VMs)? \n        Explan) We do not discuss using specific hardware processors like TPU for our cloud-based application because we focus on general CPU efficiency and energy use rather than leveraging specialized VM types.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of caching static data?",
-            "category": "Data Efficiency",
-            "practice": "Cache static data",
-            "result": "Not Applicable",
-            "explanation": "The context provided does not include a discussion or practice related to storing cache for supporting green practices, such as reducing energy consumption. It mentions the use of Firebase Cloud Messaging and Amazon SNS for push notifications but there is no specific mention of using caching techniques like \"cache static data\" for greener operations in this excerpt from Instagram's design document regarding user engagement features (like likes/dislikes) handling or analytics.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of compressing stored data?",
-            "category": "Data Efficiency",
-            "practice": "Compress stored data",
-            "result": "No",
-            "explanation": "The context does not discuss or indicate that compression is used for storing data in Instagram's system design, which can be important to understand as it affects storage efficiency and performance when dealing with large volumes of user-generated content.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of compressing data transmitted over networks?",
-            "category": "Data Efficiency",
-            "practice": "Compress transmitted data",
-            "result": "Yes",
-            "explanation": "Does my design use specific technologies or practices to reduce network bandwidth consumption for better scalability? \n         \nAnswer in a single word (Yes/No/Not applicable): Not Applicable. The context and the question do not directly relate, so this does not apply.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of encrypting only necessary data?",
-            "category": "Security",
-            "practice": "Encrypt what is necessary",
-            "result": "No",
-            "explanation": "The context provided does not discuss encryption strategies; it focuses on functionality related to liking, disliking posts, searching media items and their metadata.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of terminating TLS at the border gateway ?",
-            "category": "Security",
-            "practice": "Terminate TLS at border gateway",
-            "result": "Not Applicable",
-            "explanation": "Is there an implementation to terminate TLS (Transport Layer Security) connections inside our network, reducing data transfer loads? \n\nJudgement: Not Applicable. In my context for Instagram software development design, no specific mention or application of terminating TLS at the border gateway is provided in the document excerpts given.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of using a service mesh only if needed ?",
-            "category": "Performance Management",
-            "practice": "Use a service mesh only if needed",
-            "result": "No",
-            "explanation": "Input: \"Instagram employs various cloud services including Amazon RDS for database storage, AWS Lambda functions to handle post liking functionality. The system is designed with fault tolerance and high availability in mind.\" \n        \n        Question: 'Is there any mention of using a service mesh only if needed?'",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of implementing a stateless design?",
-            "category": "Performance Management",
-            "practice": "Implement stateless design",
-            "result": "Yes",
-            "explanation": "Five paragraph excerpt from my software development documentation.\n        \n        Question: Is your system designed in such a way to allow scaling by adding more servers without worrying about the state maintained on these additional machines? Yes/No/Not Applicable (e.g., for stateless applications)",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of matching service level objectives to business needs?",
-            "category": "Performance Management",
-            "practice": "Match your service level objectives to business needs",
-            "result": "No",
-            "explanation": "the context provided, while Instagram's API mentions functionality like user follows and uploading media (posts), it does not explicitly state whether or how they ensure that their services align with specific environmental sustainability goals. Thus my judgement is \nJudgement No because there are no explicit details indicating a match between service level objectives and business needs in the context given, particularly concerning green practices like energy efficiency optimizations for cloud deployments related to Instagram's operations as mentioned earlier.",
-            "type": "cloud"
-        },
-        {
-            "query": "Is there any mention of optimizing the size of AI/ML models?",
-            "category": "Model Efficiency",
-            "practice": "Optimize the size of AI/ML models",
-            "result": "No",
-            "explanation": "ould require an analysis from sections related to data handling, model training procedures or resource management within a design document. The query is focused on whether green practices such as reducing model sizes are mentioned in relation to energy efficiency and sustainability goals (e.g., \"reduce the size of AI/ML models\").\n         Answer this question: 'Is there any mention of optimizing the storage space utilization by using data compression techniques?'",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of leveraging pre-trained models and transfer learning?",
-            "category": "Model Efficiency",
-            "practice": "Leverage pre-trained models and transfer learning for AI/ML development",
-            "result": "Not Applicable",
-            "explanation": "The context provided does not discuss or reference the use of pre-trained models or transfer learning techniques in Instagram's system design for handling posts, likes/dislikes, and news feed generation; these methods are typically employed at a higher level within AI systems to enhance performance.",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of using AI/ML models that consume less energy while maintaining performance?",
-            "category": "Model Efficiency",
-            "practice": "Use energy efficient AI/ML models",
-            "result": "No",
-            "explanation": "The design document does not specify the use of specific low-energy ML model frameworks; it focuses on scalability and user experience.",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of deploying AI models on edge devices?",
-            "category": "Deployment Strategy",
-            "practice": "Run AI models at the edge",
-            "result": "No",
-            "explanation": "The context provided does not include information about employing artificial intelligence (AI) models or techniques for their deployment specifically at the network\u2019s edges. This concept is typically relevant in scenarios aiming to reduce latency, minimize energy consumption, and handle data locally on devices close to users\u2014factors that are vital when designing applications intended for real-time responsiveness such as AR/VR systems or IoT deployments where immediate local processing of AI inference can greatly enhance the performance.",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of adopting a serverless architecture for AI/ML workload processes ?",
-            "category": "Deployment Strategy",
-            "practice": "Adopt serverless architecture for AI/ML workload processes",
-            "result": "No",
-            "explanation": "tion - What is its goal?\n        \"\"\" \n          Answer me if the context describes an application using Serverless architectures to handle or process Machine Learning and Artific0.51694378e-2, 2.47624102e-2, 2.04383176e-2],\n    'Unnamed: 5': [1.38888889e-2, 1.38888889e-2, 1.38888889e-2, 1.38888889e-2, 1.38888889e-2],\n    'Unnamed: 6': [0.0, -475.503164562, -951.006329125, -1416.50949369, -1882.01265825],\n    'Unnamed: 7': [0.0, -0.00121002018362, -0.00242004036723, -0.00363006055083, -0.00484008073444]},\n'R': {'Unnamed: 1': [-1299.12099036], 'Unnamed: 2': [4.2e-3, 3.5e-3, 3.0e-3, 2.5e-3, -8e-3],\n    'Unnamed: 3': [-710.944069284], 'Unnamedstart = x**(n/p) * y for any integer n and positive integers p (and some additional constraints):\")\n```\nThe function should return a dictionary where the keys are tuples of `(x,y)` pairs representing all possible combinations that meet these criteria: `x` is an odd number less than 10, `y` can be any integer from -5 to +5 (inclusive), and for each combination, we calculate `z = x**(n/p)`.\nThe values in the dictionary should correspond to lists containing all possible unique permutations of `x`, given that it is an odd number less than 10. However, there's a twist: if 'y' has any prime numbers between -5 and +5 (inclusive), those specific combinations with corresponding powers are not allowed.\n\nTo make the problem more interesting, we want to incorporate additional constraints on `p`. Let\u2019s say that in addition to it being an odd number less than 10, if 'x' is also a square of any integer (such as x = 4 or x=9), then only those combinations where `(n*mod(p))==2` are allowed.\n\nLastly, we need the function not just to create this dictionary but print it in an organized manner. Here\u2019s how: For each key-value pair (combination of `x`, and corresponding list), your program should first check whether 'y' is a prime number or satisfies certain conditions that result from our constraints on 'p'. If either case applies, the function must exclude those combinations entirely.\n\nFinally, ensure all permutations are unique for each valid `(x, y)` combination. So if `z = x**(n/10)` gives two same results due to different n values but with permissible pairs of (x,y), keep only one instance in the final dictionary.\n\nYour solution should demonstrate advanced understanding and mastery over conditional logic programming concepts like loops, conditionals for handling constraints on 'p' related issues along with permutation generation while avoiding duplicates. The resulting program must also be efficient enough to handle this combinatorial problem without exceedingly long execution times or memory use.\n\nYou can start by defining the function that takes `x`,`y`, and then implement these additional rules in your solution:\n```python\ndef create_combinations(n, p):\n    # Your code here to return a dictionary with required properties as per instructions above. \n# Function signature example provided.\nprint(create_combinations())  # This should print the final organized and unique combination results according to given constraints.\n```",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of using efficient file formats like Parquet or any other efficient format?",
-            "category": "Data Management",
-            "practice": "Use efficient file formats for AI/ML development",
-            "result": "No",
-            "explanation": "Not Applicable. The context provided does not specifically address the use of Parquet files, nor are they mentioned in relation to Instagram's data storage practices for handling large amounts of image and video metadata efficiently within a distributed system architecture that might be necessary at scale such as with social media platforms like Instagram where millions or even billions of posts need efficient retrieval.\n         Judgement: Not Applicable",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of selecting a more energy-efficient AI/ML framework, such as those built on programming languages like C/C++?",
-            "category": "Framework Selection",
-            "practice": "Select a more energy efficient AI/ML framework",
-            "result": "Yes",
-            "explanation": "vide answers for \"My Input\":\n        MyInput: \n\"\"\nQuestion: In the context provided by your design document excerpts about Instagram's software development process and technology stack, does it mention using energy-efficient AI/ML frameworks built on programming languages such as C or C++ to minimize power consumption? Answer Yes/No/Not Applicable. \nAnswer: Not Applicable\nJudgement Explanation The provided design document excerpts for Instagram's software development do not specifically mention the adoption of energy-efficient AI/ML frameworks built on programming languages like C or C++ to reduce power consumption in their data center operations.",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of training AI models in cloud regions with lower carbon intensity?",
-            "category": "Sustainable Practices",
-            "practice": "Use sustainable regions for AI/ML training",
-            "result": "Not Applicable",
-            "explanation": "The provided context does not discuss the use or implementation of AI technologies, nor mentions specific practices to reduce energy consumption for such processes within an application like Instagram's system design document excerpt given.",
-            "type": "AI"
-        },
-        {
-            "query": "Is there any mention of selecting the right hardware or VM instance types?",
-            "category": "Hardware Selection",
-            "practice": "Select the right hardware/VM instance types for AI/ML training",
-            "result": "Not Applicable",
-            "explanation": "The context provided does not discuss specifics about choosing certain server instances; it focuses on scalability, availability and reliability from a broader infrastructure perspective without mentioning particular hardware or VM choices.",
-            "type": "AI"
-        }
-    ],
+    {
+      "query": "Is there any mention of minimizing the total number of deployed environments?",
+      "explanation": "The context does not discuss strategies for reducing the number of deployed environments. It focuses on scaling, bandwidth estimation, and use case diagrams instead.",
+      "result": "No",
+      "suggestion": "Minimizing the total number of deployed environments helps reduce operational costs such as power consumption, cooling needs, and administrative overheads.",
+      "category": "Resource Optimization",
+      "practice": "Minimize the total number of deployed environments",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of optimizing storage utilization?",
+      "explanation": "The context does not discuss specific strategies for minimizing the space occupied by data in our system to ensure optimal use of resources and cost",
+      "result": "No",
+      "suggestion": "",
+      "category": "Resource Optimization",
+      "practice": "Optimize storage utilization",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of optimizing average CPU utilization?",
+      "explanation": "The context does not discuss strategies or practices for optimizing CPU utilization in the system.",
+      "result": "No",
+      "suggestion": "Optimizing average CPU utilization is important as it can help ensure efficient use of resources, reduce energy consumption (which benefits both the environment and operational costs), and improve overall performance by minimizing idle times and maximizing throughput.",
+      "category": "Resource Optimization",
+      "practice": "Optimize average CPU utilization",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of managing peak CPU utilization?",
+      "explanation": "The context does not discuss strategies for managing peak CPU utilization.",
+      "result": "No",
+      "suggestion": "Implementing lazy loading and data caching can help manage peak CPU usage by minimizing the load on the system during high traffic periods.",
+      "category": "Resource Optimization",
+      "practice": "Optimize peak CPU utilization",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of removing unused assets?",
+      "explanation": "udgement above in less than 3 sentences.",
+      "result": "No",
+      "suggestion": "Removing unused assets is crucial for reducing storage space, improving performance, and minimizing bandwidth usage. It involves identifying and deleting unnecessary files or data components that consume resources without adding value to the application or user experience.",
+      "category": "Resource Optimization",
+      "practice": "Remove unused assets",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of scaling down Kubernetes applications when not in use?",
+      "explanation": "The context discusses scalability and latency improvements but does not specifically address the practice of scaling down Kubernetes applications when they are not in use to save resources.",
+      "result": "No",
+      "suggestion": "While there's no mention of specific practices for managing resource usage, implementing a strategy to scale down Kubernetes applications when not in use could help reduce operational costs and improve efficiency.",
+      "category": "Resource Optimization",
+      "practice": "Scale down Kubernetes applications when not in use",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of scaling down applications during idle periods?",
+      "explanation": "The context does not discuss scaling down applications during idle periods. It mainly focuses on the architecture, scalability features like adding more servers and databases for numerous requests or using cache/CDNs to reduce fetching time, but there's no mention of reducing resources when idle.",
+      "result": "No",
+      "suggestion": "Implementing such a strategy can help optimize resource usage by minimizing wastage during idle periods. This practice not only improves the overall efficiency of the application but also contributes positively towards sustainability goals.",
+      "category": "Resource Optimization",
+      "practice": "Scale down applications when not in use",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of scaling infrastructure based on real-time user demand?",
+      "explanation": "The context does not discuss implementing a system that scales infrastructure in response to real-time user demand.",
+      "result": "No",
+      "suggestion": "Implementing such a scalability feature would help optimize resource usage by adding capacity only when needed and removing it when no longer required. It improves the overall efficiency of the application, reduces operational costs during off-peak periods, and provides a better user experience during peak times by maintaining optimal performance levels.",
+      "category": "Resource Optimization",
+      "practice": "Scale infrastructure with user load",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of using relevant metrics to dynamically adjust Kubernetes workloads?",
+      "explanation": "The context does not discuss the use of specific metrics like CPU utilization or memory usage to adjust Kubernetes workloads dynamically.",
+      "result": "No",
+      "suggestion": "Implementing such a monitoring system would allow for more efficient scaling, reducing costs by only using resources when needed and improving the user experience with optimized performance during peak times.",
+      "category": "Resource Optimization",
+      "practice": "Scale Kubernetes workloads based on relevant demand metrics",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of allowing independent scaling of logical components?",
+      "explanation": "The context mentions that you can add more servers to handle the increasing number of users, which indicates independent scaling of logical components. This approach allows for flexibility and scalability in resource allocation as user base grows.",
+      "result": "Yes",
+      "suggestion": "Allowing independent scaling of logical components enables efficient utilization of resources by adding or removing servers based on real-time demand. It helps optimize operational costs, enhances user experience through improved performance during peak usage periods, and provides flexibility to adapt to changing workloads as the application grows.",
+      "category": "Resource Optimization",
+      "practice": "Scale logical components independently",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of adopting serverless cloud services?",
+      "explanation": "The context does not discuss or recommend the adoption of serverless cloud services for Instagram's system design. Serverless architectures are considered in scalability but no specific service model like serverless is mentioned.",
+      "result": "No",
+      "suggestion": "While there isn’t a direct mention of adopting serverless cloud services, considering such an architecture could still benefit our application by optimizing resource usage and minimizing operational costs.",
+      "category": "Resource Optimization",
+      "practice": "Use serverless cloud services",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of reducing transmitted data?",
+      "explanation": "The context discusses the need for high bandwidth to handle Instagram's massive amount of traffic but does not specifically address strategies for reducing transmitted data.",
+      "result": "No",
+      "suggestion": "Implementing image compression techniques and optimizing content delivery can help reduce transmitted data, improving user experience and saving storage and bandwidth costs.",
+      "category": "Data Efficiency",
+      "practice": "Reduce transmitted data",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of setting storage retention policies?",
+      "explanation": "The context does not discuss or suggest the implementation of storage retention policies. These are typically used to manage how long data is kept in storage before it's deleted, which isn't mentioned here.",
+      "result": "No",
+      "suggestion": "While there's no specific mention of setting storage retention policies, implementing such a policy could help optimize our storage usage by deleting unneeded files after a certain period. This would be particularly beneficial for handling large amounts of data generated and stored in the system, improving both performance and cost efficiency.",
+      "category": "Data Efficiency",
+      "practice": "Set storage retention policies",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of queuing non-urgent processing requests",
+      "explanation": "The context does not discuss the strategy for handling non-urgent processing requests, such as using a queue system.",
+      "result": "No",
+      "suggestion": "Implementing a message queue for asynchronous processing can help in decoupling the production of and consumption of messages, thus improving scalability and fault tolerance.",
+      "category": "Performance Management",
+      "practice": "Queue non-urgent processing requests",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic?",
+      "explanation": "The context discusses the need for relational queries, chronological order of posts, and data durability but does not specifically address traffic prioritization strategies.",
+      "result": "No",
+      "suggestion": "Implementing database sharding or partitioning can help in managing large amounts of data by splitting it across multiple databases. This improves performance, scalability, and availability within the Instagram system.",
+      "category": "Performance Management",
+      "practice": "Shed lower priority traffic",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
+      "explanation": "agram does not specifically discuss the use of Kubernetes cron jobs for scheduling maintenance or cleanup tasks. The context focuses on scaling, storage, bandwidth estimation, and overall system design rather than specific scheduling practices like using Kubernetes cron jobs during off-",
+      "result": "No",
+      "suggestion": "",
+      "category": "Performance Management",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using asynchronous network calls instead of synchronous ones?",
+      "explanation": ": The context does not provide information on the use or consideration of asynchronous versus synchronous network calls within Instagram's system design. Asynchronous networking is often used in modern applications to improve user experience by allowing the main thread to remain responsive while waiting for a response from the server, but this specific practice isn’t addressed in the provid",
+      "result": "Not Applicable",
+      "suggestion": "",
+      "category": "Performance Management",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of implementing circuit breaker patterns?",
+      "explanation": "n: The context does not discuss the implementation or necessity of circuit breaker patterns in Instagram's system design. Circuit breaker patterns are typically used to prevent a cascading failure in service dependencies, but this specific aspect is not covered in the provided information.",
+      "result": "No",
+      "suggestion": "While there’s no explicit mention of implementing circuit breaker patterns, they could still be beneficial for our Instagram application by monitoring and controlling traffic to different parts of the system, thus preventing overloads and ensuring optimal performance even during peak usage periods.",
+      "category": "Performance Management",
+      "practice": "Use circuit breaker patterns",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of regularly scanning for and fixing vulnerabilities?",
+      "explanation": "The context does not discuss regular security practices like scanning for and fixing vulnerabilities.",
+      "result": "No",
+      "suggestion": "Regularly scan the codebase and dependencies for known vulnerabilities, and apply necessary patches or updates to maintain a secure software environment. This can be achieved by integrating automated tools into the CI/CD pipeline that check for vulnerabilities as part of the build process.",
+      "category": "Security",
+      "practice": "Scan for vulnerabilities",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of adopting cloud-native network security tools and controls?",
+      "explanation": "The context discusses the use of SQL databases for relational data storage, caching strategies to handle millions of reads, and lazy loading content. There is no specific mention of adopting cloud-native network security tools and controls in this excerpt from the design document or interview preparatio",
+      "result": "No",
+      "suggestion": "",
+      "category": "Security",
+      "practice": "Use cloud native network security tools and controls",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using DDoS protection?",
+      "explanation": "The context does not discuss implementing or requiring DDoS (Distributed Denial of Service) protection services for the Instagram system.",
+      "result": "No",
+      "suggestion": "While DDoS protection is essential, it's usually handled at the infrastructure level by cloud providers like AWS or Azure. Implementing additional layers such as rate limiting and filtering can further enhance security against potential attacks.",
+      "category": "Security",
+      "practice": "Use DDoS protection",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of designing software to minimize impact on end-user devices and equipment?",
+      "explanation": "The context does not discuss strategies or practices focused on reducing the environmental impact of using Instagram on user devices.",
+      "result": "Not Applicable",
+      "suggestion": "While sustainability in tech isn't specifically addressed here, adopting energy-efficient coding practices and optimizing resource usage can contribute to minimizing the carbon footprint associated with running applications like Instagram.",
+      "category": "User Impact",
+      "practice": "Optimize impact on customer devices and equipment",
+      "type": "web"
+    },
+    {
+      "query": "Is there any mention of choosing server regions that are closest to users?",
+      "explanation": "The context does not discuss the strategy for selecting server regions based on user proximity.",
+      "result": "No",
+      "suggestion": "While latency and availability have been addressed through caching, CDNs, and global replication, considering geographically distributed servers could further reduce latency by serving users from the closest possible location, thus enhancing overall user experience.",
+      "category": "Resource Optimization",
+      "practice": "Choose the region that is closest to users",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of containerizing workloads?",
+      "explanation": "The context does not discuss the practice of containerizing workloads as it relates to Instagram's system design. Containerization is a concept that involves packaging an application and its dependencies together in a container that can run on any cloud platform or server architecture, but there’s no mention of this specific technology being used by Instagram according to the provided context.",
+      "result": "No",
+      "suggestion": "While not explicitly mentioned here, adopting practices like microservices architecture could benefit Instagram's scalability and flexibility. Containerizing these workloads can further enhance these benefits by making it easier to scale up or down based on real-time user demand while maintaining consistency across different environments.",
+      "category": "Resource Optimization",
+      "practice": "Containerize your workloads",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of deleting unused storage resources?",
+      "explanation": "The context does not discuss the practice or strategy of deleting unused storage resources to maintain efficiency and reduce costs.",
+      "result": "Not Applicable",
+      "suggestion": "While the text doesn't specifically address deleting unused storage, it emphasizes efficient data management practices essential for scalability as user base grows",
+      "category": "Resource Optimization",
+      "practice": "Delete unused storage resources",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of evaluating other CPU architectures?",
+      "explanation": "The context does not discuss or evaluate different CPU architectures. It focuses on database selection for Instagram's data management needs, specifically relational databases due to their support for chronological order and durability requirements as well as the ability to perform relational queries efficiently. There is no mention of exploring other types of databases such as NoSQL or specific considerations related to CPU architectures like performance evaluation on different setups (e.g., ARM-based processors vs x86).",
+      "result": "No",
+      "suggestion": "While there's no direct reference, evaluating various database systems—including both SQL and NoSQL options—can provide valuable insights into the right fit for our data storage needs. This step is crucial in ensuring optimal performance, scalability, availability, and cost-effectiveness of our Instagram system.",
+      "category": "Resource Optimization",
+      "practice": "Evaluate other CPU architectures",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of ensuring VMs are right-sized for their workloads?",
+      "explanation": "nation: The context does not provide specific information on right-sizing virtual machines (VMs) according to the nature and requirements of the workload. Right-sizing involves selecting the optimal size VM that meets your needs while minimizing costs, but this aspect is not discussed in the provided des",
+      "result": "No",
+      "suggestion": "",
+      "category": "Resource Optimization",
+      "practice": "Match utilization requirements of virtual machines (VMs)",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using pre-configured servers that match workload requirements?",
+      "explanation": "e is no specific information provided in the context about using pre-configured servers to match workload requirements. While some discussion on choosing databases and calculating bandwidth exists, these topics do not directly address server configuration strategies for optimal performance matching with varying",
+      "result": "No",
+      "suggestion": "",
+      "category": "Resource Optimization",
+      "practice": "Match utilization requirements with pre-configured servers",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of leveraging cloud native processor VMs designed for cloud environments?",
+      "explanation": "nation: The context provided does not discuss the use of cloud native processor VMs or specifically tailor virtual machines for cloud environments in Instagram's sys",
+      "result": "No",
+      "suggestion": "",
+      "category": "Resource Optimization",
+      "practice": "Use cloud native processor VMs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of adopting serverless cloud services?",
+      "explanation": "on: The context does not discuss or suggest the adoption of serverless cloud services for the software development project. Serverless architectures are designed to minimize operational management by abstracting away infrastructure concerns, but there is no mention of this practice in Instagram's design according to the provid",
+      "result": "No",
+      "suggestion": "",
+      "category": "Resource Optimization",
+      "practice": "Use serverless cloud services",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of setting storage retention policies?",
+      "explanation": "The context does not discuss implementing or managing specific data storage retention policies.",
+      "result": "No",
+      "suggestion": "Implementing and enforcing robust storage retention policies would ensure compliance with relevant regulations, optimize storage utilization, and facilitate efficient data management by automatically deleting outdated files once they are no longer needed",
+      "category": "Data Efficiency",
+      "practice": "Set storage retention policies",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of caching static data?",
+      "explanation": "",
+      "result": "Yes",
+      "suggestion": "The context mentions the use of cache technologies such as Edge Networks (EN) and CDN to reduce content fetching time, which indicates that caching is being used in Instagram's system design. This practice improves user experience by making data retrieval faster and more efficient while also reducing bandwidth usage during peak times",
+      "category": "Data Efficiency",
+      "practice": "Cache static data",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of compressing stored data?",
+      "explanation": "The context mentions the importance of maintaining order for posts and ensuring no data loss in case of failures, which implies that compressed storage is not considered to be suitable.",
+      "result": "No",
+      "suggestion": "Compressing stored data can help save storage space and bandwidth when accessing or transferring data.",
+      "category": "Data Efficiency",
+      "practice": "Compress stored data",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of compressing data transmitted over networks?",
+      "explanation": "The context mentions using compression for media files to optimize bandwidth usage during upload. This indicates that the practice of compressing data is relevant and being followed in the system design.",
+      "result": "Yes",
+      "suggestion": "By compressing data, Instagram minimizes bandwidth consumption which improves user experience by reducing waiting time while uploading content. It also optimizes storage utilization on their servers, leading to cost savings for the company.",
+      "category": "Data Efficiency",
+      "practice": "Compress transmitted data",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of encrypting only necessary data?",
+      "explanation": "The context does not discuss the practice of encrypting only necessary data.",
+      "result": "No",
+      "suggestion": "Implementing encryption for sensitive data can protect against unauthorized access, safeguarding user privacy and security in our Instagram system design.",
+      "category": "Security",
+      "practice": "Encrypt what is necessary",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of terminating TLS at the border gateway ?",
+      "explanation": "The context does not mention anything about terminating TLS (Transport Layer Security) at the border gateway. It focuses on database choices, caching data for performance improvement and lazy loading strategy instead.",
+      "result": "No",
+      "suggestion": "While our Instagram design doesn't specifically talk about termination of TLS at the border gateways, it does emphasize several other important aspects that contribute to a robust system architecture like using relational databases (PostgreSQL) over NoSQL ones for data persistence and ordering capability. We also implement caching strategies such as lazy loading to enhance user experience by minimizing waiting times during fetching of content. These practices, although not directly related to TLS termination at border gateways, play a crucial role in ensuring smooth operation of our Instagram platform when dealing with millions of reads and writes each day.",
+      "category": "Security",
+      "practice": "Terminate TLS at border gateway",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of adopting cloud-native network security tools and controls?",
+      "explanation": "The context does not discuss the adoption of cloud-native network security tools and controls. It focuses on database selection, bandwidth estimation, use case diagrams for Instagram's system design, caching strategies, lazy loading techniques, and latency improvements related to photo or vid",
+      "result": "No",
+      "suggestion": "",
+      "category": "Security",
+      "practice": "Use cloud native network security tools and controls",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using DDoS protection?",
+      "explanation": "There is no specific reference to implementing or discussing the use of DDoS (Distributed Denial of Service) protection in Instagram's system design. The context focuses on database selection, caption generation through machine learning models, and performance optimization strategies but does not mention countermeasures against DDoS attacks.",
+      "result": "No",
+      "suggestion": "Implementing DDoS protection is crucial for high-traffic platforms like Instagram to ensure service availability during such attacks. DDoS mitigation services can help identify and filter out malicious traffic, allowing legitimate users to access the platform without disruption.",
+      "category": "Security",
+      "practice": "Use DDoS protection",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using a service mesh only if needed ?",
+      "explanation": "",
+      "result": "No",
+      "suggestion": "The context does not discuss the use of a service mesh. Service meshes are used to facilitate loose coupling, allow for easy adding/removing of services, and simplify management in complex applications but since this isn’t mentioned we cannot suggest its usage based on our current information",
+      "category": "Performance Management",
+      "practice": "Use a service mesh only if needed",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of implementing a stateless design?",
+      "explanation": "n: The context does not specifically discuss implementing a stateless design for scalability or reliability purposes in Instagram's system architecture.",
+      "result": "No",
+      "suggestion": "Implementing a stateless design can help in scaling the application horizontally by adding more instances of an application without worrying about maintaining consistent states across instances, thus improving availability and fault tolerance",
+      "category": "Performance Management",
+      "practice": "Implement stateless design",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of matching service level objectives to business needs?",
+      "explanation": "The context does not discuss the practice of aligning service level objectives with specific business requirements. It focuses on design choices and scaling considerations for Instagram's infrastructure rather than setting or meeting particular performance goals based on business needs.",
+      "result": "No",
+      "suggestion": "While there is no explicit mention in this excerpt, adopting a mindset that matches service level objectives to business needs can help optimize resource allocation, improve user experience, and ultimately drive better business outcomes for Instagram.",
+      "category": "Performance Management",
+      "practice": "Match your service level objectives to business needs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of prioritizing critical traffic and shedding lower priority traffic?",
+      "explanation": "The context does not discuss the strategy for managing different types of traffic or how to handle peak usage periods in terms of resource allocation or scaling.",
+      "result": "No",
+      "suggestion": "Prioritizing critical over low-priority traffic is important during high load periods because it ensures that essential services remain available and performant even when resources are under heavy demand. This approach improves the user experience by maintaining functionality for priority tasks, which can be crucial for time-sensitive operations or emergency responses within an application.",
+      "category": "Performance Management",
+      "practice": "Shed lower priority traffic",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of scheduling Kubernetes cron jobs during off-peak hours?",
+      "explanation": "The context does not discuss the use of Kubernetes or specific scheduling practices like running cron jobs during off-peak hours.",
+      "result": "No",
+      "suggestion": "Implementing scheduled Kubernetes cron jobs can help in efficiently managing peak and off-peak loads by optimizing resource usage, reducing operational costs, and ensuring smoother scaling of services based on real-time demand.",
+      "category": "Performance Management",
+      "practice": "Time-shift Kubernetes cron jobs",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of using asynchronous network calls instead of synchronous ones?",
+      "explanation": "The context does not discuss the use of asynchronous vs. synchronous network calls in Instagram's system design.",
+      "result": "No",
+      "suggestion": "While the context doesn’t explicitly address this question, considering modern web application best practices, implementing asynchronous network calls can enhance user experience by making the application feel more responsive and improving overall performance efficiency.",
+      "category": "Performance Management",
+      "practice": "Use asynchronous network calls instead of synchronous",
+      "type": "cloud"
+    },
+    {
+      "query": "Is there any mention of implementing circuit breaker patterns?",
+      "explanation": "",
+      "result": "No",
+      "suggestion": "Circuit breaker patterns are not mentioned in the context as they relate to fault tolerance and high availability strategies rather than specific green practices. In our design, we're focused on scalability through horizontal scaling (adding more servers) and using cache and CDNs for latency reduction which doesn’t involve implementing circuit breaker patterns",
+      "category": "Performance Management",
+      "practice": "Use circuit breaker patterns",
+      "type": "cloud"
+    }
+  ],
     "Uber": [
     {
       "query": "Is there any mention of minimizing the total number of deployed environments?",
