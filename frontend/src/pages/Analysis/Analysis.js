@@ -26,6 +26,7 @@ const Analysis = () => {
   const [filterType, setFilterType] = useState("all");
   const [currentStep, setCurrentStep] = useState(0);
   const [showProgressSteps, setShowProgressSteps] = useState(true);
+  const [chartImages, setChartImages] = useState({ barChart: "", pieChart: "" });
 
   
   const location = useLocation();
@@ -159,6 +160,24 @@ const Analysis = () => {
               boundary = receivedText.indexOf('\n');
             }
           }
+
+          // get Evaluation Charts from the uploaded file
+          const chartsResponse = await fetch('http://localhost:8000/getEvaCharts', {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+            },
+          });
+          if (chartsResponse.ok) {
+            const chartData = await chartsResponse.json();
+            setChartImages({
+              barChart: chartData.barChartPath,
+              pieChart: chartData.pieChartPath
+            });
+          } else {
+            console.error('Error fetching chart images:', chartsResponse.statusText);
+          }
+
         } catch (error) {
           console.error("Error fetching data:", error);
           const errorContainer = document.getElementById('error-container');
@@ -293,6 +312,7 @@ const Analysis = () => {
       categoryWiseResult,
       apiResponse,
       docName: doc_name || 'Document',
+      chartImages
     };
 
     handleDownloadPDF(analysisData);
