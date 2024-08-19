@@ -9,8 +9,8 @@ import GSFLogo from '../../assets/GSFLogoAlternate.jpg';
 const Home = () => {
   return (
     <>
-     <h1 class="home-title">Eco Doc Sense</h1>
-     <h2 class="home-description">Eco Doc Sense is an AI-powered tool that assesses the adherence of software designs, as described in design documents, to GSF-recognized green practices.</h2>
+     <h1 class="home-title">EcoDoc Sense</h1>
+     <h2 class="home-description">EcoDoc Sense is an AI-powered tool that assesses the adherence of software designs, as described in design documents, to GSF-recognized green practices.</h2>
      <SampleDocumentList/>
      <AddDocument/>
      <div class="container">
