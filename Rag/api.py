@@ -111,6 +111,9 @@ async def ask_ecodoc(file: UploadFile):
                 json_response = export_combined_results_to_json(combined_path, q_idx) 
                 yield json.dumps({"type": "data", "payload": json_response}) + "\n"
                 yield json.dumps({"type": "indicator", "payload": {"step": 1}}) + "\n"
+        except Exception as e:
+            yield json.dumps({"type": "error", "payload": {"message": f"Error: {str(e)}"}}) + "\n"
+            raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
         finally:
             yield json.dumps({"type": "indicator", "payload": {"step": 3}}) + "\n"
             result_path = ""
@@ -143,7 +146,7 @@ async def get_sample_results(doc_name: str):
                 sample_results = json.load(file)
                 for row in sample_results.get(doc_name, []):
                     yield json.dumps(row) + "\n"
-                    await asyncio.sleep(0)  # Add a 3-second delay between each row
+                    await asyncio.sleep(1)  # Add a 3-second delay between each row
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
