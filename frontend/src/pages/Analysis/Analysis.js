@@ -10,6 +10,7 @@ import { handleDownloadPDF } from "../../utils/pdfGenerator";
 import loadingGif from '../../assets/loading.gif'
 import ProgressSteps from '../../components/ProgressSteps/index'; // Import the Stepper component
 import LoadingButton from '@mui/lab/LoadingButton';
+import InformationIcon from "../../components/InformationIcon";
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
@@ -330,7 +331,10 @@ const Analysis = () => {
             <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"2rem" }} alt="loading..." />
             <Timer/>
             </div>}
-          {showProgressSteps && <div className="progress-stepper"><ProgressSteps activeStep={currentStep}/></div>}
+          {showProgressSteps && <div className="progress-stepper">
+          <ProgressSteps activeStep={currentStep}/>
+          <InformationIcon/>
+          </div>}
         </div>
       </div>
       <div className="analysisContent">
