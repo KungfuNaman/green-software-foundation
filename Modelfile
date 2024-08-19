@@ -1,1 +1,1 @@
-FROM "fineTunedModel.gguf"
+FROM ./fineTunedModel.gguf

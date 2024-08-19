@@ -23,7 +23,7 @@ ollama pull llama2
 
 # Create a new model using the provided Modelfile
 echo "Creating a new model with the name 'fineTunedModel'..."
-ollama create "fineTunedModel" -f /root/Modelfile
+ollama create fineTunedModel -f /root/Modelfile
 
 echo "Fine tuned model up and running in ollama"
 
