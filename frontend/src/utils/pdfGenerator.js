@@ -54,7 +54,6 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
         {title: 'Practice:', text: data.practice},
         {title: 'If Followed:', text: data.result},
         {title: 'Suggestion:', text: data.suggestion},
-        // { title: 'Suggestion:', text: data.suggestion === 'No' ? `Please ${data.practice}` : '-' },
         {title: 'Explanation:', text: data.explanation}
     ];
 
@@ -74,13 +73,10 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
         // add img
         if (item.title === 'If Followed:' && item.text === "Yes") {
             doc.addImage(check_img, 'JPG', 178, 13, 18, 18);
-            // yOffset += 25;
         } else if (item.title === 'If Followed:' && item.text === "No") {
             doc.addImage(cross_img, 'JPG', 178, 13, 18, 18);
-            // yOffset += 25;
         } else if (item.title === 'If Followed:' && item.text === "Not Applicable") {
             doc.addImage(warning_img, 'PNG', 178, 13, 16, 16);
-            // yOffset += 25;
         }
     });
 
@@ -111,9 +107,8 @@ const addSummaryPage = (doc) => {
     doc.text(lines, 20, 40);
 };
 
-
 // Function to add the Overview page
-const addOverviewPage = (doc, practicesSummary) => {
+const addOverviewPage = (doc, practicesSummary, apiResponse) => {
     doc.addPage();
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 10;
@@ -123,7 +118,7 @@ const addOverviewPage = (doc, practicesSummary) => {
     doc.setFont('Arial', 'bold');
     doc.setFontSize(20);
     doc.setTextColor(0, 0, 0);
-    doc.text('Overview', doc.internal.pageSize.getWidth() / 2, yOffset, {align: 'center'});
+    doc.text('Overview', doc.internal.pageSize.getWidth() / 2, yOffset, { align: 'center' });
 
     yOffset += 15;
 
@@ -331,6 +326,45 @@ const addImprovementPlanPage = (doc, apiResponse) => {
     });
 };
 
+// Function to add the new "Analysis of Software Architecture Document" page
+const addAnalysisPage = (doc) => {
+    doc.addPage();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 10;
+    let yOffset = 25;
+
+    // Heading for the page
+    doc.setFont('Arial', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Analysis of Software Architecture Document', pageWidth / 2, yOffset, {align: 'center'});
+
+    yOffset += 20;
+
+    // Explanation text with word wrapping
+    doc.setFont('Arial', 'normal');
+    doc.setFontSize(16);
+    const analysisText = "The software architecture document will be evaluated based on whether it follows the mentioned green practices or doesn't follow them or if the green practices are not applicable for a particular document. The following symbols are used to present the final result of query:";
+    const wrappedText = doc.splitTextToSize(analysisText, pageWidth - 2 * margin); // Wrap text to fit within the page width
+    doc.text(wrappedText, margin, yOffset);
+
+    yOffset += wrappedText.length * 10; // Adjust space based on the height of the wrapped text
+
+    // Symbols explanation
+    doc.addImage(check_img, 'JPG', margin, yOffset, 10, 10);
+    doc.text(" - Yes", margin + 15, yOffset + 8);
+
+    yOffset += 20;
+
+    doc.addImage(cross_img, 'JPG', margin, yOffset, 10, 10);
+    doc.text(" - No", margin + 15, yOffset + 8);
+
+    yOffset += 20;
+
+    doc.addImage(warning_img, 'PNG', margin, yOffset, 10, 10);
+    doc.text(" - Not applicable", margin + 15, yOffset + 8);
+};
+
 // Function to add table of contents page
 const addTableOfContentsPage = (doc, pageNumbers) => {
     doc.addPage();
@@ -347,7 +381,7 @@ const addTableOfContentsPage = (doc, pageNumbers) => {
         {title: 'Overview', page: pageNumbers.overview},
         {title: 'Graphical Evaluation', page: pageNumbers.graphicalEvaluation},
         {title: 'Improvement Plan', page: pageNumbers.improvementPlan},
-        {title: 'Ranking of Document', page: pageNumbers.ranking},
+        {title: 'Analysis of Software Architecture Document', page: pageNumbers.analysisPage}, // Added the new page
         {title: 'Evaluation', page: pageNumbers.evaluation}
     ];
 
@@ -363,7 +397,7 @@ const generatePDF = async (analysisData) => {
     let pageNumber = 1;
 
     // Calculate total pages for footer
-    const totalPages = apiResponse.length + 6; // 1 for title page, 1 for summary, 1 for table of contents, 1 for green practices, 1 for overview, 1 for graphical evaluation, 1 for improvement plan, 1 for ranking, and 1 for each query
+    const totalPages = apiResponse.length + 7; // 1 for title page, 1 for summary, 1 for table of contents, 1 for green practices, 1 for overview, 1 for graphical evaluation, 1 for improvement plan, 1 for analysis page, 1 for each query
 
     // Draw the title page with light leaf green background and dark green title text
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -392,12 +426,12 @@ const generatePDF = async (analysisData) => {
     // Add table of contents page
     addTableOfContentsPage(doc, {
         summary: summaryPageNumber,
-        greenPractices: summaryPageNumber + 1,
-        overview: summaryPageNumber + 2,
-        graphicalEvaluation: summaryPageNumber + 3,
-        improvementPlan: summaryPageNumber + 4,
-        ranking: summaryPageNumber + 5,
-        evaluation: summaryPageNumber + 6
+        greenPractices: summaryPageNumber + 2,
+        overview: summaryPageNumber + 3,
+        graphicalEvaluation: summaryPageNumber + 4,
+        improvementPlan: summaryPageNumber + 5,
+        analysisPage: summaryPageNumber + 6, // Adjusted page number for the new page
+        evaluation: summaryPageNumber + 7
     });
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
@@ -419,7 +453,7 @@ const generatePDF = async (analysisData) => {
             {pillar: 'User Impact', followed: '0/1'}
         ]
     };
-    addOverviewPage(doc, practicesSummary);
+    addOverviewPage(doc, practicesSummary, apiResponse);
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 
@@ -428,90 +462,15 @@ const generatePDF = async (analysisData) => {
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 
-
-
     // Add Improvement Plan page
     addImprovementPlanPage(doc, apiResponse);
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 
-    // Add Ranking of document based on Sustainability
-    doc.addPage();
+    // Add new Analysis page
+    addAnalysisPage(doc);
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
-    doc.setFont('Arial', 'bold');
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0); // Black text color
-    doc.text('Ranking of document based on Sustainability', 10, 20);
-    doc.setFont('Arial', 'normal');
-
-    let yOffset = 30;
-    const rank = `${apiResponse.filter(practice => practice.result === 'Yes').length}/${apiResponse.length}`;
-    doc.text(`Rank: ${rank}`, 10, yOffset);
-
-    // Generate the table content
-    const tableData = {
-        'Resource Optimization': {followed: [], notFollowed: []},
-        'Data Efficiency': {followed: [], notFollowed: []},
-        'Performance Management': {followed: [], notFollowed: []},
-        'Security': {followed: [], notFollowed: []},
-        'User Impact': {followed: [], notFollowed: []}
-    };
-
-    apiResponse.forEach((practice) => {
-        const category = practice.category;
-        if (practice.result === 'Yes') {
-            tableData[category].followed.push(practice.practice);
-        } else {
-            tableData[category].notFollowed.push(practice.practice);
-        }
-    });
-
-    // Define table headers
-    const headers = [
-        {title: 'Categories', dataKey: 'category'},
-        {title: 'Practices being followed', dataKey: 'followed'},
-        {title: 'Count of Practices being followed', dataKey: 'followedCount'},
-        {title: 'Practices not followed', dataKey: 'notFollowed'},
-        {title: 'Count of Practices not followed', dataKey: 'notFollowedCount'}
-    ];
-
-    // Prepare table rows
-    const rows = [];
-    Object.keys(tableData).forEach((category) => {
-        rows.push({
-            category,
-            followed: tableData[category].followed.join(', '),
-            followedCount: tableData[category].followed.length,
-            notFollowed: tableData[category].notFollowed.join(', '),
-            notFollowedCount: tableData[category].notFollowed.length
-        });
-    });
-
-    // Draw the table
-    yOffset += 20;
-    doc.setFontSize(10);
-    doc.autoTable({
-        startY: yOffset,
-        head: [headers],
-        body: rows.map(row => [
-            row.category,
-            row.followed,
-            row.followedCount,
-            row.notFollowed,
-            row.notFollowedCount
-        ]),
-        margin: {left: 10, right: 10},
-        styles: {
-            fontSize: 10,
-            textColor: [0, 0, 0], // black text color
-            lineColor: [0, 0, 0], // black border color
-            lineWidth: 0.1,
-        },
-        headStyles: {
-            fillColor: [200, 200, 200], // light gray background for header
-        },
-    });
 
     // Add Evaluation section
     doc.addPage();
@@ -529,7 +488,7 @@ const generatePDF = async (analysisData) => {
             pageNumber++;
             drawFooter(doc, pageNumber, totalPages);
         }
-        yOffset = 40;
+        let yOffset = 40;
         yOffset = drawQuery(doc, item, yOffset, index + 1); // Pass the query number to drawQuery function
         drawBox(doc, yOffset);
     });
