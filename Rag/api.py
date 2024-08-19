@@ -133,7 +133,7 @@ async def ask_ecodoc(file: UploadFile):
                 os.remove(document_path)
             # if os.path.exists(result_path):
             #     os.remove(result_path)
-            db.delete_collection()
+            # db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")
 
@@ -144,11 +144,11 @@ async def get_sample_results(doc_name: str):
 
     async def result_generator():
         try:
-            with open(sample_results_path, 'r') as file:
+            with open(sample_results_path, 'r', encoding='utf-8') as file:
                 sample_results = json.load(file)
                 for row in sample_results.get(doc_name, []):
                     yield json.dumps(row) + "\n"
-                    await asyncio.sleep(1)  # Add a 3-second delay between each row
+                    await asyncio.sleep(0)  # Add a 3-second delay between each row
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
