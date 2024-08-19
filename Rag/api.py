@@ -131,8 +131,8 @@ async def ask_ecodoc(file: UploadFile):
                 os.remove(combined_path)
             if os.path.exists(document_path):
                 os.remove(document_path)
-            if os.path.exists(result_path):
-                os.remove(result_path)
+            # if os.path.exists(result_path):
+            #     os.remove(result_path)
             db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")
