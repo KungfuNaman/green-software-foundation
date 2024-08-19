@@ -36,7 +36,7 @@ const Analysis = () => {
     const fetchData = async () => {
       const sample_doc_list = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"];
       if (doc_name && sample_doc_list.includes(doc_name)) {
-        setTotalQuestions(37);
+        // setTotalQuestions(37);
         setShowProgressSteps(false);
         try {
           setRunTimer(true);
