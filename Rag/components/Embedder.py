@@ -14,8 +14,9 @@ class Embedder:
             self.init_remote_embedder()
 
     def init_local_embedder(self, model_name):
-        self.embedder = OllamaEmbeddings(model=model_name, base_url="http://ollama:11434")
-        # self.embedder = OllamaEmbeddings(model=model_name)
+        OLLAMA_URL = os.getenv("OLLAMA_URL")
+
+        self.embedder = OllamaEmbeddings(model=model_name,base_url=OLLAMA_URL)
 
     def init_remote_embedder(self):
         self.embedder = HFEmbedder()

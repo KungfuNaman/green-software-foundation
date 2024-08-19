@@ -8,7 +8,6 @@ from tenacity import retry, wait_fixed, stop_after_attempt
 class Generator:
     HF_TOKEN = os.getenv("HUGGINGFACE_API_TOKEN")
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
     def __init__(self, run_local=True, sota_model=False, model_name=os.getenv("LLM_MODEL"), instruction=None):
         self.run_local = run_local
         self.sota_model = sota_model
@@ -27,6 +26,8 @@ class Generator:
             self.init_remote_generator()
 
     def init_local_generator(self, model_name, template, instruction):
+        OLLAMA_URL = os.getenv("OLLAMA_URL")
+
         self.model = Ollama(
             model=model_name,
             mirostat_tau=5,             # Default = 5.0
@@ -39,7 +40,7 @@ class Generator:
             verbose=False,
             template=template,
             system=instruction,
-            base_url="http://ollama:11434"
+            base_url=OLLAMA_URL
         )
 
     @staticmethod

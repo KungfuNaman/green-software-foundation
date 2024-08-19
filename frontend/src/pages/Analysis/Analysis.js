@@ -7,9 +7,9 @@ import ResultPieChart from "../../components/ResultPieChart/ResultPieChart";
 import { json, useLocation, useNavigate } from "react-router-dom";
 import Timer from "../../components/AddDocument/Timer";
 import { handleDownloadPDF } from "../../utils/pdfGenerator";
-import Bubble from '../../components/Bubble/index'; // Import the Bubble component
 import loadingGif from '../../assets/loading.gif'
 import ProgressSteps from '../../components/ProgressSteps/index'; // Import the Stepper component
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const Analysis = () => {
   const [progressValue, setProgressValue] = useState(0);
@@ -24,7 +24,6 @@ const Analysis = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [documentUrl, setDocumentUrl] = useState("");
   const [filterType, setFilterType] = useState("all");
-  const [showBubble, setShowBubble] = useState(false); // State to control bubble visibility
   const [currentStep, setCurrentStep] = useState(0);
   const [showProgressSteps, setShowProgressSteps] = useState(true);
   const [chartImages, setChartImages] = useState({ barChart: "", pieChart: "" });
@@ -74,6 +73,12 @@ const Analysis = () => {
                   });
                 } catch (e) {
                   console.error('Error parsing JSON:', e);
+                  const errorContainer = document.getElementById('error-container');
+                  if (errorContainer) {
+                    const newMessage = document.createElement('p');
+                    newMessage.textContent = `Error parsing JSON: '${e}'`;
+                    errorContainer.appendChild(newMessage);
+                  }
                 }
               }
               receivedText = receivedText.slice(boundary + 1);
@@ -82,6 +87,12 @@ const Analysis = () => {
           }
         } catch (error) {
           console.error("Error fetching data:", error);
+          const errorContainer = document.getElementById('error-container');
+          if (errorContainer) {
+            const newMessage = document.createElement('p');
+            newMessage.textContent = `Error fetching data: '${error}'`;
+            errorContainer.appendChild(newMessage);
+          }
         } finally {
           setRunTimer(false);
         }
@@ -127,8 +138,22 @@ const Analysis = () => {
                   else if (jsonObject.type === "indicator"){
                     setCurrentStep(jsonObject.payload.step);
                   }
+                  else if (jsonObject.type === "error"){
+                    const errorContainer = document.getElementById('error-container');
+                    if (errorContainer) {
+                      const newMessage = document.createElement('p');
+                      newMessage.textContent = jsonObject.payload.message;
+                      errorContainer.appendChild(newMessage);
+                    }
+                  }
                 } catch (e) {
                   console.error('Error parsing JSON:', e);
+                  const errorContainer = document.getElementById('error-container');
+                  if (errorContainer) {
+                    const newMessage = document.createElement('p');
+                    newMessage.textContent = `Error parsing JSON: '${e}'`;
+                    errorContainer.appendChild(newMessage);
+                  }
                 }
               }
               receivedText = receivedText.slice(boundary + 1);
@@ -155,6 +180,12 @@ const Analysis = () => {
 
         } catch (error) {
           console.error("Error fetching data:", error);
+          const errorContainer = document.getElementById('error-container');
+          if (errorContainer) {
+            const newMessage = document.createElement('p');
+            newMessage.textContent = `Error fetching data: '${error}'`;
+            errorContainer.appendChild(newMessage);
+          }
         } finally {
           setRunTimer(false);
         }
@@ -206,10 +237,6 @@ const Analysis = () => {
     const length = responseArr.length;
     const value = Math.round((length / totalQuestions) * 100);
     setProgressValue(value); // Uncomment this line if you want to update progressValue
-    // if (value === 100) {
-      setShowBubble(true);
-      setTimeout(() => setShowBubble(false), 3000); // Hide the bubble after 3 seconds
-    // }
   };
 
   const changeBarChart = (responseArr) => {
@@ -296,20 +323,38 @@ const Analysis = () => {
       <div className="analysis-header">
         <button onClick={handleBackButtonClick} className="analysis-back-button">Return</button>
         <button className="analysis-preview-button" onClick={handlePreviewButtonClick}>View/Hide Your Document</button>
-        {showProgressSteps && <ProgressSteps activeStep={currentStep}/>}
         <h2 className="analysis-title">Results for: {doc_name}</h2>
-        {runTimer && <div className="analysis-timer">
-          <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"5rem" }} alt="loading..." />
-          <Timer/>
-          </div>}
+        <div className="analysis-progress">
+          <div id="error-container"></div>
+          {runTimer && <div className="analysis-timer">
+            <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"2rem" }} alt="loading..." />
+            <Timer/>
+            </div>}
+          {showProgressSteps && <div className="progress-stepper"><ProgressSteps activeStep={currentStep}/></div>}
+        </div>
       </div>
       <div className="analysisContent">
         <div className="left-container">
           <h3>Progress Bar</h3>
           {progressValue < 100 && <ProgressTimer value={progressValue} />}
-          {progressValue >= 100 && <p>All results generated! ~ Download your results PDF below after the final processing steps complete.</p>}
-          {progressValue >= 100 && <button className="analysis-download-button" disabled={runTimer} onClick={handleDownload}>Download Results PDF</button>}
-          {showBubble && <Bubble />} {/* Show the bubble animation */}
+          {progressValue >= 100 && <p>All results generated! ~ Download your Eco Doc Sustainability Report below.</p>}
+          {progressValue >= 100 && <LoadingButton sx={{
+            backgroundColor: '#aecc53',
+            borderRadius: '4px',
+            color: '#0b161f',
+            fontWeight: 700,
+            padding: '15px 34px',
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            cursor: 'pointer',
+            marginLeft: '1em',
+            marginTop: '4em',
+            marginBottom: '6em',
+            '&:disabled': {
+              backgroundColor: 'grey',
+              color: '#0b161f',
+              cursor: 'not-allowed',
+            },}}loading={runTimer} loadingPosition="start" variant="outlined" onClick={handleDownload}>Download Report</LoadingButton>}
           <ResultPieChart
           categoryWiseResult={categoryWiseResult}
           apiResponse={apiResponse}
@@ -327,6 +372,9 @@ const Analysis = () => {
             <Button className="projectType" onClick={handleCloudButton} variant={activeButton === 'button3' ? 'contained' : 'outlined'}>
               Cloud
             </Button>
+            {activeButton === 'button1' && <h4 className="filterText">Showing all results - click on 'Web' or 'Cloud' to filter by query type</h4>}
+            {activeButton === 'button2' && <h4 className="filterText">Showing results for web-related queries</h4>}
+            {activeButton === 'button3' && <h4 className="filterText">Showing results for cloud-related queries</h4>}
           </div>
           <div className="charts">
             <ResultBarChart

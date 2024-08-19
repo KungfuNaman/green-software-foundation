@@ -51,7 +51,7 @@ export default function ResultTabs({ tabularData }) {
   }));
 
   const formatSuggestion = (row) => {
-    if(row.result === "Yes"){
+    if(row.result === "Yes" && row.suggestion){
       return row.suggestion;
     }
     else if (row.result === "Not Applicable"){
