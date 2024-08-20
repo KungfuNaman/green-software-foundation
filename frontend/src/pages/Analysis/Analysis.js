@@ -26,7 +26,6 @@ const Analysis = () => {
   const [documentUrl, setDocumentUrl] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [currentStep, setCurrentStep] = useState(0);
-  const [showProgressSteps, setShowProgressSteps] = useState(true);
   const [chartImages, setChartImages] = useState({ barChart: "", pieChart: "" });
 
   
@@ -38,7 +37,7 @@ const Analysis = () => {
       const sample_doc_list = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"];
       if (doc_name && sample_doc_list.includes(doc_name)) {
         // setTotalQuestions(37);
-        setShowProgressSteps(false);
+        setCurrentStep(2);
         try {
           setRunTimer(true);
           const response = await fetch(`http://localhost:8000/get_sample_results/${doc_name}`, {
@@ -96,6 +95,7 @@ const Analysis = () => {
           }
         } finally {
           setRunTimer(false);
+          setCurrentStep(3);
         }
       } else if (doc_name && file) {
         try {
@@ -331,7 +331,7 @@ const Analysis = () => {
             <img src={loadingGif} style={{position: "relative", overflow: "hidden",height:"2rem" }} alt="loading..." />
             <Timer/>
             </div>}
-          {showProgressSteps && <div className="progress-stepper">
+          {<div className="progress-stepper">
           <ProgressSteps activeStep={currentStep}/>
           <InformationIcon/>
           </div>}
