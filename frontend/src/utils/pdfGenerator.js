@@ -50,7 +50,7 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
     const content = [
         {title: `Query ${queryNumber}:`, text: data.query},
         {title: 'Category:', text: data.category},  // Adding category information
-        {title: 'Practice:', text: data.practice},
+        {title: 'Pattern:', text: data.practice},
         {title: 'If Followed:', text: data.result},
         {title: 'Suggestion:', text: data.suggestion},
         {title: 'Explanation:', text: data.explanation}
@@ -68,21 +68,16 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
         const textLines = doc.splitTextToSize(item.text, maxWidth - 30); // Adjust width for text wrapping
         doc.text(textLines, margin + 30, yOffset);
 
-        // Check if the current content is "If Followed:"
+        // Add image next to "If Followed" text with a small gap
         if (item.title === 'If Followed:') {
-            // Calculate the xOffset for the image based on the text width
-            const textWidth = doc.getTextWidth(textLines[0]);
-            const imgXOffset = margin + 30 + textWidth + 5; // 5 pixels padding after text
-
-            // Add image directly after the text with reduced size
-            const imgWidth = 12;  // Adjust the width to reduce the size
-            const imgHeight = 12; // Adjust the height to reduce the size
+            let resultTextWidth = doc.getTextWidth(item.text);
+            let imgXOffset = margin + 30 + resultTextWidth + 5; // Add a small gap
             if (item.text === "Yes") {
-                doc.addImage(check_img, 'JPG', imgXOffset, yOffset - 8, imgWidth, imgHeight);
+                doc.addImage(check_img, 'JPG', imgXOffset, yOffset - 7, 10, 10); // Adjusted Y offset for image alignment
             } else if (item.text === "No") {
-                doc.addImage(cross_img, 'JPG', imgXOffset, yOffset - 8, imgWidth, imgHeight);
+                doc.addImage(cross_img, 'JPG', imgXOffset, yOffset - 7, 10, 10);
             } else if (item.text === "Not Applicable") {
-                doc.addImage(warning_img, 'PNG', imgXOffset, yOffset - 8, imgWidth, imgHeight);
+                doc.addImage(warning_img, 'PNG', imgXOffset, yOffset - 7, 10, 10);
             }
         }
 
@@ -98,9 +93,9 @@ const addSummaryPage = (doc) => {
   
     This project is motivated by the growing environmental footprint of the software industry, which is expected to significantly increase global carbon emissions. Current frameworks lack tools to evaluate sustainability based on design documents. EcoDoc Sense addresses this gap, helping developers prioritize sustainability alongside other design considerations.
   
-    The methodology involves analyzing software architecture documents to rank their adherence to green practices. These practices are categorized into areas like resource optimization, data efficiency, performance management, security, and user impact. The project provides developers with insights to optimize designs for sustainability.
+    The methodology involves analyzing software architecture documents to rank their adherence to green patterns. These patterns are categorized into areas like resource optimization, data efficiency, performance management, security, and user impact. The project provides developers with insights to optimize designs for sustainability.
   
-    To rank the documents, EcoDoc Sense uses Large Language Models (LLMs) and a structured retrieval process. The system identifies relevant green practices in documents and generates a report based on the LLM results evaluating the design’s sustainability. This approach highlights improvement areas and guides developers in implementing sustainable practices effectively.`;
+    To rank the documents, EcoDoc Sense uses Large Language Models (LLMs) and a structured retrieval process. The system identifies relevant green patterns in documents and generates a report based on the LLM results evaluating the design’s sustainability. This approach highlights improvement areas and guides developers in implementing sustainable patterns effectively.`;
 
     doc.addPage();
     doc.setFont('Arial', 'bold');
@@ -130,9 +125,9 @@ const addOverviewPage = (doc, practicesSummary) => {
 
     yOffset += 15;
 
-    // Green practices followed
+    // Green patterns followed
     doc.setFontSize(14);
-    doc.text('Green practices followed', margin, yOffset);
+    doc.text('Green patterns followed', margin, yOffset);
 
     yOffset += 10;
     doc.setFontSize(14);
@@ -143,7 +138,7 @@ const addOverviewPage = (doc, practicesSummary) => {
     // Table headers
     doc.setFont('Arial', 'bold');
     doc.text('Categories', margin, yOffset);
-    doc.text('Practices followed', pageWidth / 2, yOffset);
+    doc.text('Patterns followed', pageWidth / 2, yOffset);
 
     yOffset += 10;
 
@@ -162,7 +157,7 @@ const addOverviewPage = (doc, practicesSummary) => {
     });
 };
 
-// Function to add the Green Practices for Sustainable Software page
+// Function to add the Green Patterns for Sustainable Software page
 const addGreenPracticesPage = (doc) => {
     doc.addPage();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -177,7 +172,7 @@ const addGreenPracticesPage = (doc) => {
     doc.setFont('Arial', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
-    doc.text('Categorization of Green Practices', pageWidth / 2, yOffset, {align: 'center'});
+    doc.text('Categorization of Green Patterns', pageWidth / 2, yOffset, {align: 'center'});
     yOffset += 15; // Space after page heading
 
     // Content for each box
@@ -196,7 +191,7 @@ const addGreenPracticesPage = (doc) => {
         },
         {
             title: 'Security',
-            text: 'Ensuring robust security in software prevents energy-intensive breaches or inefficiencies caused by vulnerabilities, aligning with green software practices by maintaining system integrity without excessive resource use.'
+            text: 'Ensuring robust security in software prevents energy-intensive breaches or inefficiencies caused by vulnerabilities, aligning with green software patterns by maintaining system integrity without excessive resource use.'
         },
         {
             title: 'User Impact',
@@ -228,7 +223,7 @@ const addGreenPracticesPage = (doc) => {
     });
 };
 
-const addGraphicalEvaluationPage = async (doc, docName, chartImages) => {
+const addGraphicalEvaluationPage = (doc, docName, chartImages) => {
     let isSampleFile = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"].includes(docName);
     let yOffset = 38;
     doc.addPage();
@@ -248,37 +243,23 @@ const addGraphicalEvaluationPage = async (doc, docName, chartImages) => {
         doc.addImage(sampleBarChart, 'PNG', 25, yOffset, 140, 98);
         doc.addImage(samplePieChart, 'PNG', 25, yOffset + 120, 140, 98);
     } else {
-        const barChart = await fetchImageAsBase64('BarChart.png');
-        const pieChart = await fetchImageAsBase64('PieChart.png');
+        const barChart = chartImages.barChart;
+        const pieChart = chartImages.pieChart;
         doc.addImage(barChart, 'PNG', 25, yOffset, 140, 98);
         doc.addImage(pieChart, 'PNG', 25, yOffset + 120, 140, 98);
     }
 };
-async function fetchImageAsBase64(imageName) {
-    const response = await fetch(`http://localhost:8000/getImage/${imageName}`);
-    if (!response.ok) {
-        throw new Error(`Failed to fetch image: ${response.statusText}`);
-    }
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-    });
-}
 
 // Function to add the Improvement Plan page
 const addImprovementPlanPage = (doc, apiResponse) => {
+    doc.addPage();
     const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 10;
     const boxWidth = pageWidth - 2 * margin;
     const headingHeight = 12;
     let yOffset = 25; // Initial Y offset for the first box
 
     // Heading for the page
-    doc.addPage();  // Ensure starting on a new page
     doc.setFont('Arial', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
@@ -302,15 +283,35 @@ const addImprovementPlanPage = (doc, apiResponse) => {
 
     // Content for each box
     const practices = [
-        {title: 'Resource Optimization', improvements: improvementsSummary['Resource Optimization']},
-        {title: 'Data Efficiency', improvements: improvementsSummary['Data Efficiency']},
-        {title: 'Performance Management', improvements: improvementsSummary['Performance Management']},
-        {title: 'Security', improvements: improvementsSummary['Security']},
-        {title: 'User Impact', improvements: improvementsSummary['User Impact']}
+        {
+            title: 'Resource Optimization',
+            improvements: improvementsSummary['Resource Optimization'],
+            count: improvementsSummary['Resource Optimization'].length
+        },
+        {
+            title: 'Data Efficiency',
+            improvements: improvementsSummary['Data Efficiency'],
+            count: improvementsSummary['Data Efficiency'].length
+        },
+        {
+            title: 'Performance Management',
+            improvements: improvementsSummary['Performance Management'],
+            count: improvementsSummary['Performance Management'].length
+        },
+        {
+            title: 'Security',
+            improvements: improvementsSummary['Security'],
+            count: improvementsSummary['Security'].length
+        },
+        {
+            title: 'User Impact',
+            improvements: improvementsSummary['User Impact'],
+            count: improvementsSummary['User Impact'].length
+        }
     ];
 
     practices.forEach((practice) => {
-        // Calculate the height needed for the box
+        // calc box height
         doc.setFont('Arial', 'normal');
         doc.setFontSize(14);
         const improvementText = practice.improvements.join("\n");
@@ -318,30 +319,30 @@ const addImprovementPlanPage = (doc, apiResponse) => {
         const textHeight = textLines.length * 6;
         const boxHeight = headingHeight + textHeight + 10;
 
-        // Check if there is enough space on the page, if not, add a new page
-        if (yOffset + boxHeight > pageHeight - margin) {
+        // check if page space enough
+        if (yOffset + boxHeight > doc.internal.pageSize.getHeight() - margin) {
             doc.addPage();
-            yOffset = margin;  // Reset yOffset for the new page
+            yOffset = margin;
         }
 
-        // Draw the box border
+        // draw box border
         doc.setLineWidth(0.5);
         doc.rect(margin, yOffset, boxWidth, boxHeight);
 
-        // Draw the heading row
+        // draw heading row
         doc.setFont('Arial', 'bold');
         doc.setFontSize(14);
-        doc.text(practice.title, margin + 5, yOffset + headingHeight - 2);
+        doc.text(`${practice.title} - ${practice.count} improvements identified`, margin + 5, yOffset + headingHeight - 2);
 
-        // Draw a line between the heading and content
+        // draw a line between the heading and content
         doc.line(margin, yOffset + headingHeight + 1, margin + boxWidth, yOffset + headingHeight + 1);
 
-        // Draw the content row
+        // draw content row
         doc.setFont('Arial', 'normal');
         doc.setFontSize(14);
         doc.text(textLines, margin + 5, yOffset + headingHeight + 10);
 
-        // Space after each box
+        // space after each box
         yOffset += boxHeight + 10;
     });
 };
@@ -364,7 +365,7 @@ const addAnalysisPage = (doc) => {
     // Explanation text with word wrapping
     doc.setFont('Arial', 'normal');
     doc.setFontSize(16);
-    const analysisText = "The software architecture document will be evaluated based on whether it follows the mentioned green practices or doesn't follow them or if the green practices are not applicable for a particular document. The following symbols are used to present the final result of query:";
+    const analysisText = "The software architecture document will be evaluated based on whether it follows the mentioned green patterns or doesn't follow them or if the green patterns are not applicable for a particular document. The following symbols are used to present the final result of query:";
     const wrappedText = doc.splitTextToSize(analysisText, pageWidth - 2 * margin); // Wrap text to fit within the page width
     doc.text(wrappedText, margin, yOffset);
 
@@ -372,17 +373,17 @@ const addAnalysisPage = (doc) => {
 
     // Symbols explanation
     doc.addImage(check_img, 'JPG', margin, yOffset, 10, 10);
-    doc.text(" - Yes", margin + 15, yOffset + 8);
+    doc.text(" - The mentioned green pattern is being followed", margin + 15, yOffset + 8);
 
     yOffset += 20;
 
     doc.addImage(cross_img, 'JPG', margin, yOffset, 10, 10);
-    doc.text(" - No", margin + 15, yOffset + 8);
+    doc.text(" - The mentioned green pattern is not being followed", margin + 15, yOffset + 8);
 
     yOffset += 20;
 
     doc.addImage(warning_img, 'PNG', margin, yOffset, 10, 10);
-    doc.text(" - Not applicable", margin + 15, yOffset + 8);
+    doc.text(" - The mentioned green pattern is not applicable for this architecture document", margin + 15, yOffset + 8);
 };
 
 // Function to add table of contents page
@@ -394,10 +395,10 @@ const addTableOfContentsPage = (doc, pageNumbers) => {
     doc.text('Table of contents', doc.internal.pageSize.getWidth() / 2, 20, {align: 'center'});
 
     doc.setFont('Arial', 'normal');
-    doc.setFontSize(12);
+    doc.setFontSize(14);
     doc.setTextColor(0, 0, 0); // Black text color
     const tocContent = [
-        {title: 'Categorization of Green Practices ', page: pageNumbers.greenPractices},
+        {title: 'Categorization of Green Patterns ', page: pageNumbers.greenPractices},
         {title: 'Overview', page: pageNumbers.overview},
         {title: 'Graphical Evaluation', page: pageNumbers.graphicalEvaluation},
         {title: 'Improvement Plan', page: pageNumbers.improvementPlan},
@@ -495,7 +496,7 @@ const generatePDF = async (analysisData) => {
     drawFooter(doc, pageNumber, totalPages);
 
     // Add Graphical Evaluation
-    await addGraphicalEvaluationPage(doc, docName, chartImages);
+    addGraphicalEvaluationPage(doc, docName, chartImages);
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 
