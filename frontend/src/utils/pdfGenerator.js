@@ -50,7 +50,7 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
     const content = [
         {title: `Query ${queryNumber}:`, text: data.query},
         {title: 'Category:', text: data.category},  // Adding category information
-        {title: 'Practice:', text: data.practice},
+        {title: 'Pattern:', text: data.practice},
         {title: 'If Followed:', text: data.result},
         {title: 'Suggestion:', text: data.suggestion},
         {title: 'Explanation:', text: data.explanation}
@@ -98,9 +98,9 @@ const addSummaryPage = (doc) => {
   
     This project is motivated by the growing environmental footprint of the software industry, which is expected to significantly increase global carbon emissions. Current frameworks lack tools to evaluate sustainability based on design documents. EcoDoc Sense addresses this gap, helping developers prioritize sustainability alongside other design considerations.
   
-    The methodology involves analyzing software architecture documents to rank their adherence to green practices. These practices are categorized into areas like resource optimization, data efficiency, performance management, security, and user impact. The project provides developers with insights to optimize designs for sustainability.
+    The methodology involves analyzing software architecture documents to rank their adherence to green patterns. These patterns are categorized into areas like resource optimization, data efficiency, performance management, security, and user impact. The project provides developers with insights to optimize designs for sustainability.
   
-    To rank the documents, EcoDoc Sense uses Large Language Models (LLMs) and a structured retrieval process. The system identifies relevant green practices in documents and generates a report based on the LLM results evaluating the design’s sustainability. This approach highlights improvement areas and guides developers in implementing sustainable practices effectively.`;
+    To rank the documents, EcoDoc Sense uses Large Language Models (LLMs) and a structured retrieval process. The system identifies relevant green patterns in documents and generates a report based on the LLM results evaluating the design’s sustainability. This approach highlights improvement areas and guides developers in implementing sustainable patterns effectively.`;
 
     doc.addPage();
     doc.setFont('Arial', 'bold');
@@ -132,7 +132,7 @@ const addOverviewPage = (doc, practicesSummary) => {
 
     // Green practices followed
     doc.setFontSize(14);
-    doc.text('Green practices followed', margin, yOffset);
+    doc.text('Green patterns followed', margin, yOffset);
 
     yOffset += 10;
     doc.setFontSize(14);
@@ -143,7 +143,7 @@ const addOverviewPage = (doc, practicesSummary) => {
     // Table headers
     doc.setFont('Arial', 'bold');
     doc.text('Categories', margin, yOffset);
-    doc.text('Practices followed', pageWidth / 2, yOffset);
+    doc.text('Patterns followed', pageWidth / 2, yOffset);
 
     yOffset += 10;
 
@@ -177,7 +177,7 @@ const addGreenPracticesPage = (doc) => {
     doc.setFont('Arial', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
-    doc.text('Categorization of Green Practices', pageWidth / 2, yOffset, {align: 'center'});
+    doc.text('Categorization of Green Patterns', pageWidth / 2, yOffset, {align: 'center'});
     yOffset += 15; // Space after page heading
 
     // Content for each box
@@ -196,7 +196,7 @@ const addGreenPracticesPage = (doc) => {
         },
         {
             title: 'Security',
-            text: 'Ensuring robust security in software prevents energy-intensive breaches or inefficiencies caused by vulnerabilities, aligning with green software practices by maintaining system integrity without excessive resource use.'
+            text: 'Ensuring robust security in software prevents energy-intensive breaches or inefficiencies caused by vulnerabilities, aligning with green software patterns by maintaining system integrity without excessive resource use.'
         },
         {
             title: 'User Impact',
@@ -302,11 +302,31 @@ const addImprovementPlanPage = (doc, apiResponse) => {
 
     // Content for each box
     const practices = [
-        {title: 'Resource Optimization', improvements: improvementsSummary['Resource Optimization']},
-        {title: 'Data Efficiency', improvements: improvementsSummary['Data Efficiency']},
-        {title: 'Performance Management', improvements: improvementsSummary['Performance Management']},
-        {title: 'Security', improvements: improvementsSummary['Security']},
-        {title: 'User Impact', improvements: improvementsSummary['User Impact']}
+        {
+            title: 'Resource Optimization',
+            improvements: improvementsSummary['Resource Optimization'],
+            count: improvementsSummary['Resource Optimization'].length
+        },
+        {
+            title: 'Data Efficiency',
+            improvements: improvementsSummary['Data Efficiency'],
+            count: improvementsSummary['Data Efficiency'].length
+        },
+        {
+            title: 'Performance Management',
+            improvements: improvementsSummary['Performance Management'],
+            count: improvementsSummary['Performance Management'].length
+        },
+        {
+            title: 'Security',
+            improvements: improvementsSummary['Security'],
+            count: improvementsSummary['Security'].length
+        },
+        {
+            title: 'User Impact',
+            improvements: improvementsSummary['User Impact'],
+            count: improvementsSummary['User Impact'].length
+        }
     ];
 
     practices.forEach((practice) => {
@@ -328,10 +348,10 @@ const addImprovementPlanPage = (doc, apiResponse) => {
         doc.setLineWidth(0.5);
         doc.rect(margin, yOffset, boxWidth, boxHeight);
 
-        // Draw the heading row
+        // Draw the heading row with dynamic count
         doc.setFont('Arial', 'bold');
         doc.setFontSize(14);
-        doc.text(practice.title, margin + 5, yOffset + headingHeight - 2);
+        doc.text(`${practice.title} - ${practice.count} improvements identified`, margin + 5, yOffset + headingHeight - 2);
 
         // Draw a line between the heading and content
         doc.line(margin, yOffset + headingHeight + 1, margin + boxWidth, yOffset + headingHeight + 1);
@@ -364,7 +384,7 @@ const addAnalysisPage = (doc) => {
     // Explanation text with word wrapping
     doc.setFont('Arial', 'normal');
     doc.setFontSize(16);
-    const analysisText = "The software architecture document will be evaluated based on whether it follows the mentioned green practices or doesn't follow them or if the green practices are not applicable for a particular document. The following symbols are used to present the final result of query:";
+    const analysisText = "The software architecture document will be evaluated based on whether it follows the mentioned green patterns or doesn't follow them or if the green patterns are not applicable for a particular document. The following symbols are used to present the final result of query:";
     const wrappedText = doc.splitTextToSize(analysisText, pageWidth - 2 * margin); // Wrap text to fit within the page width
     doc.text(wrappedText, margin, yOffset);
 
@@ -372,17 +392,17 @@ const addAnalysisPage = (doc) => {
 
     // Symbols explanation
     doc.addImage(check_img, 'JPG', margin, yOffset, 10, 10);
-    doc.text(" - Yes", margin + 15, yOffset + 8);
+    doc.text(" - Yes, green pattern is followed", margin + 15, yOffset + 8);
 
     yOffset += 20;
 
     doc.addImage(cross_img, 'JPG', margin, yOffset, 10, 10);
-    doc.text(" - No", margin + 15, yOffset + 8);
+    doc.text(" - No, green pattern is not followed", margin + 15, yOffset + 8);
 
     yOffset += 20;
 
     doc.addImage(warning_img, 'PNG', margin, yOffset, 10, 10);
-    doc.text(" - Not applicable", margin + 15, yOffset + 8);
+    doc.text(" - Not applicable, green pattern is not applicable", margin + 15, yOffset + 8);
 };
 
 // Function to add table of contents page
@@ -394,10 +414,10 @@ const addTableOfContentsPage = (doc, pageNumbers) => {
     doc.text('Table of contents', doc.internal.pageSize.getWidth() / 2, 20, {align: 'center'});
 
     doc.setFont('Arial', 'normal');
-    doc.setFontSize(12);
+    doc.setFontSize(14);
     doc.setTextColor(0, 0, 0); // Black text color
     const tocContent = [
-        {title: 'Categorization of Green Practices ', page: pageNumbers.greenPractices},
+        {title: 'Categorization of Green Patterns ', page: pageNumbers.greenPractices},
         {title: 'Overview', page: pageNumbers.overview},
         {title: 'Graphical Evaluation', page: pageNumbers.graphicalEvaluation},
         {title: 'Improvement Plan', page: pageNumbers.improvementPlan},
