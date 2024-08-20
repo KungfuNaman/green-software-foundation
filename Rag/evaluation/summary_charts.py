@@ -42,7 +42,7 @@ def generate_pie_chart(result_path):
         text.set_color('black')
     for autotext in autotexts:
         autotext.set_fontsize(15)
-        autotext.set_color('white')
+        autotext.set_color('black')
 
     # Position the legend on the right
     plt.legend(
