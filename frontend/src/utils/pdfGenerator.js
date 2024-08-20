@@ -218,7 +218,7 @@ const addGreenPracticesPage = (doc) => {
     });
 };
 
-const addGraphicalEvaluationPage = (doc, docName, chartImages) => {
+const addGraphicalEvaluationPage = async (doc, docName, chartImages) => {
     let isSampleFile = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"].includes(docName);
     let yOffset = 38;
     doc.addPage();
@@ -238,12 +238,25 @@ const addGraphicalEvaluationPage = (doc, docName, chartImages) => {
         doc.addImage(sampleBarChart, 'PNG', 25, yOffset, 140, 98);
         doc.addImage(samplePieChart, 'PNG', 25, yOffset + 120, 140, 98);
     } else {
-        const barChart = chartImages.barChart;
-        const pieChart = chartImages.pieChart;
+        const barChart = await fetchImageAsBase64('BarChart.png');
+        const pieChart = await fetchImageAsBase64('PieChart.png');
         doc.addImage(barChart, 'PNG', 25, yOffset, 140, 98);
         doc.addImage(pieChart, 'PNG', 25, yOffset + 120, 140, 98);
     }
 };
+async function fetchImageAsBase64(imageName) {
+    const response = await fetch(`http://localhost:8000/getImage/${imageName}`);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
+}
 
 // Function to add the Improvement Plan page
 const addImprovementPlanPage = (doc, apiResponse) => {
@@ -471,7 +484,7 @@ const generatePDF = async (analysisData) => {
     drawFooter(doc, pageNumber, totalPages);
 
     // Add Graphical Evaluation
-    addGraphicalEvaluationPage(doc, docName, chartImages);
+    await addGraphicalEvaluationPage(doc, docName, chartImages);
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 

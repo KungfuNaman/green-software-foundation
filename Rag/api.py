@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse,FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import json
@@ -165,6 +165,14 @@ async def get_eva_charts():
 
     return {"barChartPath": f"/{bar_chart_path}", "pieChartPath": f"/{pie_chart_path}"}
 
+@app.get("/getImage/{image_name}")
+async def get_image(image_name: str):
+    image_path = os.path.join(CURRENT_DIR, "Charts/", image_name)
+
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    return FileResponse(image_path)
 
 if __name__ == "__main__":
     import uvicorn
