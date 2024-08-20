@@ -67,16 +67,26 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
         doc.setFontSize(14);
         const textLines = doc.splitTextToSize(item.text, maxWidth - 30); // Adjust width for text wrapping
         doc.text(textLines, margin + 30, yOffset);
-        yOffset += lineHeight * textLines.length + 9; // Adjust space between sections
 
-        // add img
-        if (item.title === 'If Followed:' && item.text === "Yes") {
-            doc.addImage(check_img, 'JPG', 178, 13, 18, 18);
-        } else if (item.title === 'If Followed:' && item.text === "No") {
-            doc.addImage(cross_img, 'JPG', 178, 13, 18, 18);
-        } else if (item.title === 'If Followed:' && item.text === "Not Applicable") {
-            doc.addImage(warning_img, 'PNG', 178, 13, 16, 16);
+        // Check if the current content is "If Followed:"
+        if (item.title === 'If Followed:') {
+            // Calculate the xOffset for the image based on the text width
+            const textWidth = doc.getTextWidth(textLines[0]);
+            const imgXOffset = margin + 30 + textWidth + 5; // 5 pixels padding after text
+
+            // Add image directly after the text with reduced size
+            const imgWidth = 12;  // Adjust the width to reduce the size
+            const imgHeight = 12; // Adjust the height to reduce the size
+            if (item.text === "Yes") {
+                doc.addImage(check_img, 'JPG', imgXOffset, yOffset - 8, imgWidth, imgHeight);
+            } else if (item.text === "No") {
+                doc.addImage(cross_img, 'JPG', imgXOffset, yOffset - 8, imgWidth, imgHeight);
+            } else if (item.text === "Not Applicable") {
+                doc.addImage(warning_img, 'PNG', imgXOffset, yOffset - 8, imgWidth, imgHeight);
+            }
         }
+
+        yOffset += lineHeight * textLines.length + 9; // Adjust space between sections
     });
 
     return yOffset;
@@ -260,14 +270,15 @@ async function fetchImageAsBase64(imageName) {
 
 // Function to add the Improvement Plan page
 const addImprovementPlanPage = (doc, apiResponse) => {
-    doc.addPage();
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 10;
     const boxWidth = pageWidth - 2 * margin;
     const headingHeight = 12;
     let yOffset = 25; // Initial Y offset for the first box
 
     // Heading for the page
+    doc.addPage();  // Ensure starting on a new page
     doc.setFont('Arial', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
@@ -299,7 +310,7 @@ const addImprovementPlanPage = (doc, apiResponse) => {
     ];
 
     practices.forEach((practice) => {
-        // calc box height
+        // Calculate the height needed for the box
         doc.setFont('Arial', 'normal');
         doc.setFontSize(14);
         const improvementText = practice.improvements.join("\n");
@@ -307,30 +318,30 @@ const addImprovementPlanPage = (doc, apiResponse) => {
         const textHeight = textLines.length * 6;
         const boxHeight = headingHeight + textHeight + 10;
 
-        // check if page space enough
-        if (yOffset + boxHeight > doc.internal.pageSize.getHeight() - margin) {
+        // Check if there is enough space on the page, if not, add a new page
+        if (yOffset + boxHeight > pageHeight - margin) {
             doc.addPage();
-            yOffset = margin;
+            yOffset = margin;  // Reset yOffset for the new page
         }
 
-        // draw box border
+        // Draw the box border
         doc.setLineWidth(0.5);
         doc.rect(margin, yOffset, boxWidth, boxHeight);
 
-        // draw heading row
+        // Draw the heading row
         doc.setFont('Arial', 'bold');
         doc.setFontSize(14);
         doc.text(practice.title, margin + 5, yOffset + headingHeight - 2);
 
-        // draw a line between the heading and content
+        // Draw a line between the heading and content
         doc.line(margin, yOffset + headingHeight + 1, margin + boxWidth, yOffset + headingHeight + 1);
 
-        // draw content row
+        // Draw the content row
         doc.setFont('Arial', 'normal');
         doc.setFontSize(14);
         doc.text(textLines, margin + 5, yOffset + headingHeight + 10);
 
-        // space after each box
+        // Space after each box
         yOffset += boxHeight + 10;
     });
 };
