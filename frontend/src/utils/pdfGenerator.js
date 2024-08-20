@@ -4,8 +4,7 @@ import gsfLogo from '../assets/GSFLogo.jpg';
 import check_img from '../assets/check.jpg';
 import cross_img from '../assets/cross.jpg';
 import warning_img from '../assets/warning.png';
-import getSampleCharts from "./chartsLoader"
-
+import getSampleCharts from "./chartsLoader";
 
 // Function to draw the footer
 const drawFooter = (doc, pageNumber, totalPages) => {
@@ -83,7 +82,6 @@ const drawQuery = (doc, data, yOffset, queryNumber) => {
     return yOffset;
 };
 
-
 // Function to add summary page
 const addSummaryPage = (doc) => {
     const summaryText = `The EcoDoc Sense project focuses on integrating sustainability into the software design phase, aiming to assess environmental impact early on. Traditionally, sustainability is evaluated after software deployment, which can lead to inefficient designs. By considering environmental factors during design, developers can make decisions that contribute to greener software from the start.
@@ -108,7 +106,7 @@ const addSummaryPage = (doc) => {
 };
 
 // Function to add the Overview page
-const addOverviewPage = (doc, practicesSummary, apiResponse) => {
+const addOverviewPage = (doc, practicesSummary) => {
     doc.addPage();
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 10;
@@ -220,11 +218,10 @@ const addGreenPracticesPage = (doc) => {
     });
 };
 
-
-const addGraphicalEvaluationPage = (doc, docName, chartImages) => {
+const addGraphicalEvaluationPage = async (doc, docName, chartImages) => {
     let isSampleFile = ["Uber", "Instagram", "Netflix", "Dropbox", "Whatsapp"].includes(docName);
     let yOffset = 38;
-    doc.addPage()
+    doc.addPage();
 
     // title
     doc.setFont('Arial', 'bold');
@@ -235,19 +232,31 @@ const addGraphicalEvaluationPage = (doc, docName, chartImages) => {
 
     // images
     if (isSampleFile) {
-        const sampleChartsObj = getSampleCharts(docName)
-        const sampleBarChart = sampleChartsObj.barChart
-        const samplePieChart = sampleChartsObj.pieChart
+        const sampleChartsObj = getSampleCharts(docName);
+        const sampleBarChart = sampleChartsObj.barChart;
+        const samplePieChart = sampleChartsObj.pieChart;
         doc.addImage(sampleBarChart, 'PNG', 25, yOffset, 140, 98);
-        doc.addImage(samplePieChart, 'PNG', 25, yOffset+120, 140, 98);
+        doc.addImage(samplePieChart, 'PNG', 25, yOffset + 120, 140, 98);
     } else {
-        const barChart = chartImages.barChart
-        const pieChart = chartImages.pieChart
+        const barChart = await fetchImageAsBase64('BarChart.png');
+        const pieChart = await fetchImageAsBase64('PieChart.png');
         doc.addImage(barChart, 'PNG', 25, yOffset, 140, 98);
-        doc.addImage(pieChart, 'PNG', 25, yOffset+120, 140, 98);
+        doc.addImage(pieChart, 'PNG', 25, yOffset + 120, 140, 98);
     }
+};
+async function fetchImageAsBase64(imageName) {
+    const response = await fetch(`http://localhost:8000/getImage/${imageName}`);
+    if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+    }
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
 }
-
 
 // Function to add the Improvement Plan page
 const addImprovementPlanPage = (doc, apiResponse) => {
@@ -441,24 +450,41 @@ const generatePDF = async (analysisData) => {
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 
-    // Add Overview page
+    // Dynamically calculate practices summary for the Overview page
     const practicesSummary = {
         totalFollowed: apiResponse.filter(practice => practice.result === 'Yes').length,
         totalPractices: apiResponse.length,
         data: [
-            {pillar: 'Resource Optimization', followed: '5/18'},
-            {pillar: 'Data Efficiency', followed: '0/5'},
-            {pillar: 'Performance Management', followed: '2/8'},
-            {pillar: 'Security', followed: '2/5'},
-            {pillar: 'User Impact', followed: '0/1'}
+            {
+                pillar: 'Resource Optimization',
+                followed: `${apiResponse.filter(practice => practice.category === 'Resource Optimization' && practice.result === 'Yes').length}/${apiResponse.filter(practice => practice.category === 'Resource Optimization').length}`
+            },
+            {
+                pillar: 'Data Efficiency',
+                followed: `${apiResponse.filter(practice => practice.category === 'Data Efficiency' && practice.result === 'Yes').length}/${apiResponse.filter(practice => practice.category === 'Data Efficiency').length}`
+            },
+            {
+                pillar: 'Performance Management',
+                followed: `${apiResponse.filter(practice => practice.category === 'Performance Management' && practice.result === 'Yes').length}/${apiResponse.filter(practice => practice.category === 'Performance Management').length}`
+            },
+            {
+                pillar: 'Security',
+                followed: `${apiResponse.filter(practice => practice.category === 'Security' && practice.result === 'Yes').length}/${apiResponse.filter(practice => practice.category === 'Security').length}`
+            },
+            {
+                pillar: 'User Impact',
+                followed: `${apiResponse.filter(practice => practice.category === 'User Impact' && practice.result === 'Yes').length}/${apiResponse.filter(practice => practice.category === 'User Impact').length}`
+            }
         ]
     };
-    addOverviewPage(doc, practicesSummary, apiResponse);
+
+    // Add Overview page
+    addOverviewPage(doc, practicesSummary);
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 
     // Add Graphical Evaluation
-    addGraphicalEvaluationPage(doc, docName, chartImages)
+    await addGraphicalEvaluationPage(doc, docName, chartImages);
     pageNumber++;
     drawFooter(doc, pageNumber, totalPages);
 

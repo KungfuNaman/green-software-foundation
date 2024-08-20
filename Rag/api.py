@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import StreamingResponse, JSONResponse,FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import json
@@ -131,9 +131,9 @@ async def ask_ecodoc(file: UploadFile):
                 os.remove(combined_path)
             if os.path.exists(document_path):
                 os.remove(document_path)
-            if os.path.exists(result_path):
-                os.remove(result_path)
-            db.delete_collection()
+            # if os.path.exists(result_path):
+            #     os.remove(result_path)
+            # db.delete_collection()
 
     return StreamingResponse(generate_results(), media_type="application/json")
 
@@ -144,11 +144,11 @@ async def get_sample_results(doc_name: str):
 
     async def result_generator():
         try:
-            with open(sample_results_path, 'r') as file:
+            with open(sample_results_path, 'r', encoding='utf-8') as file:
                 sample_results = json.load(file)
                 for row in sample_results.get(doc_name, []):
                     yield json.dumps(row) + "\n"
-                    await asyncio.sleep(1)  # Add a 3-second delay between each row
+                    await asyncio.sleep(0)  # Add a 3-second delay between each row
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
     
@@ -165,6 +165,14 @@ async def get_eva_charts():
 
     return {"barChartPath": f"/{bar_chart_path}", "pieChartPath": f"/{pie_chart_path}"}
 
+@app.get("/getImage/{image_name}")
+async def get_image(image_name: str):
+    image_path = os.path.join(CURRENT_DIR, "Charts/", image_name)
+
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    return FileResponse(image_path)
 
 if __name__ == "__main__":
     import uvicorn
