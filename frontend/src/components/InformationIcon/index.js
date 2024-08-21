@@ -53,9 +53,9 @@ const InformationIcon = () => {
             <h3>Info: Progress Indicator</h3>
             <p>
                This is your progress indicator displaying real-time progress in analysing your document. Each step represents one of the 3 key steps in the pipeline.
-               <ul>'Chunking Document' indicates that your document is currently being chunked, embedded and added to EcoDoc Sense's vector database. </ul>
-               <ul>'Retrieving Context' indicates that EcoDoc Sense's retriever is currently fetching context from the embedded vector database and using it to create a query prompt for EcoDoc Sense's Generator LLM. </ul>
-               <ul>'Generating Response' indicates that the Generator LLM is being prompted with the retrieved context and query. </ul>
+               <ul><b>Chunking Document</b> indicates that your document is currently being chunked, embedded and added to EcoDoc Sense's vector database. </ul>
+               <ul><b>Retrieving Context</b> indicates that EcoDoc Sense's retriever is currently fetching context from the embedded vector database and using it to create a query prompt for EcoDoc Sense's Generator LLM. </ul>
+               <ul><b>Generating Response</b> indicates that the Generator LLM is being prompted with the retrieved context and query. </ul>
                For each query, new context will be retrieved and combined with the query to create a prompt. These prompts are then iteratively presented to our generator for a response.
             </p>
           </Box>
