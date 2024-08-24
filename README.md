@@ -67,7 +67,6 @@ Now EcoDoc Sense is ready on **http://localhost:3000/**
 
 
 ## 4. Run with Docker
-### Pack to Docker Images
 Install [**Docker Desktop**](https://www.docker.com/products/docker-desktop/) to your machine. <br>
 Use the command below to create the docker image and run locally.
 ```bash
