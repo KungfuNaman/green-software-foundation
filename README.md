@@ -73,3 +73,15 @@ Use the command below to create the docker image and run locally.
 # build the docker image and run
 docker-compose up --build
 ```
+Docker images can also be pulled from Docker Hub: <br>
+```bash
+# images for backend, frontend, ollama service
+docker pull yile785/green-software-foundation-backend:latest
+docker pull yile785/green-software-foundation-frontend:latest
+docker pull yile785/green-software-foundation-ollama:latest
+
+# use docker-compose.yml to run the container
+docker-compose up
+```
+
+
