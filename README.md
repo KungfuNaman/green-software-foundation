@@ -1,50 +1,76 @@
-# RAG APPLICATION
+# EcoDoc Sense
+## 1. Overview
+EcoDoc Sense is a web application that focusing on analysing the compliance of software architecture documents
+with certain green software patterns. A sustainability report is generated based on developer’s
+software architecture document, highlighting whether green software patterns are being adhered to
+or overlooked. Additionally, it provides suggestions on which green patterns should be implemented
+in the software. 
 
-### Docker Images Download
-1. make sure installed "Docker Desktop" in your machine
-2. login 
+
+## 2. Project Structure
+### Backend 
+Built out the main RAG ( Retrieval-Augmented Generation ) pipeline for the project 
+and uses FastAPI to implement the RESTful service. Code in "Rag" folder.
+
+### Frontend 
+Built out a user-friendly web user interface with the React Framework.
+
+### Scripts
+The scripts for finetuning the models are included in the "Finetuning" folder.
+
+### Local Tools
+Ollama is used as the local LLM launcher in the project.
+
+
+## 3. Run on Local PC
+### Get ready for Ollama
+Install [**Ollama**](https://www.ollama.com/) to local machine. After that, pull necessary models.
 ```bash
-docker login
+# pull Llama2 for embeddings generation
+ollama pull llama2
+
+# pull LLaVA for image extraction of user's document
+ollama pull llava
 ```
-3. pull backend & frontend images
+Download finetuned model for final answer generation [here](https://drive.google.com/file/d/1l1dnbQlQGiQVCTp925pB07Sh3cYnViKR/view?usp=sharing).<br/>
+Then, copy the Modelfile in project root directory to where you store the finetuned model.<br/>
+After that, create a model instance by Modelfile.
 ```bash
-docker pull yile785/green-software-foundation-backend:first
-docker pull yile785/green-software-foundation-frontend:first
+# create the model instance
+ollama create fineTunedModel -f /root/Modelfile
 ```
-4. run the containers
+
+### Start backend server
 ```bash
-# start containers separately
-docker run -d -p 8000:8000 yile785/green-software-foundation-backend:first
-docker run -d -p 3000:3000 yile785/green-software-foundation-frontend:first
+# change directory
+cd .\Rag\
 
-# or use docker-compose.yml(in proj root dir) to run them in one go
-docker-compose up
+# install dependencies
+pip install -r .\requirements.txt
+
+# start server
+python .\api.py
 ```
 
-## Development
-### Local Ollama Install
-Install ollama https://www.ollama.com/ to local environment
-- Ollama commands (ollama list: to see the downloaded models, these models are saved in the home directory under .ollama)
-
-Check if Ollama is configured
+### Start frontend server
 ```bash
-ollama --version
-```
+# change directory
+ cd .\frontend\
 
-Pull llama2 model and chat
+# install dependencies
+npm install
+
+# start server
+npm start
+```
+Now EcoDoc Sense is ready on **http://localhost:3000/**
+
+
+## 4. Run with Docker
+### Pack to Docker Images
+Install [**Docker Desktop**](https://www.docker.com/products/docker-desktop/) to your machine. <br>
+Use the command below to create the docker image and run locally.
 ```bash
-ollama run llama2
+# build the docker image and run
+docker-compose up --build
 ```
-
-### To run backend 
-```bash
-python Rag/api.py
-```
-Request will be served on port 8000
-
-### To run frontend
-
-
-
-
-
