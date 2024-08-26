@@ -22,7 +22,16 @@ The scripts for finetuning the models are included in the "Finetuning" folder.
 Ollama is used as the local LLM launcher in the project.
 
 
-## 3. Run on Local PC
+## 3. Run with Docker
+Install [**Docker Desktop**](https://www.docker.com/products/docker-desktop/) to your machine. <br>
+Use the command below to create the docker image and run locally.
+```bash
+# build the docker image and run
+docker-compose up --build
+```
+
+
+## 4. Run on Local PC
 ### Get ready for Ollama
 Install [**Ollama**](https://www.ollama.com/) to local machine. After that, pull necessary models.
 ```bash
@@ -66,22 +75,5 @@ npm start
 Now EcoDoc Sense is ready on **http://localhost:3000/**
 
 
-## 4. Run with Docker
-Install [**Docker Desktop**](https://www.docker.com/products/docker-desktop/) to your machine. <br>
-Use the command below to create the docker image and run locally.
-```bash
-# build the docker image and run
-docker-compose up --build
-```
-Docker images can also be pulled from Docker Hub: <br>
-```bash
-# images for backend, frontend, ollama service
-docker pull yile785/green-software-foundation-backend:latest
-docker pull yile785/green-software-foundation-frontend:latest
-docker pull yile785/green-software-foundation-ollama:latest
-
-# use docker-compose.yml to run the container
-docker-compose up
-```
 
 
