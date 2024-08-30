@@ -6,7 +6,9 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch
 
 client = TestClient(app)
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+#tests the get_sample_results endpoint with a valid document name
 def test_get_sample_results_success():
     doc_name = "Netflix"
     response = client.get(f"/get_sample_results/{doc_name}")
@@ -321,10 +323,12 @@ def test_get_sample_results_success():
     for idx, row in enumerate(content):
         assert json.loads(row) == json.loads(expected_rows[idx])
 
+#tests the get_sample_results endpoint with an invalid document name (has no results in modified_results.json of sample_file_data)
 def test_get_sample_results_failure():
     response = client.get("/get_sample_results/aws")
     assert response.status_code == 200
-    
+
+#tests the ask_ecodoc endpoint with a valid document file    
 def test_ask_ecodoc_standard_file():
 
     #creating mock document to send over the network
@@ -402,10 +406,12 @@ def test_ask_ecodoc_standard_file():
     os.remove(document_file_path)
     os.remove(query_file_path)
 
+#tests the ask_ecodoc endpoint without a file as input
 def test_ask_ecodoc_no_file():
     response = client.post("/ask_ecodoc")
     assert response.status_code == 422
 
+#tests the ask_ecodoc endpoint with a document file that has a space and special character in its filename
 def test_ask_ecodoc_variant_file_path():
     #filename has a space and special character in it
     document_file_path = "test doc^ument.txt"
@@ -476,6 +482,35 @@ def test_ask_ecodoc_variant_file_path():
 
     os.remove(document_file_path)
     os.remove(query_file_path)
+
+#tests the getImage endpoint with a valid image path
+def test_get_image_success():
+    image_path = os.path.join(CURRENT_DIR, "Charts/", "BarChart.png")
+    if not os.path.exists(image_path):
+        with open('Charts/BarChart.png', 'w') as f:
+            f.write("dummy content") 
+        
+    response = client.get("/getImage/BarChart.png")
+    assert response.status_code == 200
+
+#tests the getImage endpoint with an invalid image path
+def test_get_image_failure():
+    response = client.get("/getImage/RandomImage.png")
+    assert response.status_code == 404
+
+#tests the getEvaCharts endpoint to get the paths of the charts and makes sure they exist first
+def test_get_eva_charts():
+    image_path = os.path.join(CURRENT_DIR, "Charts/", "BarChart.png")
+    if not os.path.exists(image_path):
+        with open('Charts/BarChart.png', 'w') as f:
+            f.write("dummy content") 
+    image_path = os.path.join(CURRENT_DIR, "Charts/", "PieChart.png")
+    if not os.path.exists(image_path):
+        with open('Charts/PieChart.png', 'w') as f:
+            f.write("dummy content")
+    response = client.get("/getEvaCharts")
+    assert response.status_code == 200
+    assert response.json() == {"barChartPath": "/Charts\\BarChart.png", "pieChartPath": "/Charts\\PieChart.png"}
 
 if __name__ == "__main__":
     pytest.main()
